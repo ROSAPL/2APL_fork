@@ -1,0 +1,33 @@
+Include: 
+  moving.2apl
+
+BeliefUpdates:
+  { true }               RememberGold(POS)    { gold(POS) }
+  { at(OLDPOS) }         UpdatePosition(POS)  { not at(OLDPOS), at(POS) }
+  { true }               UpdatePosition(POS)  { at(POS) }
+  
+Beliefs:
+  foundGold :- gold(_).
+  
+  /* Succeeds with probability P */ 
+  prob(P) :- is(X, rand), X < P.
+
+Goals:
+  foundGold
+
+PG-rules:
+  /* Wander around */
+  foundGold <- prob(0.05) | 
+  {
+		gotoRandomPos(15,15)
+  }
+  
+  foundGold <- true |
+  {
+    @blockworld( senseBombs(), BOMBS );
+    if B( BOMBS = [ [default,X1,Y1] | REST ] ) then
+    { 
+       RememberGold([X1,Y1])
+    }
+  }
+  

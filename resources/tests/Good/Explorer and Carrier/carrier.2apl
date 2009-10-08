@@ -1,0 +1,61 @@
+Include: 
+	moving.2apl
+
+BeliefUpdates:
+  { true }               RemoveGold(POS)      { not gold(POS) }
+  { not carrying_gold }  SetCarryingGold()    { carrying_gold }
+  { carrying_gold }      SetNotCarryingGold() { not carrying_gold }
+  { }                    SetError()           { error }
+  
+Beliefs:  
+  trap([0,0]).
+  goldStored :- not gold(_), not carrying_gold.
+  done :- goldStored.
+  
+Goals:
+  goldStored
+
+PG-rules:
+  goldStored <- gold(POS) and not carrying_gold and not at(POS)| 
+  {
+    [
+     updatePosition();
+     if B(gold(POS) and not at(POS)) then  adopta(at(POS))     
+    ]
+  }
+  
+  goldStored <- gold(POS) and not carrying_gold and at(POS)| 
+  { 
+    [
+      updatePosition();
+      if B(at(POS)) then 
+      {
+        @blockworld( pickup(), _ );
+        SetCarryingGold();
+        RemoveGold(POS)
+      }      
+    ]
+  } 
+  
+  goldStored <- carrying_gold and trap(TRAPPOS) and not at(TRAPPOS) |
+  {
+    adopta(at(TRAPPOS))
+  }
+  
+  goldStored <- carrying_gold and trap(TRAPPOS) and at(TRAPPOS) |
+  {
+    @blockworld( drop(), _ );
+    SetNotCarryingGold()  
+  }
+  
+PR-rules:
+  @blockworld(pickup(), _); REST <- true |
+  {
+  	SetError()
+  }  
+  
+  @blockworld(drop(), _); REST <- true |
+  {
+  	SetError()
+  } 
+              

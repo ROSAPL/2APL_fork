@@ -1,0 +1,66 @@
+<project name="2apl" default="compile">
+  
+  <property name="builddir" location="build"/>
+  <property name="srcdir" location="src"/>
+  <property name="resourcesdir" location="resources"/>
+  <property name="libdir" location="lib"/>
+  <property name="releasedir" location="release"/>
+ 
+  <target name="clean">
+    <delete dir="${builddir}"/>
+    <delete dir="${releasedir}"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${builddir}"/>
+    <javac srcdir="${srcdir}" destdir="${builddir}" fork="true">
+      <classpath>
+        <fileset dir="${libdir}"> 
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+    <copy todir="${builddir}/gui/icons">
+      <fileset dir="${srcdir}/gui/icons"/>
+    </copy>
+
+    
+  </target>
+
+  <target name="release" depends="compile">
+    <mkdir dir="${releasedir}"/>
+    
+    <copy todir="${releasedir}">
+      <fileset dir="${resourcesdir}"/>
+    </copy>
+
+    <copy todir="${releasedir}/lib">
+      <fileset dir="${libdir}"/>
+    </copy>
+    
+    <jar basedir="${builddir}" destfile="${releasedir}/apapl.jar">
+      <manifest>
+        <attribute name="Main-Class" value="APAPL"/>
+        <attribute 
+          name="Class-Path" 
+		  value="
+            lib/cartago/cartago-0.6.1.jar	
+            lib/jext/jext-5.0.jar
+            lib/jade/http.jar		
+            lib/jext/jython-2.1.jar
+			lib/jade/iiop.jar		
+			lib/jext/looks-1.2.2.jar
+			lib/jade/jade.jar		
+			lib/jiprolog/JIProlog.jar
+			lib/jade/jadeTools.jar		
+			lib/jiprolog/jipxsystem.jar
+			lib/jext/dawn-1.1.1.jar
+          "
+	    />
+	  </manifest>
+    </jar>
+    
+  </target>
+  
+    
+</project>

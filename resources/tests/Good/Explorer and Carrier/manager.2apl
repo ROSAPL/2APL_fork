@@ -1,0 +1,52 @@
+BeliefUpdates:
+  { true }  SetAssigned(POS, A)     { assigned(POS, A) }
+  { true }  SetGold(POS)            { gold(POS) }
+  { true }  RemoveAssigned(POS, A)  { not assigned(POS, A) }
+  { true }  RemoveGold(POS)         { not gold(POS) }
+
+Beliefs:
+  worker(w1).
+  worker(w2).
+  worker(w3).
+
+Goals:
+  haveGold
+
+PG-rules:
+  haveGold <- gold(POS) and not assigned(carrier(POS), _) and worker(W) and not assigned(_, W) |
+  {
+    send(W, request, play(carrier, POS));
+    SetAssigned(carrier(POS), W)
+  }
+  
+  haveGold <- not gold(_) and worker(W) and not assigned( _, W) |
+  {    
+    send(W, request, play(explorer));
+    SetAssigned(explorer, W)    
+  }
+
+PC-rules: 
+  message(A, inform, _, _, gold(POS)) <- true  | 
+  {
+    [
+      SetGold(POS);
+      RemoveAssigned(explorer, A)
+    ]
+  } 
+
+  message(A, inform, _, _, done(POS)) <- true |
+  {
+    [
+      RemoveAssigned(carrier(POS), A);
+      RemoveGold(POS)
+    ]
+  } 
+  
+  message(A, inform, _, _, failed(POS)) <- true |
+  {
+    [
+      RemoveAssigned(carrier(POS), A)
+    ]
+  } 
+
+    
