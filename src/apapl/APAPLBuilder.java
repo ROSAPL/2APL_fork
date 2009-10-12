@@ -8,6 +8,9 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
+import eis.EnvironmentInterfaceStandard;
+import eis.exceptions.AgentException;
+
 /**
  * A builder used to construct a multi-agent system. The builder uses parser to
  * parse the mas file and the 2APL files that specify the modules.
@@ -38,7 +41,7 @@ public class APAPLBuilder
 		// Build the MAS
 		APLMAS mas = new APLMAS(masfile.getParentFile(), msgr, exec);
 		// Keep track of the environments that are created
-		HashMap<String, Environment> envs = new HashMap<String, Environment>();
+		HashMap<String, EnvironmentInterfaceStandard> envs = new HashMap<String, EnvironmentInterfaceStandard>();
 
 		// parseMas returns a list of strings (as) per agent in the MAS
 		// as:
@@ -58,19 +61,52 @@ public class APAPLBuilder
 			// For all environments this module participates in
 			for (int i = 2; i < as.size(); i++)
 			{
-				Environment env = envs.get(as.get(i));
+				EnvironmentInterfaceStandard env = envs.get(as.get(i));
 
 				// Create environment if it does not already exist
 				if (env == null)
 				{
-					env = buildEnvironment(as.get(i));
+
+					// retrieving full path to file
+					File file = new File(masfile.getParentFile().getAbsolutePath() + File.separatorChar + as.get(i) + ".jar");
+
+					try {
+					
+						env = EnvironmentInterfaceStandard.fromJarFile(file);
+					
+					} catch (IOException e) {
+
+						System.out.println(file);
+						System.out.println(e.getMessage());
+						
+						throw new LoadEnvironmentException(as.get(i), "Environment Interface could not be loaded");
+					}
+					
 					envs.put(as.get(i), env);
-					mas.addEnvironment(env);
+					
+					mas.addEnvironmentInterface(env);
+				
 				}
 
+				// register agent to the environment
+				try {
+					env.registerAgent(t.l.getLocalName());
+
+					// for callbacks
+					env.attachAgentListener(t.l.getLocalName(), mas);
+
+				
+				} catch (AgentException e) {
+
+					throw new ParseModuleException(masfile, "Failed to register agent " + t.l.getLocalName());
+					
+				}
+				
 				// Link agent's main module to environment
-				t.l.addEnvironment(as.get(i), env);
-				env.addModule(t.l);
+				t.l.addEnvironmentInterface(as.get(i), env);
+
+				// TODO establish callbacks
+				//env.addModule(t.l);
 			}
 		}
 

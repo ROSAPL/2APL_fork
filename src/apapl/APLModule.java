@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import eis.EnvironmentInterfaceStandard;
+
 import apapl.data.APLFunction;
 import apapl.data.APLIdent;
 import apapl.data.Term;
@@ -75,7 +77,7 @@ public class APLModule
 	/** List of received external events. */
 	private LinkedList<APLFunction> eEvents = new LinkedList<APLFunction>();
 	/** List of environments where this module operates in. */
-	private HashMap<String, Environment> envs;
+	private HashMap<String, EnvironmentInterfaceStandard> envs;
 	/** Module's deliberation cycle. */
 	private Deliberation delib;
 	/** The messenger used for sending messages. */
@@ -114,7 +116,7 @@ public class APLModule
 		this.pcrules = new PCrulebase();
 		this.prrules = new PRrulebase();
 		this.plans = new Planbase();
-		this.envs = new HashMap<String, Environment>();
+		this.envs = new HashMap<String, EnvironmentInterfaceStandard>();
 		this.delib = new Deliberation();
 		this.stoppingCond = null;
 	}
@@ -143,7 +145,7 @@ public class APLModule
 	 *        performing an external action
 	 */
 	public APLModule(ArrayList<Integer> ievents,
-			LinkedList<APLFunction> eevents, HashMap<String, Environment> envs,
+			LinkedList<APLFunction> eevents, HashMap<String, EnvironmentInterfaceStandard> envs,
 			Deliberation delib, Messenger messenger, String name, APLMAS mas,
 			APLModule parent, Test stoppingCond, Beliefbase beliefs,
 			Goalbase goals, BeliefUpdates beliefupdates, PGrulebase pgrules,
@@ -153,7 +155,7 @@ public class APLModule
 		super();
 		iEvents = new ArrayList<Integer>(ievents);
 		eEvents = new LinkedList<APLFunction>(eevents);
-		this.envs = new HashMap<String, Environment>(envs);
+		this.envs = new HashMap<String, EnvironmentInterfaceStandard>(envs);
 		this.delib = delib.clone();
 		this.messenger = messenger;
 		this.name = new String(name);
@@ -251,7 +253,7 @@ public class APLModule
 	 * @param name the name by which the module can access the environment
 	 * @param env the environment
 	 */
-	public void addEnvironment(String name, Environment env)
+	public void addEnvironmentInterface(String name, EnvironmentInterfaceStandard env)
 	{
 		envs.put(name, env);
 	}
@@ -263,7 +265,7 @@ public class APLModule
 	 * @return the environment identified by name, <code>null</code> if the
 	 *         environment is not linked to the module.
 	 */
-	public Environment getEnvironment(String name)
+	public EnvironmentInterfaceStandard getEnvironmentInterface(String name)
 	{
 		return (envs.get(name));
 	}
@@ -638,7 +640,7 @@ public class APLModule
 	 * 
 	 * @return the map of environment identifiers and environments
 	 */
-	public HashMap<String, Environment> getEnvs()
+	public HashMap<String, EnvironmentInterfaceStandard> getEnvs()
 	{
 		return envs;
 	}
@@ -648,7 +650,7 @@ public class APLModule
 	 * 
 	 * @param envs the map of environment identifiers and environments
 	 */
-	public void setEnvs(HashMap<String, Environment> envs)
+	public void setEnvs(HashMap<String, EnvironmentInterfaceStandard> envs)
 	{
 		this.envs = envs;
 	}

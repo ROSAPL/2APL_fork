@@ -2,6 +2,7 @@ package apapl.plans;
 
 import apapl.Environment;
 import apapl.ExternalActionFailedException;
+import apapl.IILConverter;
 import apapl.UnboundedVarException;
 import apapl.data.APLIdent;
 import apapl.data.APLNum;
@@ -9,17 +10,22 @@ import apapl.data.Term;
 import apapl.data.APLFunction;
 import apapl.data.APLVar;
 import apapl.data.APLList;
-import apapl.data.APLListVar;
-import apapl.data.Literal;
 import apapl.APLModule;
-import apapl.program.Base;
-import jade.lang.acl.ACLMessage;
-import jade.core.AID;
 import apapl.SubstList;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Vector;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+
+import eis.EnvironmentInterfaceStandard;
+import eis.exceptions.ActException;
+import eis.exceptions.NoEnvironmentException;
+import eis.exceptions.PerceiveException;
+import eis.exceptions.RelationException;
+import eis.iilang.Action;
+import eis.iilang.ActionResult;
+import eis.iilang.Percept;
 
 /**
  * An external action.
@@ -48,6 +54,7 @@ public class ExternalAction extends Plan
 		
 	public PlanResult execute(APLModule module)
 	{
+		
 		try {
 			timeoutTerm = Term.unvar(timeoutTerm);
 			timeout = ((APLNum)timeoutTerm).toInt();
@@ -56,8 +63,10 @@ public class ExternalAction extends Plan
 			return new PlanResult(this, PlanResult.FAILED);
 		}
 		
-		Environment e = module.getEnvironment(env);
+		EnvironmentInterfaceStandard e = module.getEnvironmentInterface(env);
 
+		assert e!=null : env;
+		
 		if (e==null) {
 			return new PlanResult(this, PlanResult.FAILED);
 		}
@@ -98,6 +107,215 @@ public class ExternalAction extends Plan
 
 	}
 	
+	private Term execute(APLFunction action, EnvironmentInterfaceStandard e,
+			APLModule module) throws ExternalActionFailedException {
+		
+		System.out.println("Start execute");
+		
+		if( action.getName().equals("getFreeEntities") ) {
+			
+			// get free entities
+			LinkedList<String> freeOnes = e.getFreeEntities();
+			
+			// convert to list
+			LinkedList<Term> terms = new LinkedList<Term>();
+			
+			for( String freeOne : freeOnes )
+				terms.add( new APLIdent(freeOne) );
+			
+			APLList ret = new APLList(terms);
+
+			// return
+			return ret;
+			
+		}
+		else if( action.getName().equals("getAllEntities") ) {
+
+			// get free entities
+			LinkedList<String> allOnes = e.getEntities();
+			
+			// convert to list
+			LinkedList<Term> terms = new LinkedList<Term>();
+			
+			for( String one : allOnes )
+				terms.add( new APLIdent(one) );
+			
+			APLList ret = new APLList(terms);
+
+			// return
+			return ret;
+
+		}
+		else if( action.getName().equals("associateWith") ) {
+
+			System.out.println("associateWith");
+
+			Term term = action.getParams().get(0);
+			
+			//System.out.println("Term: " + term.toString());
+			
+			Vector<String> entities = new Vector<String>();
+			
+			// only one parameter -- and identifier
+			if( term instanceof APLIdent ) {
+			
+				entities.add( ((APLIdent)term).getName() );
+				
+			}
+			// only one parameter -- a number
+			else if ( term instanceof APLNum ) {
+				
+				entities.add( term.toString() );
+				
+			} 
+			else if( term instanceof APLList ) {
+				
+				LinkedList<Term> list = ((APLList) term).toLinkedList();
+				
+				for( int a = 0; a < list.size() ; a++ ) {
+					
+					entities.add( ((APLIdent)list.get(a)).getName() );
+					
+				}
+				
+			} 
+			else {
+				
+				System.out.println("ALarm");
+				
+				assert false : "Unexpected type " + term.getClass();
+				
+			}
+			
+			// System.out.println("Entities: " + entities);
+			
+			for( String entity : entities ) {
+	
+				try {
+				
+					e.associateEntity(module.getLocalName(), entity);
+				
+				} catch (RelationException e1) {
+					
+					throw new ExternalActionFailedException("Agent could not be associated"  + "\n" + e1.getMessage() );
+				
+				}
+			
+			}
+			
+		}
+		else if( action.getName().equals("disassociateFrom") ) {
+
+			String entity = ((APLIdent)action.getParams().get(0)).getName();
+			
+			//try {
+
+				assert false : "Implement for version 0.2!";
+				//e.freePair(module.getLocalName(), entity);
+			
+			//} catch (RelationException e1) {
+
+				//throw new ExternalActionFailedException("Agent could not be dis associated" + "\n" + e1.getMessage() );
+
+//			}
+			
+		}
+		else if( action.getName().equals("getAllPercepts") ) {
+
+			ArrayList<Term> params = action.getParams();
+
+			String[] entities = null;
+			
+			if ( params.size() == 0 ) {
+			
+				// System.out.println(e);
+				
+			}
+			else if ( params.size() == 1 ) { 
+				
+			}
+			else {
+			
+				assert false : "Wrong number of arguments";
+				
+			}
+			
+			try {
+				
+				LinkedList<Percept> percepts = e.getAllPercepts(module.getLocalName());
+				
+				LinkedList<Term> terms = new LinkedList<Term>();
+				for( Percept p : percepts ) {
+					
+					terms.add( IILConverter.convert(p) );
+					
+				}
+				
+				// System.out.println(percepts);
+				
+				return APLList.constructList(terms, null);
+			
+			} catch (PerceiveException e1) {
+
+				throw new ExternalActionFailedException("Perceiving failed." + "\n" + e1.getMessage());
+			
+			} catch (NoEnvironmentException e1) {
+				
+				throw new ExternalActionFailedException("Perceiving failed." + "\n" + "No environment connected");
+				
+			}
+
+		}
+		else {
+
+			Action iilaction = IILConverter.convertToAction(action);
+			
+			//System.out.println("Converted: " + iilaction.toProlog());
+
+			// System.out.println(iilaction.toProlog());
+
+			try {
+				
+				LinkedList<ActionResult> results = e.performAction(module.getLocalName(), iilaction);
+			
+				//System.out.println("Action performed");
+				
+				LinkedList<Term> terms = new LinkedList<Term>();
+				
+				for( ActionResult result : results ) {
+					
+					terms.add( IILConverter.convert(result) );
+				}
+				
+				//System.out.println("Done");
+				
+				return APLList.constructList(terms, null);
+				
+			} catch (ActException e1) {
+
+				//System.out.println("Fail 1");
+
+				e1.printStackTrace();
+				
+				throw new ExternalActionFailedException("Acting failed." + "\n" + e1.getMessage());
+			
+			} catch (NoEnvironmentException e1) {
+				
+				//System.out.println("Fail 2");
+
+				e1.printStackTrace();
+				
+				throw new ExternalActionFailedException("Acting failed." + "\n" + "No environment connected");
+			
+			}
+			
+			
+		}
+		
+		return new APLIdent("success");
+	
+	}
+
 	public Term getTimeout()
 	{
 		return timeoutTerm;
@@ -165,7 +383,17 @@ public class ExternalAction extends Plan
 		result.applySubstitution(theta);
 	}
 	
-	public Term execute (APLFunction a, Environment e, APLModule module) throws ExternalActionFailedException
+	/**
+	 * 
+	 * @param a
+	 * @param e
+	 * @param module
+	 * @return
+	 * @throws ExternalActionFailedException
+	 * 
+	 * @obsolete
+	 */
+	private Term execute (APLFunction a, Environment e, APLModule module) throws ExternalActionFailedException
 	{
 		ArrayList<Object> params = new ArrayList<Object>();
 		ArrayList<Class> paramTypes = new ArrayList<Class>();
@@ -275,7 +503,7 @@ public class ExternalAction extends Plan
 	
 	public void checkPlan(LinkedList<String> warnings, APLModule module)
 	{
-		Environment environment = module.getEnvironment(env.trim());
+		EnvironmentInterfaceStandard environment = module.getEnvironmentInterface(env.trim());
 		if (environment==null) {
 			//warnings.add("Action \""+this+"\" refers to an environment that is not available.");
 			warnings.add("Action \""+toRTF(0)+"\" refers to an environment that is not available.");

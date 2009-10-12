@@ -3,6 +3,10 @@ package apapl;
 import java.util.*;
 import java.io.*;
 
+import eis.AgentListener;
+import eis.EnvironmentInterfaceStandard;
+import eis.iilang.Percept;
+
 import apapl.messaging.*;
 import apapl.parser.ParseModuleException;
 import apapl.parser.ParsePrologException;
@@ -15,7 +19,7 @@ import apapl.data.*;
  * the functionality to execute a multi-agent system. The specific strategy by
  * which the modules are executed is implemented by the {@link apapl.Executor}.
  */
-public class APLMAS implements MessageListener
+public class APLMAS implements MessageListener,AgentListener
 {
 	/** The list of active modules that reside in this MAS. */
 	private List<APLModule> activeModules;
@@ -25,7 +29,7 @@ public class APLMAS implements MessageListener
 	/** The files that are used per module. */
 	private HashMap<APLModule, LinkedList<File>> modulefiles;
 	/** The environments used in this MAS. (needed for cleanup at destruction) */
-	private LinkedList<Environment> environments;
+	private LinkedList<EnvironmentInterfaceStandard> environmentInterfaces;
 	/** The executor used to execute the modules. */
 	private Executor executor;
 	/** The messenger used to send messages. */
@@ -56,7 +60,7 @@ public class APLMAS implements MessageListener
 		activeModules = new LinkedList<APLModule>();
 		inactiveModules = new LinkedList<APLModule>();
 		modulefiles = new HashMap<APLModule, LinkedList<File>>();
-		environments = new LinkedList<Environment>();
+		environmentInterfaces = new LinkedList<EnvironmentInterfaceStandard>();
 		listeners = new ArrayList<MASChangeListener>();
 
 		this.moduleSpecDir = moduleSpecDir;
@@ -161,9 +165,9 @@ public class APLMAS implements MessageListener
 	 * 
 	 * @param environment the environment to be added
 	 */
-	public void addEnvironment(Environment environment)
+	public void addEnvironmentInterface(EnvironmentInterfaceStandard ei)
 	{
-		environments.add(environment);
+		environmentInterfaces.add(ei);
 	}
 
 	/**
@@ -283,15 +287,15 @@ public class APLMAS implements MessageListener
 		executor.stop();
 
 		// Take all environments down
-		for (Environment e : environments)
+		for (EnvironmentInterfaceStandard e : environmentInterfaces)
 		{
-			e.takeDown();
+			e.release();
 		}
 
 		activeModules = new LinkedList<APLModule>();
 		inactiveModules = new LinkedList<APLModule>();
 		modulefiles = new HashMap<APLModule, LinkedList<File>>();
-		environments = new LinkedList<Environment>();
+		environmentInterfaces = new LinkedList<EnvironmentInterfaceStandard>();
 	}
 
 	/**
@@ -548,4 +552,12 @@ public class APLMAS implements MessageListener
 			return;
 		}
 	}
+
+	@Override
+	public void handlePercept(String agent, Percept percept) {
+		
+		assert false : percept.toProlog();
+		
+	}
+
 }

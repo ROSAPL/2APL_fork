@@ -1,4 +1,4 @@
-<project name="2apl" default="compile">
+<project name="2apl" default="run">
   
   <property name="builddir" location="build"/>
   <property name="srcdir" location="src"/>
@@ -55,6 +55,7 @@
 			lib/jade/jadeTools.jar		
 			lib/jiprolog/jipxsystem.jar
 			lib/jext/dawn-1.1.1.jar
+			lib/apleis/eis.jar
           "
 	    />
 	  </manifest>
@@ -62,5 +63,8 @@
     
   </target>
   
+  <target name="run" depends="release">
+    <java jar="${releasedir}/apapl.jar" fork="true"></java>
+  </target>
     
 </project>

@@ -1,0 +1,12 @@
+Plans:
+  {
+  @elevatorenv( getAllEntities(), AE );
+  print(allEntities(AE));
+  @elevatorenv( getFreeEntities(), AE );
+  print(freeEntities(AE));
+  @elevatorenv( associateWith(1), AW );
+  print(associationResult(AW));
+  @elevatorenv( goto(3,up) , GR);
+  print(gotoResult(GR));
+  skip
+  }
