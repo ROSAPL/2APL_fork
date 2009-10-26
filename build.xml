@@ -16,38 +16,39 @@
     <javac srcdir="${srcdir}" destdir="${builddir}" fork="true">
       <classpath>
         <fileset dir="${libdir}"> 
-          <include name="**/*.jar"/>
+          <include name="**/*.jar"/>        
         </fileset>
       </classpath>
     </javac>
     <copy todir="${builddir}/gui/icons">
       <fileset dir="${srcdir}/gui/icons"/>
     </copy>
-
-    
+    <copy todir="${builddir}/">
+      <fileset dir="${resourcesdir}/licence"/>
+    </copy>    
   </target>
-
+	
   <target name="release" depends="compile">
     <mkdir dir="${releasedir}"/>
     
-    <copy todir="${releasedir}">
-      <fileset dir="${resourcesdir}"/>
-    </copy>
-
+    <copy todir="${releasedir}/examples">
+      <fileset dir="${resourcesdir}/examples"/>
+    </copy>	  
+  	
     <copy todir="${releasedir}/lib">
       <fileset dir="${libdir}"/>
     </copy>
     
-    <jar basedir="${builddir}" destfile="${releasedir}/apapl.jar">
+    <jar basedir="${builddir}" destfile="${releasedir}/2apl.jar">
       <manifest>
         <attribute name="Main-Class" value="APAPL"/>
         <attribute 
           name="Class-Path" 
-		  value="
-            lib/cartago/cartago-0.6.1.jar	
-            lib/jext/jext-5.0.jar
-            lib/jade/http.jar		
-            lib/jext/jython-2.1.jar
+		  		value="
+			lib/cartago/cartago-0.6.1.jar	
+			lib/jext/jext-5.0.jar
+			lib/jade/http.jar		
+			lib/jext/jython-2.1.jar
 			lib/jade/iiop.jar		
 			lib/jext/looks-1.2.2.jar
 			lib/jade/jade.jar		
@@ -64,7 +65,7 @@
   </target>
   
   <target name="run" depends="release">
-    <java jar="${releasedir}/apapl.jar" fork="true"></java>
+    <java jar="${releasedir}/2apl.jar" fork="true"></java>
   </target>
     
 </project>
