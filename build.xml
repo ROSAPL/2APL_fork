@@ -5,6 +5,7 @@
   <property name="resourcesdir" location="resources"/>
   <property name="libdir" location="lib"/>
   <property name="releasedir" location="release"/>
+  <property name="doc" location="doc"/>
  
   <target name="clean">
     <delete dir="${builddir}"/>
@@ -66,6 +67,20 @@
   
   <target name="run" depends="release">
     <java jar="${releasedir}/2apl.jar" fork="true"></java>
+  </target>
+
+  <target name="doc">
+    <mkdir dir="${doc}"/>
+    <javadoc sourcepath="." destdir="${doc}" failonerror="true">
+    <fileset dir="." defaultexcludes="yes">
+    <include name="**/*.java"/>
+    </fileset>
+    <classpath>
+    	<fileset dir="${libdir}"> 
+        <include name="**/*.jar"/>        
+        </fileset>
+    </classpath>
+    </javadoc>
   </target>
     
 </project>
