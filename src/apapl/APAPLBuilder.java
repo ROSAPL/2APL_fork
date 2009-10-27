@@ -8,6 +8,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
+import eis.EILoader;
 import eis.EnvironmentInterfaceStandard;
 import eis.exceptions.AgentException;
 
@@ -72,7 +73,7 @@ public class APAPLBuilder
 
 					try {
 					
-						env = EnvironmentInterfaceStandard.fromJarFile(file);
+						env = EILoader.fromJarFile(file);
 					
 					} catch (IOException e) {
 

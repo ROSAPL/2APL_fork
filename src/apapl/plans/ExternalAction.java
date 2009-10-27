@@ -208,16 +208,15 @@ public class ExternalAction extends Plan
 
 			String entity = ((APLIdent)action.getParams().get(0)).getName();
 			
-			//try {
+			try {
 
-				assert false : "Implement for version 0.2!";
-				//e.freePair(module.getLocalName(), entity);
+				e.freePair(module.getLocalName(), entity);
 			
-			//} catch (RelationException e1) {
+			} catch (RelationException e1) {
 
-				//throw new ExternalActionFailedException("Agent could not be dis associated" + "\n" + e1.getMessage() );
+				throw new ExternalActionFailedException("Agent could not be dis associated" + "\n" + e1.getMessage() );
 
-//			}
+			}
 			
 		}
 		else if( action.getName().equals("getAllPercepts") ) {

@@ -57,7 +57,7 @@
 			lib/jade/jadeTools.jar		
 			lib/jiprolog/jipxsystem.jar
 			lib/jext/dawn-1.1.1.jar
-			lib/apleis/eis.jar
+			lib/apleis/eis-0.2.jar
           "
 	    />
 	  </manifest>
