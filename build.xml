@@ -25,7 +25,7 @@
       <fileset dir="${srcdir}/gui/icons"/>
     </copy>
     <copy todir="${builddir}/">
-      <fileset dir="${resourcesdir}/licence"/>
+      <fileset dir="${resourcesdir}/license"/>
     </copy>    
   </target>
 	
@@ -78,9 +78,9 @@
     <classpath>
     	<fileset dir="${libdir}"> 
         <include name="**/*.jar"/>        
-        </fileset>
+      </fileset>
     </classpath>
     </javadoc>
   </target>
-    
+	
 </project>
