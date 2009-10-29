@@ -6,6 +6,7 @@
   <property name="libdir" location="lib"/>
   <property name="releasedir" location="release"/>
   <property name="doc" location="doc"/>
+  <property name="junitresults" location="junitresults"/>
  
   <target name="clean">
     <delete dir="${builddir}"/>
@@ -110,4 +111,25 @@
   	    javacchome="${libdir}/javacc"
   	/>
   </target>
+	
+	<target name="tests">
+		<mkdir dir="${junitresults}"/>
+		<junit printsummary="yes" haltonfailure="no" showoutput="yes">
+		  <classpath>
+		   	<fileset dir="${libdir}"> 
+		        <include name="**/*.jar"/>        
+		    </fileset>
+		  	<pathelement location="${builddir}"/>
+		  	<pathelement location="${libdir}/*/*.jar"/>
+		  </classpath>
+
+		  <formatter type="plain"/>
+			
+		  <batchtest todir="${junitresults}">
+		    <fileset dir="${srcdir}">
+		      <include name="apapl/tests/**/*Test*.java"/>
+		    </fileset>
+		  </batchtest>
+		</junit>
+	</target>
 </project>
