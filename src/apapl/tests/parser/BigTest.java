@@ -23,7 +23,6 @@ public class BigTest {
 			e.printStackTrace();
 		}
 		
-	    assertEquals("Multiplication", 6l, 6l);
 	  }
 
 }
