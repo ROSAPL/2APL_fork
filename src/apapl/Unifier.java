@@ -152,12 +152,6 @@ public class Unifier
 			
 			return unify(q1,q2,theta);
 		}
-		else if (p1 instanceof CartagoAction && p2 instanceof CartagoAction)
-		{
-			CartagoAction a1 = (CartagoAction)p1;
-			CartagoAction a2 = (CartagoAction)p2;
-			return unify(a1.getAct(),a2.getAct(),theta);
-		}
 		else if (p1 instanceof GoalAction && p2 instanceof GoalAction)
 		{
 			GoalAction a1 = (GoalAction)p1;

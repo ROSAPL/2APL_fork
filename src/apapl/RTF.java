@@ -144,12 +144,6 @@ public class RTF
 			BeliefUpdateAction p = (BeliefUpdateAction)plan;
 			return toView(p.getPlan(),true);
 		}
-		//CartagoAction
-		else if (plan instanceof CartagoAction)
-		{
-			CartagoAction p = (CartagoAction)plan;
-			return toView(p.getAct(),true);
-		}
 		//TestAction
 		else if (plan instanceof TestAction)
 		{

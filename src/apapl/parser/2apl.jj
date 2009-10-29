@@ -386,8 +386,6 @@ Plan PlanWithVar() :
 	p = UpdateBeliefbaseAction() {return p;} 
 |	LOOKAHEAD(TestAction())
 	p = TestAction() {return p;}   
-|	LOOKAHEAD(CartagoAction())
-	p = CartagoAction() {return p;}
 |	LOOKAHEAD(GoalAction())
 	p = GoalAction() {return p;}
 |	LOOKAHEAD(ChunkPlanWithVar())
@@ -422,8 +420,6 @@ Plan Plan() :
 	p = UpdateBeliefbaseAction() {return p;}  
 |	LOOKAHEAD(TestAction())
 	p = TestAction() {return p;}	 
-|	LOOKAHEAD(CartagoAction())
-	p = CartagoAction() {return p;}
 |	LOOKAHEAD(GoalAction())
 	p = GoalAction() {return p;}
 |	LOOKAHEAD(ChunkPlan())
@@ -735,55 +731,6 @@ Term NumVar() :
 {
 	t = APLNum() { return t;}
 |	t = APLVar() {return t;}
-}
-
-Plan CartagoAction() :
-{Term p = new APLIdent(""); Term q = new APLIdent("");  APLFunction op; APLVar result; int i=-1;}
-{
-	<USE>
-	<LBRACE>
-	p = NameVar()
-	<COMMA> op = PlanAtom() //operator
-	(LOOKAHEAD(<COMMA> NameVar()) <COMMA> q = NameVar())?	//sensor
-	(LOOKAHEAD(<COMMA> NameVar()) <COMMA> i = Int())?  //timeout
-	<RBRACE>
-	{
-		return new CartagoAction(new APLFunction("use",p,op,q,new APLNum(i)));
-	}
-|	<SENSE>
-	<LBRACE>
-	p = NameVar() <COMMA> //sensor
-	(LOOKAHEAD(NameVar() <COMMA>) q = NameVar() <COMMA>)? //filter
-	(i = Int() <COMMA>)? //dt
-	result = APLVar() //result
-	<RBRACE>
-	{
-		return new CartagoAction(new APLFunction("sense",p,q,new APLNum(i),result));
-	}
-|	<LINKSENSOR> <LBRACE> p = NameVar() <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("linkSensor",p));
-	}
-|	<UNLINKSENSOR> <LBRACE> p = NameVar() <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("unlinkSensor",p));
-	}
-|	<FOCUS> <LBRACE> p = NameVar() <COMMA> q = NameVar() <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("focus",p,q));
-	}
-|	<STOPFOCUS> <LBRACE> p = NameVar() <COMMA> <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("stopFocus",p));
-	}
-|	<CREATEART> <LBRACE> p = NameVar() <COMMA> q = NameVar() <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("createArtifact",p,q));
-	}
-|	<DISPOSEART> <LBRACE> p = NameVar() <RBRACE>
-	{
-		return new CartagoAction(new APLFunction("disposeArtifact",p));
-	}
 }
 
 

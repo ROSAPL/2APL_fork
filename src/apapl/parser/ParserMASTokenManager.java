@@ -392,10 +392,10 @@ public static final String[] jjstrLiteralImages = {
 
 /** Lexer state names. */
 public static final String[] lexStateNames = {
-   "DEFAULT", 
-   "IN_SINGLE_LINE_COMMENT", 
-   "IN_FORMAL_COMMENT", 
-   "IN_MULTI_LINE_COMMENT", 
+   "DEFAULT",
+   "IN_SINGLE_LINE_COMMENT",
+   "IN_FORMAL_COMMENT",
+   "IN_MULTI_LINE_COMMENT",
 };
 
 /** Lex State array. */
@@ -417,8 +417,8 @@ static final long[] jjtoMore = {
 protected SimpleCharStream input_stream;
 private final int[] jjrounds = new int[13];
 private final int[] jjstateSet = new int[26];
-private final StringBuffer jjimage = new StringBuffer();
-private StringBuffer image = jjimage;
+private final StringBuilder jjimage = new StringBuilder();
+private StringBuilder image = jjimage;
 private int jjimageLen;
 private int lengthOfMatch;
 protected char curChar;
@@ -507,13 +507,13 @@ public Token getNextToken()
 
   EOFLoop :
   for (;;)
-  {   
-   try   
-   {     
+  {
+   try
+   {
       curChar = input_stream.BeginToken();
-   }     
+   }
    catch(java.io.IOException e)
-   {        
+   {
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
       matchedToken.specialToken = specialToken;
@@ -591,7 +591,7 @@ public Token getNextToken()
               }
               SkipLexicalActions(matchedToken);
            }
-           else 
+           else
               SkipLexicalActions(null);
          if (jjnewLexState[jjmatchedKind] != -1)
            curLexState = jjnewLexState[jjmatchedKind];
@@ -650,7 +650,7 @@ void MoreLexicalActions()
          jjimageLen = 0;
                    input_stream.backup(1);
          break;
-      default : 
+      default :
          break;
    }
 }

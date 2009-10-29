@@ -83,4 +83,31 @@
     </javadoc>
   </target>
 	
+	
+  <target name="javacc">
+  	<delete>
+        <fileset dir="${srcdir}/apapl/parser"> 
+          <include name="ParseException.java"/>
+            <include name="Parser2apl.java"/>
+            <include name="Parser2aplConstants.java"/>
+            <include name="Parser2aplTokenManager.java"/>
+            <include name="ParserMAS.java"/>
+            <include name="ParserMASConstants.java"/>
+            <include name="ParserMASTokenManager.java"/>
+            <include name="SimpleCharStream.java"/>
+            <include name="Token.java"/>
+            <include name="TokenMgrError.java"/>
+        </fileset>
+  	</delete>
+  	<javacc
+  	    target="${srcdir}/apapl/parser/2apl.jj"
+  	    outputdirectory="${srcdir}/apapl/parser"
+  	    javacchome="${libdir}/javacc"
+  	/>
+  	<javacc
+  	    target="${srcdir}/apapl/parser/mas.jj"
+  	    outputdirectory="${srcdir}/apapl/parser"
+  	    javacchome="${libdir}/javacc"
+  	/>
+  </target>
 </project>
