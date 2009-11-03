@@ -39,7 +39,6 @@ public class IILConverter {
 	}
 	
 	
-	
 	public static Parameter convert(Term term) {
 		
 		if( term instanceof APLNum ) {

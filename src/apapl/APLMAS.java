@@ -588,7 +588,6 @@ public class APLMAS implements MessageListener, AgentListener {
     public void messageSent(APLMessage message) {
         try {
             APLModule module = this.getModule(null, message.getReceiver());
-
             if (isActive(module))
                 wakeUp(module);
 
@@ -598,8 +597,22 @@ public class APLMAS implements MessageListener, AgentListener {
     }
 
     @Override
-    public void handlePercept(String agent, Percept percept) {
-        assert false : "Percept handling not implemented:" + percept.toProlog();
+    public void handlePercept(String moduleName, Percept percept) {
+      
+    	try {
+            APLModule module = this.getModule(null, moduleName);
+        
+            if (isActive(module))
+                wakeUp(module);
+
+            // TODO somehow we have to get the origin of the percept this has to be implemented in the EIS
+            String env = "unknown";
+            
+            module.notifyEEevent(IILConverter.convert(percept), env);
+            
+        } catch (ModuleAccessException e) {
+            return;
+        }
     }
 
 }
