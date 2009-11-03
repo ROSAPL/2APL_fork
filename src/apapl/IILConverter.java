@@ -1,17 +1,22 @@
 package apapl;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import apapl.data.APLFunction;
 import apapl.data.APLIdent;
 import apapl.data.APLNum;
+import apapl.data.APLList;
 import apapl.data.Term;
+
 import eis.iilang.Action;
 import eis.iilang.ActionResult;
 import eis.iilang.Identifier;
 import eis.iilang.Numeral;
 import eis.iilang.Parameter;
+import eis.iilang.ParameterList;
 import eis.iilang.Percept;
 
 public class IILConverter {
@@ -30,9 +35,10 @@ public class IILConverter {
 			
 		}
 		
-		return new Action(action.getName(), params);
-		
+		return new Action(action.getName(), params);		
 	}
+	
+	
 	
 	public static Parameter convert(Term term) {
 		
@@ -43,17 +49,21 @@ public class IILConverter {
 			return ret;
 			
 		}
-		if( term instanceof APLIdent ) {
-			
+		if( term instanceof APLIdent ) {			
 			return new Identifier( ((APLIdent)term).getName() );
 		
 		}
-		else {
-			
-			assert false: "Unknown type " + term.getClass();
-			
+		if( term instanceof APLList) {
+			List<Parameter> list = new ArrayList<Parameter>();
+			for(Term item : ((APLList) term).toLinkedList()) {
+				list.add(convert(item));
+			}
+			return new ParameterList(list);			
 		}
-			
+		else {
+			assert false: "Unknown type " + term.getClass();			
+		}
+		
 		return null;
 		
 	}
@@ -86,14 +96,21 @@ public class IILConverter {
 			
 			return new APLNum( ((Numeral)parameter).getValue().doubleValue() );
 			
-		}
+		}		
+		if (parameter instanceof ParameterList) {
+			LinkedList<Term> terms = new LinkedList<Term>();					
+			
+			for (Parameter item : ((ParameterList) parameter)) {
+				terms.add(convert(item));
+			}
+			
+			return new APLList(terms);
+		}			
 		else {
-			
 			assert false: "Unknown type " + parameter.getClass();
-			
 		}
-		return ret;
 		
+		return ret;		
 	}
 
 	public static Term convert(ActionResult result) {
@@ -109,6 +126,16 @@ public class IILConverter {
 		
 		return new APLFunction(result.getName(), params);
 		
-	}
+	}	
 	
+	public static ActionResult convertToActionResult(Term term) {			
+		Parameter param = convert(term);
+		if (term != null) {
+			return new ActionResult("actionresult", param);
+		}
+		else {
+			return null;
+		}		
+	}	
+
 }

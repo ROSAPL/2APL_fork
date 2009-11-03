@@ -84,6 +84,7 @@ public class Env extends Environment implements ObsVectListener
 	// The default constructor
 	public Env()
 	{
+		super();
 		// Create the window
 		m_window = new Window( this );
 	}
@@ -550,28 +551,37 @@ public class Env extends Environment implements ObsVectListener
 	public void refresh() { }
 	
 		// Add an agent to the environment
-	public void addAgent(String sAgent)
-	{
-		String sAgentMain = getMainModule(sAgent);
-		final Agent agent = new Agent( sAgentMain );
-		_agents.add( agent );
-		agentmap.put(sAgentMain,agent);
-		
-		writeToLog( "agent " + agent + " added" );
-	}
+    public void addAgent(String sAgent) {
+        String sAgentMain = getMainModule(sAgent);
+        // Agent not yet in the environment
+        if (agentmap.keySet().contains(sAgentMain)) {
+            agentmap.put(sAgent,agentmap.get(sAgentMain));  
+            writeToLog("linking " + sAgent + "");
+        } else{
+            final Agent agent = new Agent(sAgentMain);
+            _agents.add(agent);
+            agentmap.put(sAgent, agent);
+            writeToLog("agent " + agent + " added");
+        }
+
+                
+    }
 	
 	// Remove the agent from the environment
 	public void removeAgent(String sAgent)
 	{
 		try 
 		{
-			String sAgentMain = getMainModule(sAgent);
+			//String sAgentMain = getMainModule(sAgent);
 			
-			Agent a = getAgent(sAgentMain);
-			a.reset();
+			Agent a = getAgent(sAgent);			
+			agentmap.remove( sAgent );
 			
-			_agents.remove( sAgentMain );
-			agentmap.remove( sAgentMain );
+			// there can be several agent
+			if (!agentmap.containsValue(a)) {
+			    _agents.remove(a);		
+			    a.reset();
+			} 
 			
 			writeToLog("Agent removed: " + sAgent);
 	
@@ -600,11 +610,13 @@ public class Env extends Environment implements ObsVectListener
 	
 	// Get the agent from its name
 	private Agent getAgent(String name) throws ExternalActionFailedException
-	{
+	{    
 		Agent a = null;
-		a = agentmap.get(getMainModule(name));
+		//a = agentmap.get(getMainModule(name));
+		a = agentmap.get(name);
 		if (a==null) throw new ExternalActionFailedException("No such agent: "+name);
 		else return a;
+		
 	}
 	
 	private String getMainModule(String sAgent)
@@ -623,7 +635,7 @@ public class Env extends Environment implements ObsVectListener
 	public int getHeight() { return m_size.height; }
 	
 	// Return the agents
-	public Collection getAgents() 
+	public Collection getBlockWorldAgents() 
 	{
 		return _agents;
 	}
@@ -888,7 +900,9 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	// Print a message to the console
-	static public void writeToLog( String message ) { System.out.println( "blockworld: " + message ); }
+    static public void writeToLog(String message) {
+      //System.out.println("blockworld: " + message);
+    }
 	
 	// helper function to wrap a boolean value inside a ListPar.
 	static public APLListVar wrapBoolean( boolean b )

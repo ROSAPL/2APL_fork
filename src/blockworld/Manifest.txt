@@ -1,1 +1,1 @@
-Class-Path: apapl.jar
+Main-Class: blockworld.Env

@@ -12,10 +12,10 @@
     <delete dir="${builddir}"/>
     <delete dir="${releasedir}"/>
   </target>
-
+	
   <target name="compile">
     <mkdir dir="${builddir}"/>
-    <javac srcdir="${srcdir}" destdir="${builddir}" fork="true">
+    <javac srcdir="${srcdir}" destdir="${builddir}" fork="true" source="5">
       <classpath>
         <fileset dir="${libdir}"> 
           <include name="**/*.jar"/>        
@@ -27,7 +27,10 @@
     </copy>
     <copy todir="${builddir}/">
       <fileset dir="${resourcesdir}/license"/>
-    </copy>    
+    </copy>
+    <copy todir="${builddir}/blockworld/images">
+      <fileset dir="${srcdir}/blockworld/images" />
+    </copy>
   </target>
 	
   <target name="release" depends="compile">
@@ -42,32 +45,45 @@
     </copy>
     
     <jar basedir="${builddir}" destfile="${releasedir}/2apl.jar">
-      <manifest>
+    	<exclude name="blockworld/**" />
+    	<manifest>
         <attribute name="Main-Class" value="APAPL"/>
         <attribute 
           name="Class-Path" 
 		  		value="
-			lib/cartago/cartago-0.6.1.jar	
-			lib/jext/jext-5.0.jar
-			lib/jade/http.jar		
-			lib/jext/jython-2.1.jar
-			lib/jade/iiop.jar		
-			lib/jext/looks-1.2.2.jar
-			lib/jade/jade.jar		
-			lib/jiprolog/JIProlog.jar
-			lib/jade/jadeTools.jar		
-			lib/jiprolog/jipxsystem.jar
-			lib/jext/dawn-1.1.1.jar
-			lib/apleis/eis-0.2.jar
+						lib/cartago/cartago-0.6.1.jar	
+						lib/jext/jext-5.0.jar
+						lib/jade/http.jar		
+						lib/jext/jython-2.1.jar
+						lib/jade/iiop.jar		
+						lib/jext/looks-1.2.2.jar
+						lib/jade/jade.jar		
+						lib/jiprolog/JIProlog.jar
+						lib/jade/jadeTools.jar		
+						lib/jiprolog/jipxsystem.jar
+						lib/jext/dawn-1.1.1.jar
+						lib/apleis/eis-0.2.jar
           "
 	    />
-	  </manifest>
+	   </manifest>
     </jar>
-    
+  	
+  	<mkdir dir="${releasedir}/environments"/>
+  	
+    <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
+      <include name="blockworld/**" />      
+    	<manifest>
+        <attribute name="Main-Class" value="blockworld.Env"/>
+	    </manifest>
+    </jar>
   </target>
   
   <target name="run" depends="release">
-    <java jar="${releasedir}/2apl.jar" fork="true"></java>
+    <java jar="${releasedir}/2apl.jar" fork="true">
+    	<assertions>
+    	  <enable />
+    	</assertions>
+    </java>
   </target>
 
   <target name="doc">
@@ -100,11 +116,13 @@
             <include name="TokenMgrError.java"/>
         </fileset>
   	</delete>
+  	
   	<javacc
   	    target="${srcdir}/apapl/parser/2apl.jj"
   	    outputdirectory="${srcdir}/apapl/parser"
   	    javacchome="${libdir}/javacc"
   	/>
+  	
   	<javacc
   	    target="${srcdir}/apapl/parser/mas.jj"
   	    outputdirectory="${srcdir}/apapl/parser"

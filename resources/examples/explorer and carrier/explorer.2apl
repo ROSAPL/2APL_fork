@@ -25,7 +25,7 @@ PG-rules:
   foundGold <- true |
   {
     @blockworld( senseBombs(), BOMBS );
-    if B( BOMBS = [ [default,X1,Y1] | REST ] ) then
+    if B( BOMBS = [actionresult([ [default,X1,Y1] | REST ])]) then
     { 
        RememberGold([X1,Y1])
     }

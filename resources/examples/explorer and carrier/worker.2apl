@@ -7,7 +7,7 @@ Beliefs:
 Plans:
     B(is( X, int( random( 15 ) ) ));
     B(is( Y, int( random( 15 ) ) ));
-    @blockworld( enter( X, Y, blue ), L )
+    @blockworld( enter( X, Y, blue ), _ )
     
 PG-rules:
 

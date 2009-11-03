@@ -4,7 +4,7 @@ Goals:
   search( blockWorld )
 
 Plans:
-  @blockworld( enter( 8, 8, red ), L )
+  @blockworld( enter( 8, 8, red ), _ )
 
 PG-rules:
   search( blockWorld ) <- true |
@@ -13,7 +13,7 @@ PG-rules:
     B(is( Y, int( random( 15 ) ) ));
     goto( X, Y );
     @blockworld( senseBombs(), BOMBS );
-    if B( BOMBS = [ [default,X1,Y1] | REST ] ) then
+    if B( BOMBS = [actionresult(  [[default,X1,Y1]|REST]  )] ) then
     { send( harry, inform, bombAt( X1, Y1 ) )
     }
   }

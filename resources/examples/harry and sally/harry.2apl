@@ -8,12 +8,11 @@ BeliefUpdates:
 
 Beliefs:
   start(0,1).
-  bomb(3,3).
   clean( blockWorld ) :- not bomb(X,Y) , not carry(bomb).
 
 Plans:
   B(start(X,Y)) ;
-  @blockworld( enter( X, Y, blue ), L )
+  @blockworld( enter( X, Y, blue ), _ )
 
 Goals:
   clean( blockWorld )
@@ -22,11 +21,11 @@ PG-rules:
   clean( blockWorld ) <- bomb( X, Y ) |
   {
     goto( X, Y );
-    @blockworld( pickup( ), L1 );
+    @blockworld( pickup( ), _ );
 		PickUp( );
 		RemoveBomb( X, Y );
     goto( 0, 0 );
-		@blockworld( drop( ), L2 );
+		@blockworld( drop( ), _ );
     Drop( )
 	}
 
@@ -44,9 +43,9 @@ PC-rules:
 
 
 PR-rules:
-  @blockworld( pickup(), L ); REST <- true |
+  @blockworld( pickup(), _ ); REST <- true |
   {
     @blockworld( sensePosition(), POS );
-    B(POS = [X,Y]);
+    B(POS = [actionresult([X,Y])]);
     RemoveBomb( X, Y )
   }

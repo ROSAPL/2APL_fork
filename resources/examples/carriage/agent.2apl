@@ -11,17 +11,17 @@ Plans:
   print(allPercepts(AP));
 
 
-  while B( true ) do {
+  while B( false ) do {
   
     @carriageexample( wait(), _ )
 
   };
  
-  @carriageexample( push(), _ );
-  @carriageexample( push(), _ );
-  @carriageexample( push(), _ );
-  @carriageexample( push(), _ );
-  @carriageexample( push(), _ );
+  @carriageexample( push(), X );
+  @carriageexample( push(), X );
+  @carriageexample( push(), X );
+  @carriageexample( push(), X );
+  @carriageexample( push(), X );
 
   print("ALARM")
   }

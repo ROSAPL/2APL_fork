@@ -10,10 +10,10 @@ PG-rules:
   {
     updatePosition();    
     B(at(POS) and POS = [A,B]);
-    if B(A > X) then { @blockworld( west(), L ) }
-    else if B(A < X) then  { @blockworld( east(), L ) }
-    else if B(B > Y) then  { @blockworld( north(), L )}
-    else if B(B < Y) then  { @blockworld( south(), L )};    
+    if B(A > X) then { @blockworld( west(), _ ) }
+    else if B(A < X) then  { @blockworld( east(), _ ) }
+    else if B(B > Y) then  { @blockworld( north(), _  )}
+    else if B(B < Y) then  { @blockworld( south(), _ )};    
     updatePosition()
   }
   
@@ -27,7 +27,11 @@ PC-rules:
     [ if B(not at([X, Y])) then  adopta(at([X, Y])) ]
   }
 
-  updatePosition() <- true |  { @blockworld( sensePosition(), POS ); UpdatePosition(POS) }
+  updatePosition() <- true |  
+  { 
+  	@blockworld( sensePosition(), RES ); 
+  	if B(RES = [actionresult(POS)]) then UpdatePosition(POS) 
+  }
   
   randomMove() <- prob(0.25) | { @blockworld( south(), _) }  
   randomMove() <- prob(0.5) | { @blockworld( north(), _) }  
@@ -35,9 +39,9 @@ PC-rules:
   randomMove() <- true | { @blockworld( east(), _)  }        
   
 PR-rules:
-  @blockworld( south(), L); REST <- true | { randomMove(); REST }  
-  @blockworld( north(), L); REST <- true | { randomMove(); REST }  
-  @blockworld( west(), L); REST <- true |  { randomMove(); REST }  
-  @blockworld( east(), L); REST <- true |  { randomMove(); REST }  
+  @blockworld( south(), _); REST <- true | { randomMove(); REST }  
+  @blockworld( north(), _); REST <- true | { randomMove(); REST }  
+  @blockworld( west(), _); REST <- true |  { randomMove(); REST }  
+  @blockworld( east(), _); REST <- true |  { randomMove(); REST }  
   
             

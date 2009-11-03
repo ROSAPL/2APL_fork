@@ -2,7 +2,7 @@ PC-rules:
   goto( X, Y ) <- true |
   {
     @blockworld( sensePosition(), POS );
-    B(POS = [A,B]);
+    B(POS = [actionresult([A,B])]);
     if B(A > X) then
     { @blockworld( west(), L );
       goto( X, Y )

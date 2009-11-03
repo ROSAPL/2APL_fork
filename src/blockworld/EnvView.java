@@ -262,8 +262,6 @@ class EnvView extends JPanel implements ObsVectListener, Observer {
 		{
 			// Changed SA:
 			imgStone = createImage((ImageProducer)(this.getClass().getResource("images/stone.gif")).getContent());
-
-			System.out.println("Stone icon found - Vond pictogram van steen");
 		} catch(Exception xEx) {
 			xEx.printStackTrace();
 		}
@@ -283,8 +281,6 @@ class EnvView extends JPanel implements ObsVectListener, Observer {
 			imgAgents[7] = createImage((ImageProducer)(this.getClass().getResource("images/agents/agent_red.gif")).getContent());
 			imgAgents[8] = createImage((ImageProducer)(this.getClass().getResource("images/agents/agent_teal.gif")).getContent());
 			imgAgents[9] = createImage((ImageProducer)(this.getClass().getResource("images/agents/agent_yellow.gif")).getContent());
-
-			System.out.println("Normal agent icon found - Vond pictogram van normale agent");
 		} 
 		catch(Exception xEx) 
 		{
@@ -305,21 +301,14 @@ class EnvView extends JPanel implements ObsVectListener, Observer {
 			imgAgentsHolding[7] = createImage((ImageProducer)(this.getClass().getResource("images/agents/holding_red.gif")).getContent());
 			imgAgentsHolding[8] = createImage((ImageProducer)(this.getClass().getResource("images/agents/holding_teal.gif")).getContent());
 			imgAgentsHolding[9] = createImage((ImageProducer)(this.getClass().getResource("images/agents/holding_yellow.gif")).getContent());
-
-			System.out.println("Bearing agent icon found - Vond pictogram van agent het dragen");
-
 		} catch(Exception xEx) {
 			xEx.printStackTrace();
 		}
-		
-
-		
 				
 		try
 		{
 			// Changed SA:
 			imgBomb = createImage((ImageProducer)(this.getClass().getResource("images/bomb.gif")).getContent());
-			System.out.println("Bomb icon found - Vond pictogram van bom");
 		} catch(Exception xEx) {
 			xEx.printStackTrace();
 		}
@@ -328,7 +317,6 @@ class EnvView extends JPanel implements ObsVectListener, Observer {
 		{
 			// Changed SA:
 			imgTrap = createImage((ImageProducer)(this.getClass().getResource("images/trap.gif")).getContent());
-			System.out.println("Trap icon found - Vond pictogram van val");
 		} catch(Exception xEx) {
 			xEx.printStackTrace();
 		}
@@ -473,7 +461,7 @@ class EnvView extends JPanel implements ObsVectListener, Observer {
 				g.drawRect( (int) (x * cw), (int) (y * ch), (int) cw, (int) ch );
 			}
 
-		Iterator a = _env.getAgents().iterator();
+		Iterator a = _env.getBlockWorldAgents().iterator();
 		while( a.hasNext() ) {
 			final Agent agent = (Agent) a.next();
 
