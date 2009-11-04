@@ -2,50 +2,50 @@ Include:
 	moving.2apl
 
 BeliefUpdates:
-  { true }               RemoveGold(POS)      { not gold(POS) }
-  { not carrying_gold }  SetCarryingGold()    { carrying_gold }
-  { carrying_gold }      SetNotCarryingGold() { not carrying_gold }
+  { true }               RemoveBomb(POS)      { not bomb(POS) }
+  { not carrying_bomb }  SetCarryingBomb()    { carrying_bomb }
+  { carrying_bomb }      SetNotCarryingBomb() { not carrying_bomb }
   { }                    SetError()           { error }
   
 Beliefs:  
   trap([0,0]).
-  goldStored :- not gold(_), not carrying_gold.
-  done :- goldStored.
+  bombStored :- not bomb(_), not carrying_bomb.
+  done :- bombStored.
   
 Goals:
-  goldStored
+  bombStored
 
 PG-rules:
-  goldStored <- gold(POS) and not carrying_gold and not at(POS)| 
+  bombStored <- bomb(POS) and not carrying_bomb and not at(POS)| 
   {
     [
      updatePosition();
-     if B(gold(POS) and not at(POS)) then  adopta(at(POS))     
+     if B(bomb(POS) and not at(POS)) then  adopta(at(POS))     
     ]
   }
   
-  goldStored <- gold(POS) and not carrying_gold and at(POS)| 
+  bombStored <- bomb(POS) and not carrying_bomb and at(POS)| 
   { 
     [
       updatePosition();
       if B(at(POS)) then 
       {
         @blockworld( pickup(), _ );
-        SetCarryingGold();
-        RemoveGold(POS)
+        SetCarryingBomb();
+        RemoveBomb(POS)
       }      
     ]
   } 
   
-  goldStored <- carrying_gold and trap(TRAPPOS) and not at(TRAPPOS) |
+  bombStored <- carrying_bomb and trap(TRAPPOS) and not at(TRAPPOS) |
   {
     adopta(at(TRAPPOS))
   }
   
-  goldStored <- carrying_gold and trap(TRAPPOS) and at(TRAPPOS) |
+  bombStored <- carrying_bomb and trap(TRAPPOS) and at(TRAPPOS) |
   {
     @blockworld( drop(), _ );
-    SetNotCarryingGold()  
+    SetNotCarryingBomb()  
   }
   
 PR-rules:

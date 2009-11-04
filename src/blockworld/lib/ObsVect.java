@@ -84,7 +84,9 @@ public class ObsVect extends Vector {
 	}
 
 	public void addElement( Object obj ) {
-		super.addElement( obj );
+		synchronized(this) {
+		    super.addElement( obj );
+		}
 		Object[] data = new Object[ 3 ];
 		data[ 0 ] = new Integer( ADD );
 		data[ 1 ] = new Integer( size() - 1 );
@@ -98,7 +100,11 @@ public class ObsVect extends Vector {
 	}
 
 	public boolean addAll( int index, Collection c ) {
-		if( super.addAll( index, c ) ) {
+		boolean result;
+		synchronized(this) {
+		    result = super.addAll( index, c );
+		}
+	    if( result ) {
 			Object[] data = new Object[ 3 ];
 			data[ 0 ] = new Integer( ADD );
 			Iterator iter = c.iterator();
@@ -115,7 +121,9 @@ public class ObsVect extends Vector {
 	}
 
 	public void insertElementAt( Object obj, int index ) {
-		super.insertElementAt( obj, index );
+		synchronized(this) {
+		    super.insertElementAt( obj, index );
+		}		
 		Object[] data = new Object[ 3 ];
 		data[ 0 ] = new Integer( ADD );
 		data[ 1 ] = new Integer( index );
@@ -124,13 +132,13 @@ public class ObsVect extends Vector {
 		_observable.notifyObservers( data );
 	}
 
-	public Object remove( int index ) {
-		Object obj = get( index );
+	public synchronized Object remove( int index ) {		
+	    Object obj = get( index );
 		removeElementAt( index );
 		return obj;
 	}
 
-	public void removeAllElements() {
+	public synchronized void removeAllElements() {	    
 		Iterator iter = iterator();
 		while( iter.hasNext() ) {
 			iter.next();
@@ -139,8 +147,12 @@ public class ObsVect extends Vector {
 	}
 
 	public void removeElementAt( int index ) {
-		Object obj = get( index );
-		super.removeElementAt( index );
+	    Object obj;
+	    synchronized (this) {
+		    obj = get( index );
+		    super.removeElementAt( index );
+		}
+		
 		Object[] data = new Object[ 3 ];
 		data[ 0 ] = new Integer( REMOVE );
 		data[ 1 ] = new Integer( index );
@@ -149,9 +161,12 @@ public class ObsVect extends Vector {
 		_observable.notifyObservers( data );
 	}
 
-	public Object set( int index, Object element ) {
-		Object removed = get( index );
-		super.set( index, element );
+	public Object set( int index, Object element ) {		
+	    Object removed;
+	    synchronized(this) {
+    	    removed = get( index );
+    		super.set( index, element );
+	    }
 		Object[] data = new Object[ 3 ];
 		data[ 0 ] = new Integer( REMOVE );
 		data[ 1 ] = new Integer( index );
@@ -167,8 +182,11 @@ public class ObsVect extends Vector {
 	}
 
 	public void setElementAt( Object obj, int index ) {
-		Object removed = get( index );
-		super.setElementAt( obj, index );
+	    Object removed;
+	    synchronized(this) {
+    		removed = get( index );
+    		super.setElementAt( obj, index );
+	    }
 		Object[] data = new Object[ 3 ];
 		data[ 0 ] = new Integer( REMOVE );
 		data[ 1 ] = new Integer( index );
@@ -182,7 +200,7 @@ public class ObsVect extends Vector {
 		_observable.notifyObservers( data );
 	}
 
-	public void setSize( int newSize ) {
+	public synchronized void  setSize( int newSize ) {
 		if( newSize < size() ) {
 			Iterator iter = listIterator( newSize );
 			while( iter.hasNext() ) {

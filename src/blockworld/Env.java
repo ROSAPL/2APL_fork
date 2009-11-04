@@ -118,7 +118,7 @@ public class Env extends Environment implements ObsVectListener
 		}
 		
 		// Is this position within the world?
-		if (outOfBounds(position)) 
+		if (isOutOfBounds(position)) 
 		{
 			throw new ExternalActionFailedException("Position "+pos+" out of bounds.");
 		}
@@ -324,7 +324,7 @@ public class Env extends Environment implements ObsVectListener
 	}
 
 	// Sense all agents. This does not include self.
-	public Term senseAllAgent(String sAgent) throws ExternalActionFailedException
+	public synchronized Term senseAllAgent(String sAgent) throws ExternalActionFailedException
 	{
 		//Collection c = senseAllAgents(getAgent(agent).getPosition());
 		Point position = getAgent(sAgent).getPosition();
@@ -358,14 +358,14 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	// Sense the given agent his position
-	public Term sensePosition(String sAgent) throws ExternalActionFailedException
+	public synchronized Term sensePosition(String sAgent) throws ExternalActionFailedException
 	{
 		Point p = getAgent(sAgent).getPosition();
 		return new APLList(new APLNum(p.x),new APLNum(p.y));
 	}
 	
 	// is there a trap in the senserange of the agent?
-	public Term senseTraps(String agent) throws ExternalActionFailedException
+	public synchronized Term senseTraps(String agent) throws ExternalActionFailedException
 	{
 		// Get the agent his position
 		Point position = getAgent(agent).getPosition();
@@ -381,11 +381,11 @@ public class Env extends Environment implements ObsVectListener
 				visible.add( t );
 		}
 		
-		return convertCollection(visible);
+		return convertCollectionToTerm(visible);
 	}
 	
 	// Get all the traps in the env
-	public Term senseAllTraps(String agent)
+	public synchronized Term senseAllTraps(String agent)
 	{
 		// iterate over all traps
 		Vector all = new Vector();
@@ -396,11 +396,11 @@ public class Env extends Environment implements ObsVectListener
 			all.add( (TypeObject) i.next() );
 		}
 		
-		return convertCollection(all);
+		return convertCollectionToTerm(all);
 	}
 	
 	// Sends a bom in the senserange of the agent
-	public Term senseBombs(String agent) throws ExternalActionFailedException
+	public synchronized Term senseBombs(String agent) throws ExternalActionFailedException
 	{
 		// Get the agent his position
 		Point position = getAgent(agent).getPosition();
@@ -417,11 +417,11 @@ public class Env extends Environment implements ObsVectListener
 				visible.add( b );
 		}
 		
-		return convertCollection(visible);
+		return convertCollectionToTerm(visible);
 	}
 	
 	// Find all the bombs in the environment
-	public Term senseAllBombs (String agent)
+	public synchronized Term senseAllBombs (String agent)
 	{
 		// iterate over all bombs
 		Vector all = new Vector();
@@ -432,11 +432,11 @@ public class Env extends Environment implements ObsVectListener
 			all.add( (TypeObject) i.next() );
 		}
 		
-		return convertCollection( all);
+		return convertCollectionToTerm(all);
 	}
 	
 	// Sense the stones in the agent senserange
-	public Term senseStones(String agent) throws ExternalActionFailedException
+	public synchronized Term senseStones(String agent) throws ExternalActionFailedException
 	{
 		// Get the agent his position
 		Point position = getAgent(agent).getPosition();
@@ -453,11 +453,11 @@ public class Env extends Environment implements ObsVectListener
 				visible.add( t );
 		}
 		
-		return convertCollection(visible);
+		return convertCollectionToTerm(visible);
 	}
 	
 	// Sense all stones
-	public Term senseAllStones (String agent)
+	public synchronized Term senseAllStones (String agent)
 	{
 		// iterate over all traps
 		Vector all = new Vector();
@@ -468,11 +468,11 @@ public class Env extends Environment implements ObsVectListener
 			all.add( (TypeObject) i.next() );
 		}
 		
-		return convertCollection(all);
+		return convertCollectionToTerm(all);
 	}
 	
 	// Sense visible area for agents. This does not include self.
-	public Term senseAgent(String sAgent) throws ExternalActionFailedException
+	public synchronized Term senseAgent(String sAgent) throws ExternalActionFailedException
 	{
 		//Collection c = senseAgents(getAgent(agent).getPosition());
 		Point position = getAgent(sAgent).getPosition();
@@ -516,8 +516,8 @@ public class Env extends Environment implements ObsVectListener
 	
 	/* Standard functions --------------------------------------*/
 	
-	public void notifyAgents(APLFunction event, String... receivers) {
-		 throwEvent(event);
+	private void notifyAgents(APLFunction event, String... receivers) {
+		 throwEvent(event, receivers);
 	}
 	
 	private void notifyEvent(String parm1, Point ptPosition)
@@ -542,16 +542,9 @@ public class Env extends Environment implements ObsVectListener
 			notifyAgents(new APLFunction(parm1,nX,nY),targetAgents.toArray(new String[0]));
 		}
 	}
-
-	// what is it
-	public String getDescription() { return "Blockworld for 2APL"; }
 	
-	public String toString() { return "blockworld"; }
-	
-	public void refresh() { }
-	
-		// Add an agent to the environment
-    public void addAgent(String sAgent) {
+	// Add an agent to the environment
+    public synchronized void addAgent(String sAgent) {
         String sAgentMain = getMainModule(sAgent);
         // Agent not yet in the environment
         if (agentmap.keySet().contains(sAgentMain)) {
@@ -562,13 +555,11 @@ public class Env extends Environment implements ObsVectListener
             _agents.add(agent);
             agentmap.put(sAgent, agent);
             writeToLog("agent " + agent + " added");
-        }
-
-                
+        }                
     }
 	
 	// Remove the agent from the environment
-	public void removeAgent(String sAgent)
+	public synchronized void removeAgent(String sAgent)
 	{
 		try 
 		{
@@ -601,7 +592,7 @@ public class Env extends Environment implements ObsVectListener
 	/* Helper functions --------------------------------------*/
 	
 	// Get the size of the blockworld
-	public Term getWorldSize(String agent)
+	public synchronized Term getWorldSize(String agent)
 	{
 		int w = getWidth();
 		int h = getHeight();
@@ -609,7 +600,7 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	// Get the agent from its name
-	private Agent getAgent(String name) throws ExternalActionFailedException
+	private synchronized Agent getAgent(String name) throws ExternalActionFailedException
 	{    
 		Agent a = null;
 		//a = agentmap.get(getMainModule(name));
@@ -619,7 +610,7 @@ public class Env extends Environment implements ObsVectListener
 		
 	}
 	
-	private String getMainModule(String sAgent)
+	private static String getMainModule(String sAgent)
 	{
 		int dotPos;
 		if ((dotPos = sAgent.indexOf('.')) == -1)
@@ -629,19 +620,19 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	// Get the environment width
-	public int getWidth() {	return m_size.width; }
+	public synchronized int getWidth() {	return m_size.width; }
 
 	// Get the environment height
-	public int getHeight() { return m_size.height; }
+	public synchronized int getHeight() { return m_size.height; }
 	
 	// Return the agents
-	public Collection getBlockWorldAgents() 
+	public synchronized Collection getBlockWorldAgents() 
 	{
-		return _agents;
+		return new Vector(_agents);
 	}
 	
 	// convert a collection to a term
-	private Term convertCollection(Collection c)
+	private static Term convertCollectionToTerm(Collection c)
 	{
 		LinkedList<Term> listpar = new LinkedList<Term>();
 		for(Object i : c) {
@@ -661,28 +652,28 @@ public class Env extends Environment implements ObsVectListener
 	// Redrawing the window is a nightmare, this does some redraw stuff
 	private void validatewindow()
 	{
-		Runnable addTab = new Runnable()
+		Runnable repaint = new Runnable()
 		{
 			public void run()
 			{
 				//try {Thread.sleep(500);} catch(Exception e) {}
 				m_window.doLayout();
-				// Changed SA: NO you may not close
-				if (!m_window.isVisible())
+				
+				/*if (!m_window.isVisible())
 				{
 					m_window.setVisible( true );
-				}
+				}*/
 			}
 		};
-		SwingUtilities.invokeLater(addTab);
+		SwingUtilities.invokeLater(repaint);
 	}
 	
 	// Move the agent
-	private boolean setAgentPosition( Agent agent, Point position) 
+	private synchronized boolean setAgentPosition( Agent agent, Point position) 
 	{
 		agent.signalMove.emit();
 
-		if( outOfBounds( position ) )
+		if( isOutOfBounds( position ) )
 			return false;
 
 		// suspend thread if some other agent is blocking our entrance
@@ -708,7 +699,7 @@ public class Env extends Environment implements ObsVectListener
 	
 	// check if point is within environment boundaries
 	// return false is p is within bounds
-	protected boolean outOfBounds( Point p ) 
+	protected boolean isOutOfBounds( Point p ) 
 	{
 		if( (p.x >= m_size.getWidth()) || (p.x < 0) || (p.y >= m_size.getHeight()) || (p.y < 0) )
 		{
@@ -719,133 +710,147 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	// Is the position free?
-	public boolean isFree( final Point position ) 
+	public synchronized boolean isFree( final Point position ) 
 	{
 		return (isStone( position )) == null && (isAgent( position ) == null);
 	}
 	
 	 // Check for agent at coordinate. \return Null if there is no agent at the
 	 // specified coordinate. Otherwise return a reference to the agent there.
-	public Agent isAgent( final Point p ) 
+	public synchronized Agent isAgent( final Point p ) 
 	{
-		Iterator i = _agents.iterator();
-		while( i.hasNext() ) {
-			final Agent agent = (Agent) i.next();
-			if( p.equals( agent.getPosition() ) )
-				return agent;
-		}
-		return null;
+	    synchronized (_agents) {
+    		Iterator i = _agents.iterator();
+    		while( i.hasNext() ) {
+    			final Agent agent = (Agent) i.next();
+    			if( p.equals( agent.getPosition() ) )
+    				return agent;
+    		}
+    		return null;
+	    }
 	}
 	
 	// Is there a stone at this point
-	public TypeObject isStone( Point p ) 
+	public synchronized TypeObject isStone( Point p ) 
 	{
-		Iterator i = _stones.iterator();
-		while( i.hasNext() ) {
-			TypeObject stones = (TypeObject) i.next();
-			if( p.equals( stones.getPosition() ) )
-				return stones;
-		}
-		return null;
+	    synchronized (_agents) {
+    		Iterator i = _stones.iterator();
+    		while( i.hasNext() ) {
+    			TypeObject stones = (TypeObject) i.next();
+    			if( p.equals( stones.getPosition() ) )
+    				return stones;
+    		}
+    		return null;
+	    }
 	}
 	
 	// see if there is a trap at the specified coordinate
-	public TypeObject isTrap( Point p ) {
-		Iterator i = _traps.iterator();
-		while( i.hasNext() ) {
-			TypeObject trap = (TypeObject) i.next();
-			if( p.equals( trap.getPosition() ) )
-				return trap;
-		}
-		return null;
+	public synchronized TypeObject isTrap( Point p ) {
+	    synchronized (_traps) {
+    	    Iterator i = _traps.iterator();
+    		while( i.hasNext() ) {
+    			TypeObject trap = (TypeObject) i.next();
+    			if( p.equals( trap.getPosition() ) )
+    				return trap;
+    		}
+    		return null;
+	    }
 	}
 	
-	public TypeObject isBomb( Point p ) 
+	public synchronized TypeObject isBomb( Point p ) 
 	{
-		for (Object b : _bombs) {
-			TypeObject bomb = (TypeObject)b;
-			if(p.equals(bomb.getPosition())) return bomb;
-		}
-		return null;
+	    synchronized (_bombs) {
+    	    Iterator i = _bombs.iterator();
+    		while( i.hasNext() ) {
+    			TypeObject bomb = (TypeObject)i.next();
+    			if(p.equals(bomb.getPosition())) 
+    			    return bomb;
+    		}
+    		return null;
+	    }
 	}
 	
 	// Remove bomb at position TODO Jaap; why is this different then remove stone???
-	public TypeObject removeBomb( Point position )
+	public synchronized TypeObject removeBomb( Point position )
 	{
 		// find bomb in bombs list
-		Iterator i = _bombs.iterator();
-
-		while (i.hasNext())
-		{
-			TypeObject bomb = (TypeObject) i.next();
-			if (position.equals(bomb.getPosition()))
-			{
-				i.remove();
-				notifyEvent("bombRemovedAt", position);
-				return bomb;
-			}
-		}
+	    synchronized(this) {
+	        Iterator i = _bombs.iterator();
+    		while (i.hasNext())
+    		{
+    			TypeObject bomb = (TypeObject) i.next();
+    			if (position.equals(bomb.getPosition()))
+    			{
+    				i.remove();				
+    				return bomb;
+    			}
+    		}
+	    }
+		
+		notifyEvent("bombRemovedAt", position);
 		return null;
+		
 	}
 	
 	// remove stone at position
-	public boolean removeStone( Point position )
+	public synchronized boolean removeStone( Point position )
 	{
-		// find stone in stones list
-		Iterator i = _stones.iterator();
-
-		while (i.hasNext())
-			//if( position.equals( i.next() ) ) {
-			// Changed SA:
-			if (position.equals(((TypeObject)i.next()).getPosition()))
-			{
-				i.remove();
-				
-				notifyEvent("wallRemovedAt", position);
-
-				// there may be other threads blocked because this agent was in
-				// the way, notify
-				// them of the changed state of environment
-				synchronized( this ) 
-				{
-					notifyAll();
-				}
-
-				return true;
-			}
-
+		synchronized(_stones) {
+    	    // find stone in stones list
+    		Iterator i = _stones.iterator();
+    		while (i.hasNext())
+    			//if( position.equals( i.next() ) ) {
+    			// Changed SA:
+    			if (position.equals(((TypeObject)i.next()).getPosition()))
+    			{
+    				i.remove();				
+    
+    				// there may be other threads blocked because this agent was in
+    				// the way, notify
+    				// them of the changed state of environment
+    				synchronized( this ) 
+    				{
+    					notifyAll();
+    				}
+    
+    				return true;
+    			}
+		}
+		notifyEvent("wallRemovedAt", position);
 		return false;
 	}
 	
 	// remove trap at position
-	public boolean removeTrap( Point position )
+	public synchronized boolean removeTrap( Point position )
 	{
+	    synchronized(_traps) {
 		// find trap in traps list
-		Iterator i = _traps.iterator();
-
-		while (i.hasNext())
-			if (position.equals(((TypeObject)i.next()).getPosition()))
-			{
-				i.remove();
-
-				notifyEvent("trapRemovedAt", position);
-
-				// Sohan: I believe this notification is unnecessary, commented it out:
-				//synchronized( this ) {
-				//	notifyAll();
-				//}
-
-				return true;
-			}
-
+    		Iterator i = _traps.iterator();
+    		while (i.hasNext()) {
+    			if (position.equals(((TypeObject)i.next()).getPosition()))
+    			{
+    				i.remove();    
+    				
+    
+    				// Sohan: I believe this notification is unnecessary, commented it out:
+    				//synchronized( this ) {
+    				//	notifyAll();
+    				//}
+    
+    				return true;
+    			}
+    	    }
+	    }
+	    
+	    notifyEvent("trapRemovedAt", position);
 		return false;
 	}
 	
 	// Add a stone at the given position
-	public boolean addStone( Point position ) throws IndexOutOfBoundsException 
+	public synchronized boolean addStone( Point position ) throws IndexOutOfBoundsException 
 	{
 		// valid coordinate
-		if( outOfBounds( position ) )
+		if( isOutOfBounds( position ) )
 			throw new IndexOutOfBoundsException( "setStone out of range: "
 					+ position + ", " + m_size );
 
@@ -853,18 +858,19 @@ public class Env extends Environment implements ObsVectListener
 		// Changed SA:
 		if( isBomb( position ) != null || isStone( position ) != null ||  isTrap( position ) != null )
 			return false;
-
-		_stones.add( new TypeObject(_objType,position) );
 		
+		synchronized (_stones) {
+		    _stones.add( new TypeObject(_objType,position) );
+		}
 		notifyEvent("wallAt", position);
 
 		return true;
 	}
 	
 	// Add a bomb to the environment
-	boolean addBomb( Point position ) throws IndexOutOfBoundsException
+	public synchronized boolean addBomb( Point position ) throws IndexOutOfBoundsException
 	{
-		if( outOfBounds( position ) )
+		if( isOutOfBounds( position ) )
 			throw new IndexOutOfBoundsException( "addBomb outOfBounds: "
 					+ position + ", " + m_size );
 
@@ -873,17 +879,18 @@ public class Env extends Environment implements ObsVectListener
 			return false;
 
 		// all clear, accept bomb
-		_bombs.add( new TypeObject(_objType,position) );
-
+		synchronized (_bombs) {
+		    _bombs.add( new TypeObject(_objType,position) );
+		}
 		notifyEvent("bombAt", position);
 
 		return true;
 	}
 	
 	// Add a trap at the given position
-	public boolean addTrap( Point position ) throws IndexOutOfBoundsException {
+	public synchronized boolean addTrap( Point position ) throws IndexOutOfBoundsException {
 		// valid coordinate
-		if( outOfBounds( position ) )
+		if( isOutOfBounds( position ) )
 			throw new IndexOutOfBoundsException( "setTrap out of range: "
 					+ position + ", " + m_size );
 
@@ -891,9 +898,9 @@ public class Env extends Environment implements ObsVectListener
 		// Changed SA:
 		if( isBomb( position ) != null ||  isStone( position ) != null ||  isTrap( position ) != null )
 			return false;
-
-		_traps.add( new TypeObject(_objType,position) );
-		
+		synchronized(_traps) {
+		    _traps.add( new TypeObject(_objType,position) );
+		}
 		notifyEvent("trapAt", position);
 
 		return true;
@@ -979,17 +986,17 @@ public class Env extends Environment implements ObsVectListener
 
 		Iterator i = _bombs.iterator();
 		while( i.hasNext() ) {
-			if( outOfBounds( ((TypeObject) i.next()).getPosition() ) )
+			if( isOutOfBounds( ((TypeObject) i.next()).getPosition() ) )
 				i.remove();
 		}
 		i = _stones.iterator();
 		while( i.hasNext() ) {
-			if( outOfBounds( (Point) i.next() ) )
+			if( isOutOfBounds( (Point) i.next() ) )
 				i.remove();
 		}
 		i = _traps.iterator();
 		while( i.hasNext() ) {
-			if( outOfBounds( ((TypeObject) i.next()).getPosition() ) )
+			if( isOutOfBounds( ((TypeObject) i.next()).getPosition() ) )
 				i.remove();
 		}
 	}

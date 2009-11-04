@@ -1,8 +1,8 @@
 BeliefUpdates:
   { true }  SetAssigned(POS, A)     { assigned(POS, A) }
-  { true }  SetGold(POS)            { gold(POS) }
+  { true }  SetBomb(POS)            { bomb(POS) }
   { true }  RemoveAssigned(POS, A)  { not assigned(POS, A) }
-  { true }  RemoveGold(POS)         { not gold(POS) }
+  { true }  RemoveBomb(POS)         { not bomb(POS) }
 
 Beliefs:
   worker(w1).
@@ -10,26 +10,26 @@ Beliefs:
   worker(w3).
 
 Goals:
-  haveGold
+  haveBomb
 
 PG-rules:
-  haveGold <- gold(POS) and not assigned(carrier(POS), _) and worker(W) and not assigned(_, W) |
+  haveBomb <- bomb(POS) and not assigned(carrier(POS), _) and worker(W) and not assigned(_, W) |
   {
     send(W, request, play(carrier, POS));
     SetAssigned(carrier(POS), W)
   }
   
-  haveGold <- not gold(_) and worker(W) and not assigned( _, W) |
+  haveBomb <- not bomb(_) and worker(W) and not assigned( _, W) |
   {    
     send(W, request, play(explorer));
     SetAssigned(explorer, W)    
   }
 
 PC-rules: 
-  message(A, inform, _, _, gold(POS)) <- true  | 
+  message(A, inform, _, _, bomb(POS)) <- true  | 
   {
     [
-      SetGold(POS);
+      SetBomb(POS);
       RemoveAssigned(explorer, A)
     ]
   } 
@@ -38,7 +38,7 @@ PC-rules:
   {
     [
       RemoveAssigned(carrier(POS), A);
-      RemoveGold(POS)
+      RemoveBomb(POS)
     ]
   } 
   

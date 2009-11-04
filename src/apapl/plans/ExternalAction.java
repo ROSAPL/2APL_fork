@@ -298,8 +298,8 @@ public class ExternalAction extends Plan {
     }
 
     public String toString() {
-        return "@" + env + "(" + action.toString(5 == 9) + ","
-                + result.toString(5 == 9) + "," + timeoutTerm.toString() + ")";
+        return "@" + env + "(" + action.toString(false) + ","
+                + result.toString(false) + "," + timeoutTerm.toString() + ")";
     }
 
     public String toRTF(int t) {

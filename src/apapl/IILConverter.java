@@ -18,6 +18,7 @@ import eis.iilang.Numeral;
 import eis.iilang.Parameter;
 import eis.iilang.ParameterList;
 import eis.iilang.Percept;
+import eis.iilang.Function;
 
 public class IILConverter {
 
@@ -43,10 +44,8 @@ public class IILConverter {
 		
 		if( term instanceof APLNum ) {
 			
-			Numeral ret = new Numeral( ((APLNum)term).getVal() );
-		
-			return ret;
-			
+			Numeral ret = new Numeral( ((APLNum)term).getVal() );		
+			return ret;			
 		}
 		if( term instanceof APLIdent ) {			
 			return new Identifier( ((APLIdent)term).getName() );
@@ -59,6 +58,13 @@ public class IILConverter {
 			}
 			return new ParameterList(list);			
 		}
+	    if( term instanceof APLFunction) {
+	        Parameter params[] = new Parameter[((APLFunction) term).getParams().size()];
+	        for (int i = 0; i < params.length; i++)
+	            params[i] = convert(((APLFunction) term).getParams().get(i));
+	        
+	        return new Function(((APLFunction) term).getName(), params);
+	    }
 		else {
 			assert false: "Unknown type " + term.getClass();			
 		}
@@ -137,4 +143,12 @@ public class IILConverter {
 		}		
 	}	
 
+	public static Percept convertToPercept(APLFunction f)
+	{
+	    Parameter params[] = new Parameter[f.getParams().size()];
+	    for (int i = 0; i < params.length; i++)
+	        params[i] = convert(f.getParams().get(i));
+	    
+	    return new Percept(f.getName(), (Parameter[]) params);
+	}
 }

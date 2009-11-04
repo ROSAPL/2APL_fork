@@ -23,9 +23,9 @@ public class Agent
 	 * means that through the north/south/west/east methods of the environment.
 	 * \todo is protection "package" correct?
 	 */
-	Point _position = null;
+	protected Point _position = null;
 
-	TypeObject _bomb = null;
+	protected TypeObject _bomb = null;
 	
 	int _colorID = 0;
 

@@ -605,9 +605,18 @@ public class APLMAS implements MessageListener, AgentListener {
             if (isActive(module))
                 wakeUp(module);
 
-            // TODO somehow we have to get the origin of the percept this has to be implemented in the EIS
+            // TODO Somehow we have to get the origin of the percept this has to
+            // be implemented in the EIS.
+            //
+            // To overcome this problem, we will temporarily assume that the
+            // module has access to only one environment. This environment will
+            // be chosen as the source.
+            //
+            // FIXME This is a hack. Needs to be fixed.
             String env = "unknown";
-            
+            if(module.getEnvs().size() == 1)
+                env = (String) module.getEnvs().keySet().toArray()[0];
+                         
             module.notifyEEevent(IILConverter.convert(percept), env);
             
         } catch (ModuleAccessException e) {
