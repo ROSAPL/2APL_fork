@@ -161,7 +161,7 @@ public class ConditionalPlan extends Plan
 		for (Plan p : elsePlan) p.checkPlan(warnings,module);
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("if");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("ifplan");
 	}
 }

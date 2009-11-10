@@ -79,93 +79,61 @@ public interface Parser2aplConstants {
   /** RegularExpression Id. */
   int GOALACTION = 47;
   /** RegularExpression Id. */
-  int USE = 48;
+  int COMMA = 48;
   /** RegularExpression Id. */
-  int SENSE = 49;
+  int B = 49;
   /** RegularExpression Id. */
-  int LINKSENSOR = 50;
+  int G = 50;
   /** RegularExpression Id. */
-  int UNLINKSENSOR = 51;
+  int GE = 51;
   /** RegularExpression Id. */
-  int FOCUS = 52;
+  int P = 52;
   /** RegularExpression Id. */
-  int STOPFOCUS = 53;
+  int AT = 53;
   /** RegularExpression Id. */
-  int CREATEART = 54;
+  int SLASHJADE = 54;
   /** RegularExpression Id. */
-  int DISPOSEART = 55;
+  int UNDERSCORE = 55;
   /** RegularExpression Id. */
-  int ABSTRACTACTION = 56;
+  int LBRACE = 56;
   /** RegularExpression Id. */
-  int BELIEFUPDATE = 57;
+  int RBRACE = 57;
   /** RegularExpression Id. */
-  int EXTERNALACTION = 58;
+  int DOTCOMMA = 58;
   /** RegularExpression Id. */
-  int ATOMICPLAN = 59;
+  int LISTL = 59;
   /** RegularExpression Id. */
-  int UPDATEBELIEFBASE = 60;
+  int LISTR = 60;
   /** RegularExpression Id. */
-  int CARTAGO = 61;
+  int ACCL = 61;
   /** RegularExpression Id. */
-  int TEST = 62;
+  int ACCR = 62;
   /** RegularExpression Id. */
-  int GOALACTIONQ = 63;
+  int LEFTARROW = 63;
   /** RegularExpression Id. */
-  int COMMA = 64;
+  int DOT = 64;
   /** RegularExpression Id. */
-  int B = 65;
+  int IMPL = 65;
   /** RegularExpression Id. */
-  int G = 66;
+  int RELATIONAL = 66;
   /** RegularExpression Id. */
-  int GE = 67;
+  int SIGN = 67;
   /** RegularExpression Id. */
-  int P = 68;
+  int IDENT = 68;
   /** RegularExpression Id. */
-  int AT = 69;
+  int VARNAME = 69;
   /** RegularExpression Id. */
-  int SLASHJADE = 70;
+  int NUM = 70;
   /** RegularExpression Id. */
-  int UNDERSCORE = 71;
+  int NUMNAME = 71;
   /** RegularExpression Id. */
-  int LBRACE = 72;
+  int NAMEDOT = 72;
   /** RegularExpression Id. */
-  int RBRACE = 73;
+  int VERT = 73;
   /** RegularExpression Id. */
-  int DOTCOMMA = 74;
+  int QUOTE = 74;
   /** RegularExpression Id. */
-  int LISTL = 75;
-  /** RegularExpression Id. */
-  int LISTR = 76;
-  /** RegularExpression Id. */
-  int ACCL = 77;
-  /** RegularExpression Id. */
-  int ACCR = 78;
-  /** RegularExpression Id. */
-  int LEFTARROW = 79;
-  /** RegularExpression Id. */
-  int DOT = 80;
-  /** RegularExpression Id. */
-  int IMPL = 81;
-  /** RegularExpression Id. */
-  int RELATIONAL = 82;
-  /** RegularExpression Id. */
-  int SIGN = 83;
-  /** RegularExpression Id. */
-  int IDENT = 84;
-  /** RegularExpression Id. */
-  int VARNAME = 85;
-  /** RegularExpression Id. */
-  int NUM = 86;
-  /** RegularExpression Id. */
-  int NUMNAME = 87;
-  /** RegularExpression Id. */
-  int NAMEDOT = 88;
-  /** RegularExpression Id. */
-  int VERT = 89;
-  /** RegularExpression Id. */
-  int QUOTE = 90;
-  /** RegularExpression Id. */
-  int QUOTE1 = 91;
+  int QUOTE1 = 75;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -228,22 +196,6 @@ public interface Parser2aplConstants {
     "\"execute\"",
     "\"updateBB\"",
     "<GOALACTION>",
-    "\"use\"",
-    "\"sense\"",
-    "\"linkSensor\"",
-    "\"unlinkSensor\"",
-    "\"focus\"",
-    "\"stopFocus\"",
-    "\"createArtifact\"",
-    "\"disposeArtifact\"",
-    "\"abstractaction\"",
-    "\"beliefupdate\"",
-    "\"externalaction\"",
-    "\"atomicplan\"",
-    "\"updatebeliefbase\"",
-    "\"cartago\"",
-    "\"test\"",
-    "\"goalaction\"",
     "\",\"",
     "\"B\"",
     "\"G\"",

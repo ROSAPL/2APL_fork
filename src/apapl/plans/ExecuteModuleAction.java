@@ -123,9 +123,9 @@ public class ExecuteModuleAction extends ModulePlan
 		return executedModule;
 	}
 
-	public APLIdent getPlanQueryType()
+	public APLIdent getPlanDescriptor()
 	{
-		return new APLIdent("execute");
+		return new APLIdent("executemoduleaction");
 	}
 
 	/**

@@ -21,7 +21,6 @@ public class Parser2apl
 {
 }
 
-
 PARSER_END(Parser2apl) 
 
 
@@ -143,32 +142,6 @@ TOKEN :
 |	<GOALACTION:	("adopta" | "adoptz" | "dropgoal" | "dropsubgoals" | "dropsupergoals" )>
 }
 
-// Cartago Plans
-TOKEN :
-{
-	<USE:			("use")>
-|	<SENSE:			("sense")>
-|	<LINKSENSOR:	("linkSensor")>
-|	<UNLINKSENSOR:	("unlinkSensor")>
-|	<FOCUS:			("focus")>
-|	<STOPFOCUS:		("stopFocus")>
-|	<CREATEART:		("createArtifact")>
-|	<DISPOSEART:	("disposeArtifact")>
-}
-
-//Plan Query Language
-TOKEN : 
-{
-    <ABSTRACTACTION:("abstractaction")>
-|   <BELIEFUPDATE:	("beliefupdate")>
-|   <EXTERNALACTION:("externalaction")>
-|   <ATOMICPLAN: 	("atomicplan")>
-|   <UPDATEBELIEFBASE:	("updatebeliefbase")>
-|   <CARTAGO:		("cartago")>
-|   <TEST:			("test")>
-|   <GOALACTIONQ:	("goalaction")>
-}
-
 <DEFAULT, IN_INCLUDE_SECTION>
 TOKEN :
 {
@@ -214,11 +187,6 @@ TOKEN:
 
 }
 
-
-
-
-
-
 void Program(APLModule m, LinkedList<File> files) :
 {}
 {
@@ -236,15 +204,6 @@ void Base(APLModule m, LinkedList<File> files) :
 |	<PRRULEHEAD> PRrulebase(m.getPRrulebase())
 |	<PCRULEHEAD> PCrulebase(m.getPCrulebase())
 }
-
-/* OBSOLETE
-void Environments (LinkedList<String> environments) :
-{String e;}
-{
-	e = AnyName() {environments.add(e);}
-	(<COMMA> e = AnyName() {environments.add(e);})*
-}
-*/
 
 String AnyName() :
 {Token t;}
@@ -697,10 +656,7 @@ BeliefTest BeliefTest(APLIdent moduleId):
 PlanTest PlanTest(APLIdent moduleId):
 {Query q;}
 {
-	<P> <LBRACE> q = PlanQuery() <RBRACE> 
-	{
-		return new PlanTest(moduleId, q);	
-	}
+	<P> <LBRACE> q = PlanQuery() <RBRACE> {return new PlanTest(moduleId, q);}
 }
 
 WhilePlan WhilePlan() :
@@ -787,45 +743,18 @@ APLIdent APLIdent() :
 |	s = <QUOTE> {return new APLIdent(s.toString().substring(1, s.toString().length() - 1), true);}
 }
 
-APLIdent PlanTypeIdentifier() :
-{Token t;}
-{
-	(		t = <ABSTRACTACTION>
-		|   t = <BELIEFUPDATE>
-		|   t = <CARTAGO>
-		|   t = <ATOMICPLAN>
-		|   t = <CLONE>
-		|   t = <IF>
-		|   t = <CREATE>
-		|   t = <EXECUTE>
-		|   t = <EXTERNALACTION>
-		|   t = <GOALACTIONQ>
-		|   t = <PRINT>
-		|   t = <RELEASE>
-		|   t = <SEND>
-		|   t = <SKIPPLAN>
-		|   t = <TEST>
-		|   t = <UPDATEBELIEFBASE>
-		|   t = <WHILE>
-	)
-
-	{ return new APLIdent(t.image);}
-}
 
 
 Query PlanQuery() :
-{Query w,v; APLIdent a;}
+{Query q;}
 {
-	( 
-		<TRUE> {w = new True();}
-		|
-		LOOKAHEAD(PlanTypeIdentifier())
-		a = PlanTypeIdentifier() {w = new Literal(a, true);}
-	)
-
-	( LOOKAHEAD(<OR> PlanQuery()) <OR> v = PlanQuery() {w = new OrQuery(w, v);} )?
-	
-	{return w;}
+	q = Query()
+	{
+		if (q.containsNots()) 
+			throw new ParseException("Plan query "+q+" contains negative literals. That is not allowed");
+		else 
+			return q;
+	}
 }
 
 Query Query() :

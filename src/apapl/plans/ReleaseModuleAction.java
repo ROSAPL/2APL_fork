@@ -67,9 +67,9 @@ public class ReleaseModuleAction extends Plan
 		return new ArrayList<String>();
 	}
 
-	public APLIdent getPlanQueryType()
+	public APLIdent getPlanDescriptor()
 	{
-		return new APLIdent("release");
+		return new APLIdent("releaseaction");
 	}
 
 	/**

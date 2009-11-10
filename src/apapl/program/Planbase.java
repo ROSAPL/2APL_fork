@@ -9,6 +9,8 @@ import java.util.List;
 import apapl.APLModule;
 import apapl.ActivationGoalAchievedException;
 import apapl.ModuleDeactivatedException;
+import apapl.Prolog;
+import apapl.SolutionIterator;
 import apapl.SubstList;
 import apapl.data.APLIdent;
 import apapl.data.GoalCompare;
@@ -269,41 +271,25 @@ public class Planbase extends Base implements Iterable<PlanSeq>
 		return pb;
 	}
 	
-	/**
-	 * Performs a test on the planbase
-	 * @param query
-	 * @return true if the test succeeded, false otherwise
-	 * @throws Exception if the plan query has unsupported syntax
-	 */
-	public boolean doTest(Query query) 
-	throws Exception
-	{
-		if (query instanceof True) 
-			return true;		
-		else if (query instanceof Literal) {		
-			// Iterate over plans in the planbase
-			for(PlanSeq p : plans) {
-				if (plans.size() > 0) {	
-					Plan fp = p.getPlans().getFirst();	
-					APLIdent plantype;
-					if (((Literal)query).getBody() instanceof APLIdent)	{
-						plantype = (APLIdent)((Literal)query).getBody();
-					}
-					else {
-						throw new Exception("Plan query syntax error: Plan query must contain only ground atoms.");
-					}				
-					if (fp.isType(plantype)) 
-						return true;				
-				}
-			}
-		}		
-		else if (query instanceof OrQuery) {
-			return doTest(((OrQuery)query).getLeft()) || doTest(((OrQuery)query).getRight());
-		}
-		else {
-			throw new Exception("Plan query syntax error: Plan query must be a disjunction of ground atoms.");
-		}		
-		
-		return false;
-	}	
+    /**
+     * Performs a test on the planbase
+     * 
+     * @param query the plan query
+     * @return the solution iterator
+     */
+    public SolutionIterator doTest(Query query)
+    {
+        Prolog prolog = new Prolog();
+        
+        // Fill-in Prolog database with terms representing the first action of
+        // each plan.
+        for (PlanSeq p : plans) {
+            if (plans.size() > 0) {            
+                prolog.addPredicate(p.getPlans().getFirst().getPlanDescriptor().toString());
+            }
+        }        
+        
+        SolutionIterator solutions = prolog.doTest(query);
+        return solutions;
+    }
 }

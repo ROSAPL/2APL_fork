@@ -197,7 +197,9 @@ public class APLFunction extends Fact
 	 */
 	public String toString(boolean inplan)
 	{
-		if (infix) {
+		
+	    if (infix) {
+	     // Infix Notation
 			Term left = params.get(0);
 			Term right = params.get(1);
 			String leftString = left.toString(inplan);
@@ -213,11 +215,23 @@ public class APLFunction extends Fact
 			
 			return leftString + name + rightString;
 			//return  "("+params.get(0).toString(inplan)+name+params.get(1).toString(inplan)+")";
-		}
-		String r = "";
-		for (Term t : params) r = r + t.toString(inplan) + ", ";
-		if (r.length()>=1) r = r.substring(0,r.length()-2);	
-		return name+"("+r+")";
+		} else
+		{
+            if (params.size() > 0) {
+                String r = "";
+                for (Term t : params)
+                    r = r + t.toString(inplan) + ", ";
+                if (r.length() >= 1)
+                    r = r.substring(0, r.length() - 2);
+
+                return name + "(" + r + ")";
+            } else {
+                // Function has no parameters
+                return name;
+            }
+        }
+		
+
 	}
 	
 	public String toRTF(boolean inplan)

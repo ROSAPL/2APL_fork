@@ -45,7 +45,7 @@ public class Skip extends Plan
 		return new ArrayList<String>();
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("skip");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("skipaction");
 	}
 }

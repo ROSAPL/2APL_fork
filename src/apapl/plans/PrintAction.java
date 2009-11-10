@@ -56,8 +56,8 @@ public class PrintAction extends Plan
 		return pt.getVariables();
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("print");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("printaction");
 	}
 
 }

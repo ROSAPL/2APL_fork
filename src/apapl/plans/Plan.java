@@ -140,15 +140,19 @@ public abstract class Plan
 	 */
 	public boolean isType(APLIdent typeIdent)
 	{		
-		return this.getPlanQueryType().equals(typeIdent);
+		return this.getPlanDescriptor().equals(typeIdent);
 	}
-	
-	/**
-	 * Returns identifier that describes the type of the plan.
-	 * Plan type identifiers are used in the plan querying language.
-	 * This method is supposed to be implemented by all extending classes.
-	 *  
-	 * @return type of the plan
-	 */
-	public abstract APLIdent getPlanQueryType();
+
+    /**
+     * Returns <tt>Term</tt> that describes the plan. The plan descriptors
+     * allow for easy plan base querying using a plan test action.
+     * 
+     * This method is supposed to be implemented by all subclasses.
+     * @see {@link apapl.data.PlanTest}
+     * @see {@link apapl.data.PlanQuery}  
+     * 
+     * @return the descriptor of the plan
+     */
+	public abstract Term getPlanDescriptor();
+
 }

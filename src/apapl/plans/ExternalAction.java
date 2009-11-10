@@ -383,8 +383,9 @@ public class ExternalAction extends Plan {
                     + "\" refers to a method that is not available.");
     }
 
-    public APLIdent getPlanQueryType() {
-        return new APLIdent("externalaction");
+    public Term getPlanDescriptor() {
+        return new APLFunction("externalaction", new APLIdent(env), action, result, timeoutTerm);
     }
+
 
 }

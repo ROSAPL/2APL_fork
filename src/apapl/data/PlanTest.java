@@ -68,6 +68,28 @@ public class PlanTest extends Test
 		}
 
 		Planbase pb = testedModule.getPlanbase();
+        
+        SolutionIterator solutions = pb.doTest(query);
+        if (next == null) {
+            return solutions.next();
+        }
+        else {
+            for (SubstList<Term> solution : solutions) {
+                if (solution == null) 
+                    return null;
+                Test next2 = next.clone();
+                next2.applySubstitution(solution);
+                SubstList<Term> solution2 = next2.test(module);
+                if (solution2 != null) {
+                    solution2.putAll(solution);
+                    return solution2;
+                }
+            }
+        }
+        return null;
+        
+		
+		/*
 		boolean succeeded = false;
 		try
 		{
@@ -95,6 +117,7 @@ public class PlanTest extends Test
 			}
 		}
 		return null;
+		*/
 	}
 
 	/**

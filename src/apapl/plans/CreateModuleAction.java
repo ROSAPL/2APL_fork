@@ -72,9 +72,9 @@ public class CreateModuleAction extends Plan
 		return new ArrayList<String>();
 	}
 
-	public APLIdent getPlanQueryType()
+	public APLIdent getPlanDescriptor()
 	{
-		return new APLIdent("create");
+		return new APLIdent("createaction");
 	}
 
 	/**

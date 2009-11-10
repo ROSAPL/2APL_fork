@@ -120,8 +120,8 @@ public class BeliefUpdateAction extends Plan
 			warnings.add("Belief update \""+toRTF(0) +"\" is not defined.");
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("beliefupdate");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("beliefupdateaction");
 	}
 	
 }

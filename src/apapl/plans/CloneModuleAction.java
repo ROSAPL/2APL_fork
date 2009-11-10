@@ -71,9 +71,9 @@ public class CloneModuleAction extends Plan
 		return new ArrayList<String>();
 	}
 
-	public APLIdent getPlanQueryType()
+	public APLIdent getPlanDescriptor()
 	{
-		return new APLIdent("clone");
+		return new APLIdent("clonemoduleaction");
 	}
 
 	/**

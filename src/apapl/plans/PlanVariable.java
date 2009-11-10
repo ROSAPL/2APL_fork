@@ -108,7 +108,7 @@ public class PlanVariable extends Plan
 	{
 	}
 
-	public APLIdent getPlanQueryType() {
+	public APLIdent getPlanDescriptor() {
 		return new APLIdent("planvar");
 	}
 	

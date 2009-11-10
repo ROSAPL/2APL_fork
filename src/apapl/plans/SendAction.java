@@ -155,8 +155,13 @@ public class SendAction extends Plan
 	public Term getOntology() {return ontology;}
 	public Term getContent() {return content;}
 
-	public APLIdent getPlanQueryType() {
-		return  new APLIdent("send");
+	public Term getPlanDescriptor() {
+		return  new APLFunction("sendaction", 
+    		        receiver, 
+    		        performative,
+    		        language,
+    		        ontology,
+    		        content);
 	}
 
 

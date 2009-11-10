@@ -127,7 +127,7 @@ public class GoalAction extends ModulePlan
 		return g;
 	}
 
-	public APLIdent getPlanQueryType() {
+	public APLIdent getPlanDescriptor() {
 		return new APLIdent("goalaction");
 	}
 	

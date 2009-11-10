@@ -156,9 +156,9 @@ public class UpdateBeliefbaseAction extends ModulePlan
 		}
 	}
 
-	public APLIdent getPlanQueryType()
+	public APLIdent getPlanDescriptor()
 	{
-		return new APLIdent("updatebeliefbase");
+		return new APLIdent("updatebeliefbaseaction");
 	}
 	/**
 	 * Returns the literals specifying the belief update. 

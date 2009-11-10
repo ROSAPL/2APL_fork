@@ -102,7 +102,7 @@ public class TestAction extends Plan
 		return test;
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("test");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("testaction");
 	}
 }

@@ -122,7 +122,7 @@ public class AbstractAction extends Plan
 			warnings.add("Abstract action \""+toRTF(0)+"\"  has no corresponding PC rule.");
 	}
 
-	public APLIdent getPlanQueryType() {
+	public APLIdent getPlanDescriptor() {
 		return new APLIdent("abstractaction");
 	}
 	

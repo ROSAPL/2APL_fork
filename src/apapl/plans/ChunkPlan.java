@@ -261,7 +261,7 @@ public class ChunkPlan extends Plan implements ParentPlan
 		return false;
 	}
 
-	public APLIdent getPlanQueryType() {
+	public APLIdent getPlanDescriptor() {
 		return new APLIdent("atomicplan");
 	}
 	

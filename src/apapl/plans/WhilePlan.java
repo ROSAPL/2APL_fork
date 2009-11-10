@@ -140,7 +140,7 @@ public class WhilePlan extends Plan
 		for (Plan p : plan) p.checkPlan(warnings,module);
 	}
 
-	public APLIdent getPlanQueryType() {
-		return new APLIdent("updatebeliefbase");
+	public APLIdent getPlanDescriptor() {
+		return new APLIdent("whileplan");
 	}
 }
