@@ -12,7 +12,6 @@ import apapl.data.APLList;
 import apapl.data.Term;
 
 import eis.iilang.Action;
-import eis.iilang.ActionResult;
 import eis.iilang.Identifier;
 import eis.iilang.Numeral;
 import eis.iilang.Parameter;
@@ -118,7 +117,7 @@ public class IILConverter {
 		return ret;		
 	}
 
-	public static Term convert(ActionResult result) {
+/**	public static Term convert(ActionResult result) {
 
 		// terms
 		ArrayList<Term> params = new ArrayList<Term>();
@@ -141,8 +140,18 @@ public class IILConverter {
 		else {
 			return null;
 		}		
-	}	
+	}*/	
 
+	public static Percept convertToActionResult(Term term) {			
+		Parameter param = convert(term);
+		if (term != null) {
+			return new Percept("actionresult", param);
+		}
+		else {
+			return null;
+		}		
+	}
+	
 	public static Percept convertToPercept(APLFunction f)
 	{
 	    Parameter params[] = new Parameter[f.getParams().size()];

@@ -25,7 +25,6 @@ import eis.exceptions.NoEnvironmentException;
 import eis.exceptions.PerceiveException;
 import eis.exceptions.RelationException;
 import eis.iilang.Action;
-import eis.iilang.ActionResult;
 import eis.iilang.EnvironmentCommand;
 import eis.iilang.EnvironmentEvent;
 import eis.iilang.Parameter;
@@ -732,7 +731,7 @@ public class Environment implements EnvironmentInterfaceStandard {
      * EIS specification, the return values from action calls are wrapped in the
      * {@link eis.illang.ActionResult} having name <tt>actionresult</tt>. 
      */ 
-    public final LinkedList<ActionResult> performAction(String agent,
+    public final LinkedList<Percept> performAction(String agent,
             Action action, String... entities) throws ActException,
             NoEnvironmentException {
         // unregistered agents cannot act
@@ -785,7 +784,7 @@ public class Environment implements EnvironmentInterfaceStandard {
             classParams[a + 1] = params.get(a).getClass();
 
         // return value
-        LinkedList<ActionResult> rets = new LinkedList<ActionResult>();
+        LinkedList<Percept> rets = new LinkedList<Percept>();
 
         try {
             // lookup the method
@@ -805,7 +804,7 @@ public class Environment implements EnvironmentInterfaceStandard {
                 Term result = (Term) m.invoke(this, objParams);
 
                 // Convert Term to ActionResult
-                ActionResult ar = IILConverter.convertToActionResult(result);
+                Percept ar = IILConverter.convertToActionResult(result);
                 rets.add(ar);
             }
 
@@ -937,5 +936,24 @@ public class Environment implements EnvironmentInterfaceStandard {
     public boolean isConnected() {
         return true;
     }
+
+	@Override
+	public String getType(String arg0) throws EntityException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void manageEnvironment(EnvironmentCommand arg0)
+			throws ManagementException, NoEnvironmentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String requiredVersion() {
+		// TODO Auto-generated method stub
+		return "0.2rc1";
+	}
 
 }

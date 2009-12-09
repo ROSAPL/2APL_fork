@@ -24,7 +24,6 @@ import eis.exceptions.NoEnvironmentException;
 import eis.exceptions.PerceiveException;
 import eis.exceptions.RelationException;
 import eis.iilang.Action;
-import eis.iilang.ActionResult;
 import eis.iilang.Percept;
 
 /**
@@ -225,14 +224,14 @@ public class ExternalAction extends Plan {
 
             try {
 
-                LinkedList<ActionResult> results = e.performAction(module
+                LinkedList<Percept> results = e.performAction(module
                         .getLocalName(), iilaction);
 
                 // System.out.println("Action performed");
 
                 LinkedList<Term> terms = new LinkedList<Term>();
 
-                for (ActionResult result : results) {
+                for (Percept result : results) {
 
                     terms.add(IILConverter.convert(result));
                 }
