@@ -77,6 +77,13 @@
 	    </manifest>
     </jar>
   	
+    <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
+      <include name="blockworld/**" />      
+    	<manifest>
+        <attribute name="Main-Class" value="blockworld.Env"/>
+	    </manifest>
+    </jar>
+  	
   	<!-- Distributes re-compiled blockworld environment to the examples -->
   	
     <jar basedir="${builddir}/" destfile="${releasedir}/examples/explorer and carrier/blockworld.jar">
@@ -102,10 +109,11 @@
     </java>
   </target>
 	
-	<!-- Starts demo example "Explorer and Carrier" without 2APL GUI 	-->
+	<!-- Starts demo example "Explorer and Carrier" -->
 
   <target name="demo" depends="release">
     <java jar="${releasedir}/2apl.jar" fork="true" >
+    <arg value="-nojade" />	
     <arg value="${releasedir}/examples/explorer and carrier/explorerandcarrier.mas" />
     	<assertions>
     	  <enable />

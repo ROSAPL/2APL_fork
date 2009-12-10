@@ -11,6 +11,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.net.InetAddress;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
@@ -25,10 +26,13 @@ public class Config extends JFrame implements ActionListener, WindowListener
 	private JRadioButton[] modeButton;
 	private JTextField portField, hostField;
 	private JButton okButton, cancelButton;
+	private File masfile = null;
 	
-	public Config()
+	public Config(File masfile)
 	{
-		modeButton = new JRadioButton[3];
+		this.masfile = masfile;
+		
+	    modeButton = new JRadioButton[3];
 		ButtonGroup modes = new ButtonGroup();
 		
 		modeButton[0] = new JRadioButton("No Jade");
@@ -108,9 +112,9 @@ public class Config extends JFrame implements ActionListener, WindowListener
 		{	int port = 1099;
 			try {port = Integer.parseInt(portField.getText());} catch (Exception ex) {}
 			String host = hostField.getText();
-			if (modeButton[1].isSelected()) new GUI(new JadeMessenger(null,port));
-			else if (modeButton[2].isSelected()) new GUI(new JadeMessenger(host,port));
-			else if (modeButton[0].isSelected()) new GUI(new LocalMessenger());
+			if (modeButton[1].isSelected()) new GUI(new JadeMessenger(null,port), masfile);
+			else if (modeButton[2].isSelected()) new GUI(new JadeMessenger(host,port), masfile);
+			else if (modeButton[0].isSelected()) new GUI(new LocalMessenger(), masfile);
 			setVisible(false);
 		}
 		else if ("server".equals(e.getActionCommand()))

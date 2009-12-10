@@ -95,7 +95,7 @@ public class GUI extends JFrame implements WindowListener,
 	public static LookAndFeel laf = UIManager.getLookAndFeel();
 	public static Object oldUIClassLoader = UIManager.get("ClassLoader");
 
-	public GUI(Messenger msgr)
+	public GUI(Messenger msgr, File masfile)
 	{
 		// WindowUtilities.setNativeLookAndFeel();
 		mastab = null;
@@ -154,6 +154,10 @@ public class GUI extends JFrame implements WindowListener,
 		add(splitPane, BorderLayout.CENTER);
 
 		validateTree();
+		
+		if (masfile != null) {
+		    loadMas(masfile);
+		}
 	}
 
 	public void loadMas(File masfile)
