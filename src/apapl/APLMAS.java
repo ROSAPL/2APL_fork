@@ -20,7 +20,7 @@ import apapl.data.*;
  * the functionality to execute a multi-agent system. The specific strategy by
  * which the modules are executed is implemented by the {@link apapl.Executor}.
  */
-public class APLMAS implements MessageListener, AgentListener {
+public class APLMAS implements MessageListener {
     /** The list of active modules that reside in this MAS. */
     private List<APLModule> activeModules;
     /** The list of inactive modules that reside in this MAS. */
@@ -30,6 +30,10 @@ public class APLMAS implements MessageListener, AgentListener {
     private HashMap<APLModule, LinkedList<File>> modulefiles;
     /** The environments used in this MAS. (needed for cleanup at destruction) */
     private LinkedList<EnvironmentInterfaceStandard> environmentInterfaces;
+    /** The listeners used to forward percepts from environments to modules. 
+     *  The key is a concatenation of the module name and the environment name. */
+    private HashMap<String, AgentListener> eisAgentListeners;
+    
     /** The executor used to execute the modules. */
     private Executor executor;
     /** The messenger used to send messages. */
@@ -60,7 +64,9 @@ public class APLMAS implements MessageListener, AgentListener {
         inactiveModules = new LinkedList<APLModule>();
         modulefiles = new HashMap<APLModule, LinkedList<File>>();
         environmentInterfaces = new LinkedList<EnvironmentInterfaceStandard>();
+        eisAgentListeners = new HashMap<String, AgentListener>();
         listeners = new ArrayList<MASChangeListener>();
+        
 
         this.moduleSpecDir = moduleSpecDir;
         this.msgr = msgr;
@@ -186,15 +192,23 @@ public class APLMAS implements MessageListener, AgentListener {
             final String environmentName = envName;
             final APLMAS mas = this;
             
+            AgentListener agentListener =              
+                new AgentListener() {
+                    @Override
+                    public void handlePercept(String moduleName, Percept percept) {
+                        mas.notifyEEevent(moduleName, environmentName, IILConverter.convert(percept));
+                    }               
+                };
+
+            
             // Attach callback handler
             env.attachAgentListener(module.getLocalName(), 
-        		new AgentListener() {
-					@Override
-					public void handlePercept(String moduleName, Percept percept) {
-						mas.notifyEEevent(moduleName, environmentName, IILConverter.convert(percept));
-					}            	
-        		}
-            );
+                    agentListener
+            );    
+            
+            // Store AgentListener to allow later detachment
+            this.eisAgentListeners.put(module.getName() + envName, agentListener);
+           
 
             /* Support for old 2APL environments.
              * Creates an entity for each agent, which is then automatically
@@ -240,7 +254,8 @@ public class APLMAS implements MessageListener, AgentListener {
             env.unregisterAgent(module.getLocalName());
 
             // remove call-backs
-            env.detachAgentListener(module.getLocalName(), this);
+            env.detachAgentListener(module.getLocalName(), 
+                    this.eisAgentListeners.get(module.getName()+envName));
             
         } catch (AgentException e) {
             throw new RuntimeException("Failed to de-register agent " 
@@ -593,34 +608,6 @@ public class APLMAS implements MessageListener, AgentListener {
             if (isActive(module))
                 wakeUp(module);
 
-        } catch (ModuleAccessException e) {
-            return;
-        }
-    }
-
-    @Override
-    public void handlePercept(String moduleName, Percept percept) {
-      
-    	try {
-            APLModule module = this.getModule(null, moduleName);
-        
-            if (isActive(module))
-                wakeUp(module);
-
-            // TODO Somehow we have to get the origin of the percept this has to
-            // be implemented in the EIS.
-            //
-            // To overcome this problem, we will temporarily assume that the
-            // module has access to only one environment. This environment will
-            // be chosen as the source.
-            //
-            // FIXME This is a hack. Needs to be fixed.
-            String env = "unknown";
-            if(module.getEnvs().size() == 1)
-                env = (String) module.getEnvs().keySet().toArray()[0];
-                         
-            module.notifyEEevent(IILConverter.convert(percept), env);
-            
         } catch (ModuleAccessException e) {
             return;
         }
