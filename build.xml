@@ -38,36 +38,34 @@
     
     <copy todir="${releasedir}/examples">
       <fileset dir="${resourcesdir}/examples"/>
-    </copy>	  
+    </copy>	
   	
-    <copy todir="${releasedir}/lib">
-      <fileset dir="${libdir}"/>
-    </copy>
-    
+  	<!-- Unpack the dependencies to a temp-folder -->
+  	<mkdir dir="dependencies"/>
+  	<unjar src="lib/jext/jext-5.0.jar" dest= "dependencies"/>
+  	<unjar src="lib/jade/http.jar" dest= "dependencies"/>
+  	<unjar src="lib/jext/jython-2.1.jar" dest= "dependencies"/>
+  	<unjar src="lib/jade/iiop.jar" dest= "dependencies"/>
+  	<unjar src="lib/jext/looks-1.2.2.jar" dest= "dependencies"/>
+  	<unjar src="lib/jade/jade.jar" dest= "dependencies"/>
+  	<unjar src="lib/jiprolog/JIProlog.jar" dest= "dependencies"/>
+  	<unjar src="lib/jade/jadeTools.jar" dest= "dependencies"/>
+  	<unjar src="lib/jiprolog/jipxsystem.jar" dest= "dependencies"/>
+  	<unjar src="lib/jext/dawn-1.1.1.jar" dest= "dependencies"/>
+  	<unjar src="lib/apleis/eis-0.2rc1.jar" dest= "dependencies"/>
+ 
+  	<!-- Create the jar-file -->
     <jar basedir="${builddir}" destfile="${releasedir}/2apl.jar">
-    	<exclude name="blockworld/**" />
+      	<fileset dir="${builddir}" excludes="blockworld/**"/>
+      	<fileset dir="dependencies"/>
     	<manifest>
-        <attribute name="Main-Class" value="APAPL"/>
-        <attribute 
-          name="Class-Path" 
-		  		value="
-						lib/cartago/cartago-0.6.1.jar	
-						lib/jext/jext-5.0.jar
-						lib/jade/http.jar		
-						lib/jext/jython-2.1.jar
-						lib/jade/iiop.jar		
-						lib/jext/looks-1.2.2.jar
-						lib/jade/jade.jar		
-						lib/jiprolog/JIProlog.jar
-						lib/jade/jadeTools.jar		
-						lib/jiprolog/jipxsystem.jar
-						lib/jext/dawn-1.1.1.jar
-						lib/apleis/eis-0.2rc1.jar
-          "
-	    />
+          <attribute name="Main-Class" value="APAPL"/>
 	   </manifest>
     </jar>
   	
+  	<!-- Delete the temp-folder -->
+    <delete dir="dependencies"/>
+
   	<mkdir dir="${releasedir}/environments"/>
   	
     <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
@@ -98,7 +96,16 @@
     	<manifest>
         <attribute name="Main-Class" value="blockworld.Env"/>
 	    </manifest>
-    </jar>  	
+    </jar>  
+  	
+  	<!-- create a zip with a timestamp -->
+    <tstamp>
+      <format property="TODAY_MY" pattern="dMMMMyyyy" locale="en,UK"/>
+    </tstamp>
+    <zip destfile="apapl-0.1_${TODAY_MY}.zip"
+         basedir="${releasedir}"
+    />
+  	
   </target>
   
   <target name="run" depends="release">
@@ -165,6 +172,9 @@
   	/>
   </target>
 	
+  <target name="jar-with-dependencies">
+  </target>
+
 	<target name="tests">
 		<mkdir dir="${junitresults}"/>
 		<junit printsummary="yes" haltonfailure="no" showoutput="yes">
