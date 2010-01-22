@@ -41,7 +41,7 @@ public class Beliefbase extends Base
 	public Beliefbase()
 	{		
 		belief = new Prolog( );
-		//belief.loadLibs();
+		belief.loadLibs();
 	}	
 	
 	/**

@@ -40,6 +40,14 @@
       <fileset dir="${resourcesdir}/examples"/>
     </copy>	
   	
+  	<!-- Copy JIProlog extension libraries to the release folder -->
+  	<mkdir dir="${releasedir}/lib/jiprolog"/>
+    <copy todir="${releasedir}/lib/jiprolog">
+      <fileset dir="${libdir}/jiprolog">
+        <exclude name="JIProlog.jar" />
+      </fileset> 	
+    </copy>	
+  	
   	<!-- Unpack the dependencies to a temp-folder -->
   	<mkdir dir="dependencies"/>
   	<unjar src="lib/jext/jext-5.0.jar" dest= "dependencies"/>
@@ -48,9 +56,16 @@
   	<unjar src="lib/jade/iiop.jar" dest= "dependencies"/>
   	<unjar src="lib/jext/looks-1.2.2.jar" dest= "dependencies"/>
   	<unjar src="lib/jade/jade.jar" dest= "dependencies"/>
-  	<unjar src="lib/jiprolog/JIProlog.jar" dest= "dependencies"/>
   	<unjar src="lib/jade/jadeTools.jar" dest= "dependencies"/>
+  	<unjar src="lib/jiprolog/JIProlog.jar" dest= "dependencies"/>
+  	
+  	<!-- 
+  	The JIPProlog seems to be unable to load libraries from a jar file.
   	<unjar src="lib/jiprolog/jipxsystem.jar" dest= "dependencies"/>
+  	<unjar src="lib/jiprolog/jipxsets.jar" dest= "dependencies"/>
+  	<copy  file="lib/jiprolog/list.pl" todir="dependencies" />
+  	 -->
+  	
   	<unjar src="lib/jext/dawn-1.1.1.jar" dest= "dependencies"/>
   	<unjar src="lib/apleis/eis-0.2rc1.jar" dest= "dependencies"/>
  
@@ -83,7 +98,6 @@
     </jar>
   	
   	<!-- Distributes re-compiled blockworld environment to the examples -->
-  	
     <jar basedir="${builddir}/" destfile="${releasedir}/examples/explorer and carrier/blockworld.jar">
       <include name="blockworld/**" />      
     	<manifest>

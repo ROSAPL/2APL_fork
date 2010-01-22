@@ -7,10 +7,14 @@ import apapl.program.Beliefbase;
 import apapl.program.Base;
 import com.ugos.JIProlog.engine.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
+
 
 /**
  * Convenience class that provides the interface to the JIProlog engine.
@@ -177,23 +181,24 @@ public class Prolog
 	 * libraries are not loaded by default. for instance, when performing a simple query,
 	 * these libraries are not needed.  
 	 */
-	public void loadLibs()
+	public void loadLibs() 
 	{
 		File dir = new File( "lib"+File.separatorChar+"jiprolog" );
+		if (dir.isDirectory()) {
 		String[] files = dir.list();
-		for( int i = 0; i < files.length; i++ ) {
-			String fileName = files[ i ];
-			if( fileName.startsWith( "jipx" ) && fileName.endsWith( ".jar" ) ) {
-				try {
-					 jip.loadLibrary( dir.getAbsolutePath()
-			                                + File.separatorChar + fileName );
-				}
-				catch( Exception e )
-				{
-					System.err.println( "Caught exception:" );
-					e.printStackTrace( System.err );
-				}
-			}
+    		for( int i = 0; i < files.length; i++ ) {
+    			String fileName = files[ i ];
+    			if( fileName.startsWith( "jipx" ) && fileName.endsWith( ".jar" ) ) {
+    				try {
+    					 jip.loadLibrary( dir.getAbsolutePath()
+    			                                + File.separatorChar + fileName );
+    				}
+    				catch( Exception e ) {
+    					System.err.println( "Unable to load JIProlog library \""+ dir.getAbsolutePath()+"\".");
+    					e.printStackTrace( System.err );
+    				}
+    			}
+    		}
 		}
 	}
 	
