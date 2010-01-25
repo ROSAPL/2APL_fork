@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 
 import apapl.APAPLBuilder;
 import apapl.APLMAS;
@@ -102,6 +103,17 @@ public class APAPL {
 
             // start the MAS
             mas.start();
+            
+            System.out.println("MAS started. Press a key to quit.");
+            try {
+				System.in.read();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            mas.takeDown();
+            System.out.println("Done");
+            
         }
     }
 }
