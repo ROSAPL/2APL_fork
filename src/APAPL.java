@@ -29,8 +29,7 @@ public class APAPL {
         // has been the path to MAS file provided?
         File masfile = null; 
 
-        // Parse arguments, the last argument should be the mas filename.
-       
+        // Parse arguments, the last argument should be the mas filename.       
         for (String arg : args) {  
             if (arg.equals(NOGUI_ARGUMENT)) {
                 nogui = true;
@@ -54,15 +53,43 @@ public class APAPL {
         }
         
         if (args.length > 0) {
-            if (!args[args.length-1].startsWith("-")) {                
+            if (!args[args.length - 1].startsWith("-")) {
                 // Does the file exist?
-                masfile = new File(args[args.length-1]);
-                if (masfile.isFile() == false) {
-                    System.out.println("Cannot access MAS file: "+ masfile);
-                    System.exit(0);
-                }  
-            }            
+                masfile = new File(args[args.length - 1]);
+                if (!masfile.isFile()) {
+                    // Try to find the mas file in the directory
+                    if (masfile.isDirectory()) {                       
+                        File[] listOfFiles = masfile.listFiles();
+                        for (int i = 0; i < listOfFiles.length; i++) {
+                            if (listOfFiles[i].isFile()
+                                    && listOfFiles[i].getName()
+                                            .endsWith(".mas")) {
+                                System.out.print("Found mas file "
+                                        + listOfFiles[i].getName()
+                                        + " in directory "
+                                        + args[args.length - 1] + "\n");
+                                masfile = new File(args[args.length - 1] + 
+                                        File.separator
+                                        + listOfFiles[i].getName());
+                                break;
+                            }
+                        }
+                        // Check again if a mas file is found and loaded
+                        if (!masfile.isFile()) {
+                            System.out.print("Cannot access MAS file: "
+                                    + masfile + "\n");
+                            System.exit(0);
+                        }
+                    } else {
+                        System.out.print("Cannot access MAS file: " + masfile
+                                + "\n");
+                        System.exit(0);
+                    }
+                }
+            }
         }
+        
+        
         
         if (!nogui) {
             if (nojade) {
