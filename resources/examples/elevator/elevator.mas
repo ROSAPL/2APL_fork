@@ -1,1 +1,51 @@
-agent : agent.2apl @elevatorenv
+/* 
+-------------------
+ ELEVATORS EXAMPLE
+-------------------
+
+This multi-agent system consists of three agents that control elevator cars in the elevator simulator.
+
+The agents engage in a negotiation in order to decide which of the floors will each of 
+the elevator cars serve. When the need to serve passengers on one of the floors arises, each of
+the agents evaluates personal cost (or willingness) to serve the passengers and sends a bid with 
+the proposed amount to other elevator agents. 
+
+All the agents stick to the principle that the elevator with the lowest indicated cost commits to
+serve the passengers.
+
+----------------------------------------------
+ RECOMMENDED SET-UP OF THE ELEVATOR SIMULATOR
+----------------------------------------------
+
+1. When the simulator window appears, choose File -> New... -> Random Rider Insertion 
+and confirm by clicking the "Real-time" button.
+
+2. We recommend to set "number of people" to 8, which makes functioning of the system easier to observe. 
+
+3. Then, it is necessary to set the "controller" to "GOALController" and press "Apply".
+
+4. Start the multi-agent system in the 2APL platform.
+
+4. Finally, press "Go, Dude!" to start the simulation.
+
+Note: After some time, the simulation stops - this is indicated by the clock in the simulator window
+that does not change anymore. This happens if all the people have been moved to their desired 
+destination or it may happen in a more or less random fashion, which is probably a bug of the simulator.
+
+------------
+ STRATEGIES
+------------
+Agents can include one of the following files to change strategy for evaluating cost 
+of serving passengers waiting at one of the floors going in a one of the directions.
+
+ economic_strategy.2apl - the only "rational" strategy - keeps number of elevator moves as low as possible
+ even_floors_strategy.2apl - prefers to serve only even floors
+ odd_floors_strategy.2apl - prefers to serve only odd floors
+ bottom_strategy.2apl - prefers to operate in the lower floors
+ top_strategy.2apl - prefers to operate in the higher floors
+
+*/
+
+car0 : car0.2apl @elevatorenv
+car1 : car1.2apl @elevatorenv
+car2 : car2.2apl @elevatorenv
