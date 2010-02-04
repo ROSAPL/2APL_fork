@@ -19,7 +19,7 @@ import java.awt.Component;
 
 public class Viewer extends JTabbedPane
 {
-	protected ArrayList<FileFrame> files = new ArrayList<FileFrame>();
+	//protected ArrayList<FileFrame> files = new ArrayList<FileFrame>();
 	protected ArrayList<JComponent> tabs = new ArrayList<JComponent>();
 
 	protected boolean showBases = true;

@@ -63,17 +63,12 @@
     	        <attribute 
     	          name="Class-Path" 
     			  		value="
-    							lib/cartago/cartago-0.6.1.jar	
-    							lib/jext/jext-5.0.jar
     							lib/jade/http.jar		
-    							lib/jext/jython-2.1.jar
     							lib/jade/iiop.jar		
-    							lib/jext/looks-1.2.2.jar
     							lib/jade/jade.jar		
     							lib/jiprolog/JIProlog.jar
     							lib/jade/jadeTools.jar		
     							lib/jiprolog/jipxsystem.jar
-    							lib/jext/dawn-1.1.1.jar
     							lib/apleis/eis-0.2rc1.jar
     	          "
     		    />
