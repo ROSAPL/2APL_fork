@@ -4,13 +4,30 @@ import apapl.messaging.Messenger;
 import apapl.parser.*;
 import apapl.data.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import eis.EILoader;
 import eis.EnvironmentInterfaceStandard;
 import eis.exceptions.AgentException;
+import eis.exceptions.ManagementException;
+import eis.exceptions.NoEnvironmentException;
+import eis.iilang.EnvironmentCommand;
+import eis.iilang.Function;
+import eis.iilang.IILElement;
+import eis.iilang.Identifier;
+import eis.iilang.Numeral;
+import eis.iilang.Parameter;
 
 /**
  * A builder used to construct a multi-agent system. The builder uses parser to
@@ -19,7 +36,15 @@ import eis.exceptions.AgentException;
  * @see apapl.Parser
  */
 public class APAPLBuilder {
-    private Parser parser = new Parser();
+    private Parser parser = null;
+    //private XMLParser
+    
+    public APAPLBuilder() {
+    	
+    	parser = new Parser();
+    	
+    }
+
 
     /**
      * Builds a multi-agent system from a MAS specification file.
@@ -35,6 +60,178 @@ public class APAPLBuilder {
      * @throws LoadEnvironmentException
      */
     public APLMAS buildMas(File masfile, Messenger msgr, Executor exec)
+            throws ParseMASException, ParseModuleException,
+            ParsePrologException, LoadEnvironmentException {
+
+    	if( masfile.getName().endsWith(".xml")) {
+    		return buildMasXML(masfile,msgr,exec);
+        }
+        else if( masfile.getName().endsWith(".mas")) {
+       		return buildMasTraditional(masfile,msgr,exec);
+        }
+    	
+    	return null;
+ 
+    }
+    
+    public APLMAS buildMasXML(File masfile, Messenger msgr, Executor exec)
+    throws ParseMASException, ParseModuleException,
+    ParsePrologException, LoadEnvironmentException {
+
+        APLMAS ret = new APLMAS(masfile.getParentFile(), msgr, exec);
+    	
+		// parse the XML document
+		Document doc = null;
+		try {
+			DocumentBuilderFactory documentbuilderfactory = DocumentBuilderFactory.newInstance();
+			doc = documentbuilderfactory.newDocumentBuilder().parse(masfile);
+		} catch (SAXException e) {
+
+			throw new ParseMASException(masfile,"error parsing");
+
+		} catch (IOException e) {
+			throw new ParseMASException(masfile,"error parsing");
+
+		} catch (ParserConfigurationException e) {
+
+			throw new ParseMASException(masfile,"error parsing");
+
+		}
+		
+		// get the root
+		Element root = doc.getDocumentElement();
+		if( root.getNodeName().equals("apaplmas") == false )
+			throw new ParseMASException(masfile,"root-element must be apaplmas");
+
+		// parse all childs
+		HashMap<String,EnvironmentInterfaceStandard> envs = new HashMap<String,EnvironmentInterfaceStandard>();
+		LinkedList<APLModule> mods = new LinkedList<APLModule>();
+		for( int a = 0 ; a < root.getChildNodes().getLength() ; a++ ) {
+			
+			Node child = root.getChildNodes().item(a);
+			
+			// node is an environment-specification
+			if( child.getNodeName().equals("environment") ) {
+				
+				// attributes = environment name and file
+				String envName = child.getAttributes().getNamedItem("name").getNodeValue();
+				String envFile = child.getAttributes().getNamedItem("file").getNodeValue();
+				System.out.println(envName + " " + envFile);
+
+				// instantiate interface
+				EnvironmentInterfaceStandard env = null;
+                File file = new File(masfile.getParentFile()
+                        .getAbsolutePath()
+                        + File.separatorChar + envFile);
+				try {
+					env = EILoader.fromJarFile(file);
+					envs.put(envName,env);
+					ret.addEnvironmentInterface(env);
+				} catch (IOException e) {
+					throw new LoadEnvironmentException(envName, "environment could not be loaded from " + file.getAbsolutePath());
+				}
+				
+				// parameters
+				HashMap<String,String> envParams = new HashMap<String,String>();
+				for( int b = 0; b < child.getChildNodes().getLength() ; b++ ) {
+					
+					Node grandchild = child.getChildNodes().item(b);
+					if( grandchild.getNodeName().equals("parameter") == false )
+						continue;
+		
+					String paramKey = grandchild.getAttributes().getNamedItem("key").getNodeValue();
+					String paramValue = grandchild.getAttributes().getNamedItem("value").getNodeValue();
+					System.out.println(paramKey + " " + paramValue);
+					
+					envParams.put(paramKey, paramValue);
+					
+				}
+				
+				assert env != null;
+				
+				// create environment command from parameters
+				EnvironmentCommand cmd = new EnvironmentCommand(
+						EnvironmentCommand.INIT
+						);
+				for( Entry<String, String> entry : envParams.entrySet() ) {
+					
+					Parameter e = null;
+					
+					// Numeral or Identifier?
+					Integer i = new Integer(entry.getValue());
+					if( i != null ) {
+						e = new Numeral(i.longValue());
+					}
+					else {
+						Double d = new Double(entry.getValue());
+						if( d != null ) {
+							e = new Numeral(d.doubleValue());
+						}
+						else 
+							e = new Identifier(entry.getValue());
+					}
+					assert e != null;
+					
+					Function f = new Function(entry.getKey(),e);
+					cmd.addParameter(f);
+				}
+				
+				// manage
+				try {
+					env.manageEnvironment(cmd);
+				} catch (ManagementException e) {
+					e.printStackTrace();
+				} catch (NoEnvironmentException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			// node is an agent-specification
+			else if( child.getNodeName().equals("agent") ) {
+		
+				// attributes = environment name and file
+				String agentName = child.getAttributes().getNamedItem("name").getNodeValue();
+				String agentFile = child.getAttributes().getNamedItem("file").getNodeValue();
+				System.out.println(agentName + " " + agentFile);
+
+	            // Build the module
+	            Tuple<APLModule, LinkedList<File>> t = buildModule(agentFile,agentName,ret);
+	            // Main module starts implicitly as active
+	            ret.addModule(t.l, t.r, true);
+	            mods.add(t.l);
+				 
+			}
+			
+		}
+    	
+		// associate
+		for( APLModule mod : mods ) {
+			
+			for( Entry<String, EnvironmentInterfaceStandard> env : envs.entrySet() ) {
+				
+				ret.attachModuleToEnvironment(mod, env.getKey(), env.getValue());
+				
+			}
+			
+		}
+		
+		return ret;
+    }  
+    
+    /**
+     * Builds a multi-agent system from a MAS specification file.
+     * 
+     * @param masfile the file that specifies the MAS
+     * @param msgr the messenger used by the modules for communication
+     * @param exec the executor implementing the strategy for executing the
+     *        modules
+     * @return the MAS constructed from the specification file
+     * @throws ParseMASException
+     * @throws ParseModuleException
+     * @throws ParsePrologException
+     * @throws LoadEnvironmentException
+     */
+    private APLMAS buildMasTraditional(File masfile, Messenger msgr, Executor exec)
             throws ParseMASException, ParseModuleException,
             ParsePrologException, LoadEnvironmentException {
         // Build the MAS

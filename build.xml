@@ -40,47 +40,46 @@
       <fileset dir="${resourcesdir}/examples"/>
     </copy>	
   	
+    <copy todir="${releasedir}/lib">
+      <fileset dir="lib"/>
+    </copy>	
+
+
   	<!-- Copy JIProlog extension libraries to the release folder -->
-  	<mkdir dir="${releasedir}/lib/jiprolog"/>
+  	<!--mkdir dir="${releasedir}/lib/jiprolog"/>
     <copy todir="${releasedir}/lib/jiprolog">
       <fileset dir="${libdir}/jiprolog">
         <exclude name="JIProlog.jar" />
       </fileset> 	
-    </copy>	
+    </copy-->	
   	
-  	<!-- Unpack the dependencies to a temp-folder -->
-  	<mkdir dir="dependencies"/>
-  	<unjar src="lib/jext/jext-5.0.jar" dest= "dependencies"/>
-  	<unjar src="lib/jade/http.jar" dest= "dependencies"/>
-  	<unjar src="lib/jext/jython-2.1.jar" dest= "dependencies"/>
-  	<unjar src="lib/jade/iiop.jar" dest= "dependencies"/>
-  	<unjar src="lib/jext/looks-1.2.2.jar" dest= "dependencies"/>
-  	<unjar src="lib/jade/jade.jar" dest= "dependencies"/>
-  	<unjar src="lib/jade/jadeTools.jar" dest= "dependencies"/>
-  	<unjar src="lib/jiprolog/JIProlog.jar" dest= "dependencies"/>
-  	
-  	<!-- 
-  	The JIPProlog seems to be unable to load libraries from a jar file.
-  	<unjar src="lib/jiprolog/jipxsystem.jar" dest= "dependencies"/>
-  	<unjar src="lib/jiprolog/jipxsets.jar" dest= "dependencies"/>
-  	<copy  file="lib/jiprolog/list.pl" todir="dependencies" />
-  	 -->
-  	
-  	<unjar src="lib/jext/dawn-1.1.1.jar" dest= "dependencies"/>
-  	<unjar src="lib/apleis/eis-0.2rc1.jar" dest= "dependencies"/>
  
   	<!-- Create the jar-file -->
     <jar basedir="${builddir}" destfile="${releasedir}/2apl.jar">
       	<fileset dir="${builddir}" excludes="blockworld/**"/>
-      	<fileset dir="dependencies"/>
+      	<!--fileset dir="${libdir}"/-->
     	<manifest>
           <attribute name="Main-Class" value="APAPL"/>
+    	        <attribute 
+    	          name="Class-Path" 
+    			  		value="
+    							lib/cartago/cartago-0.6.1.jar	
+    							lib/jext/jext-5.0.jar
+    							lib/jade/http.jar		
+    							lib/jext/jython-2.1.jar
+    							lib/jade/iiop.jar		
+    							lib/jext/looks-1.2.2.jar
+    							lib/jade/jade.jar		
+    							lib/jiprolog/JIProlog.jar
+    							lib/jade/jadeTools.jar		
+    							lib/jiprolog/jipxsystem.jar
+    							lib/jext/dawn-1.1.1.jar
+    							lib/apleis/eis-0.2rc1.jar
+    	          "
+    		    />
 	   </manifest>
-    </jar>
+    </jar>  	
   	
-  	<!-- Delete the temp-folder -->
-    <delete dir="dependencies"/>
-
   	<mkdir dir="${releasedir}/environments"/>
   	
     <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
@@ -111,15 +110,7 @@
         <attribute name="Main-Class" value="blockworld.Env"/>
 	    </manifest>
     </jar>  
-  	
-  	<!-- create a zip with a timestamp -->
-    <tstamp>
-      <format property="TODAY_MY" pattern="dMMMMyyyy" locale="en,UK"/>
-    </tstamp>
-    <zip destfile="apapl-0.1_${TODAY_MY}.zip"
-         basedir="${releasedir}"
-    />
-  	
+  	  	
   </target>
   
   <target name="run" depends="release">
@@ -142,6 +133,18 @@
     </java>
   </target>
 
+	 <target name="harrysallyxml" depends="release">
+	    <java jar="${releasedir}/2apl.jar" fork="true" >
+	    <arg value="-nojade" />	
+		<arg value="-nogui" />	
+	    <arg value="${releasedir}/examples/harry and sally/harrysallymas.xml" />
+	    	<assertions>
+	    	  <enable />
+	    	</assertions>
+	    </java>
+	  </target>
+
+	
   <target name="doc">
     <mkdir dir="${doc}"/>
     <javadoc sourcepath="." destdir="${doc}" failonerror="true">

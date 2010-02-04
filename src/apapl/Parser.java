@@ -294,27 +294,26 @@ public class Parser
 	 * @return the list of mas lines
 	 * @throws ParseMASException
 	 */
-	public ArrayList<ArrayList<String>> parseMas(File file) throws ParseMASException
-	{
-    ArrayList<ArrayList<String>> a = new ArrayList<ArrayList<String>>();
-    
-		try
-		{
-		  BufferedReader in = new BufferedReader(new FileReader(file));
-			ParserMAS parser = new ParserMAS(in);
-			parser.Mas(a);
-		}
-		catch( IOException e )
-		{ throw( new ParseMASException(file, e.getMessage() ) );
-		}
-		catch( ParseException e )
-		{ throw( new ParseMASException(file, e ) );
-		}
-		catch( TokenMgrError e )
-		{ throw( new ParseMASException(file, e.getMessage()) );
-		}
+	public ArrayList<ArrayList<String>> parseMas(File file) throws ParseMASException {
+	    ArrayList<ArrayList<String>> ret = new ArrayList<ArrayList<String>>();
+		
+	    	try
+			{
+			  BufferedReader in = new BufferedReader(new FileReader(file));
+				ParserMAS parser = new ParserMAS(in);
+				parser.Mas(ret);
+			}
+			catch( IOException e )
+			{ throw( new ParseMASException(file, e.getMessage() ) );
+			}
+			catch( ParseException e )
+			{ throw( new ParseMASException(file, e ) );
+			}
+			catch( TokenMgrError e )
+			{ throw( new ParseMASException(file, e.getMessage()) );
+			}
 
-		return a;
+		return ret;
 	}
 
 	/** 

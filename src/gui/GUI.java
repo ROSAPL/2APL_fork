@@ -8,6 +8,7 @@ import java.awt.FileDialog;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -43,6 +44,20 @@ import apapl.messaging.Messenger;
 import apapl.parser.ParseMASException;
 import apapl.parser.ParseModuleException;
 import apapl.parser.ParsePrologException;
+
+class MASFilenameFilter implements FilenameFilter {
+
+	@Override
+	public boolean accept(File dir, String name) {
+
+		if( name.endsWith(".mas") || name.endsWith(".xml") )
+			return true;
+		
+		return false;
+	}
+	
+
+}
 
 /**
  * The class constructs graphic user interface (GUI) of the 2APL platform. The
@@ -197,8 +212,8 @@ public class GUI extends JFrame implements WindowListener,
 			toolbar.setMessenger(msgr);
 
 			// Add edit MAS file to MAS tab
-			File[] files = { masfile };
-			mastab.addTab("File", new FileList(new JextEdit(), files, mastab));
+			//File[] files = { masfile };
+			//mastab.addTab("File", new FileList(new JextEdit(), files, mastab));
 
 			List<APLModule> modules = mas.getModules();
 
@@ -270,9 +285,9 @@ public class GUI extends JFrame implements WindowListener,
 		ModuleViewer viewer = new ModuleViewer(module, this);
 
 		// Add File tab to ModuleViewer
-		LinkedList<File> files = mas.getFiles(module);
-		viewer.addTab("Files", new FileList(new JextEdit(), files
-				.toArray(new File[0]), viewer));
+		//LinkedList<File> files = mas.getFiles(module);
+		//viewer.addTab("Files", new FileList(new JextEdit(), files
+		//		.toArray(new File[0]), viewer));
 
 		viewers.put(module, viewer);
 
@@ -410,12 +425,14 @@ public class GUI extends JFrame implements WindowListener,
 	public void openFile()
 	{
 		FileDialog o = new FileDialog(this, "Open File", FileDialog.LOAD);
+		MASFilenameFilter filter = new MASFilenameFilter();
+		o.setFilenameFilter(filter);
 		o.setVisible(true);
 		String filename = o.getFile();
 		String path = o.getDirectory();
 		if (filename == null)
 			return;
-		if (filename.endsWith(".mas"))
+		if (filename.endsWith(".mas") || filename.endsWith(".xml"))
 		{
 			loadMas(new File(path + File.separator + filename));
 		}
