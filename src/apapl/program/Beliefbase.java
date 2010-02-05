@@ -255,4 +255,10 @@ public class Beliefbase extends Base
 		
 		return cloned;		
 	}
+
+	public void addFromFile(File beliefsFile) throws IOException {
+
+		belief.addFromFile(beliefsFile.getAbsolutePath());
+	
+	}
 }

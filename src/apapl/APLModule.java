@@ -1,5 +1,7 @@
 package apapl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -685,4 +687,15 @@ public class APLModule {
     public synchronized int getMessageCount() {
         return messenger.getMessageCount(getName());
     }
+
+	/**
+	 * Parses additional beliefs from a prolog-file and adds them to the belief-base.
+	 * @param beliefsFile
+	 * @throws IOException 
+	 */
+	void addAdditionalBeliefs(File beliefsFile) throws IOException {
+		
+		this.beliefs.addFromFile(beliefsFile);
+		
+	}
 }

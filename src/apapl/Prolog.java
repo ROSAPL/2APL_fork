@@ -367,4 +367,13 @@ public class Prolog
 	{
 		jip.releaseAllResources();
 	}
+
+	public void addFromFile(String absolutePath) throws IOException {
+		System.out.println(absolutePath);
+		
+		// TODO show this in the view
+		
+		jip.consultFile(absolutePath);
+		
+	}
 }

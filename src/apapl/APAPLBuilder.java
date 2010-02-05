@@ -19,12 +19,10 @@ import org.xml.sax.SAXException;
 
 import eis.EILoader;
 import eis.EnvironmentInterfaceStandard;
-import eis.exceptions.AgentException;
 import eis.exceptions.ManagementException;
 import eis.exceptions.NoEnvironmentException;
 import eis.iilang.EnvironmentCommand;
 import eis.iilang.Function;
-import eis.iilang.IILElement;
 import eis.iilang.Identifier;
 import eis.iilang.Numeral;
 import eis.iilang.Parameter;
@@ -36,18 +34,16 @@ import eis.iilang.Parameter;
  * @see apapl.Parser
  */
 public class APAPLBuilder {
-    private Parser parser = null;
-    //private XMLParser
+    
+	private Parser parser = new Parser();
     
     public APAPLBuilder() {
     	
-    	parser = new Parser();
-    	
     }
 
-
     /**
-     * Builds a multi-agent system from a MAS specification file.
+     * Builds a multi-agent system from a MAS specification file. 
+     * Distinguishes between <i>.mas</i>- and <i>.xml</i>-files.
      * 
      * @param masfile the file that specifies the MAS
      * @param msgr the messenger used by the modules for communication
@@ -74,7 +70,20 @@ public class APAPLBuilder {
  
     }
     
-    public APLMAS buildMasXML(File masfile, Messenger msgr, Executor exec)
+    /**
+     * Loads a MAS from an XML-specification.
+     * 
+     * @param masfile the file that specifies the MAS
+     * @param msgr the messenger used by the modules for communication
+     * @param exec the executor implementing the strategy for executing the
+     *        modules
+     * @return the MAS constructed from the specification file
+     * @throws ParseMASException
+     * @throws ParseModuleException
+     * @throws ParsePrologException
+     * @throws LoadEnvironmentException
+     */
+    private APLMAS buildMasXML(File masfile, Messenger msgr, Executor exec)
     throws ParseMASException, ParseModuleException,
     ParsePrologException, LoadEnvironmentException {
 
@@ -98,6 +107,9 @@ public class APAPLBuilder {
 
 		}
 		
+		// get the masPath
+		String masPath = masfile.getParentFile().getAbsolutePath() + File.separatorChar;
+		
 		// get the root
 		Element root = doc.getDocumentElement();
 		if( root.getNodeName().equals("apaplmas") == false )
@@ -116,13 +128,10 @@ public class APAPLBuilder {
 				// attributes = environment name and file
 				String envName = child.getAttributes().getNamedItem("name").getNodeValue();
 				String envFile = child.getAttributes().getNamedItem("file").getNodeValue();
-				System.out.println(envName + " " + envFile);
 
 				// instantiate interface
 				EnvironmentInterfaceStandard env = null;
-                File file = new File(masfile.getParentFile()
-                        .getAbsolutePath()
-                        + File.separatorChar + envFile);
+                File file = new File(masPath + envFile);
 				try {
 					env = EILoader.fromJarFile(file);
 					envs.put(envName,env);
@@ -192,14 +201,31 @@ public class APAPLBuilder {
 				// attributes = environment name and file
 				String agentName = child.getAttributes().getNamedItem("name").getNodeValue();
 				String agentFile = child.getAttributes().getNamedItem("file").getNodeValue();
-				System.out.println(agentName + " " + agentFile);
-
+				String agentBeliefs = null;
+				if(child.getAttributes().getNamedItem("beliefs") != null )
+					agentBeliefs = child.getAttributes().getNamedItem("beliefs").getNodeValue();
+				
 	            // Build the module
 	            Tuple<APLModule, LinkedList<File>> t = buildModule(agentFile,agentName,ret);
 	            // Main module starts implicitly as active
 	            ret.addModule(t.l, t.r, true);
 	            mods.add(t.l);
-				 
+	            
+	            // load additional beliefs
+	            if( agentBeliefs !=  null ) {
+	            
+	            	File beliefsFile = new File(masPath + agentBeliefs);
+	            	if( beliefsFile.exists() == false)
+	            		throw new ParseMASException(masfile,"could not load additional beliefs from " + beliefsFile.getAbsolutePath());
+	            	
+	            	try {
+						t.l.addAdditionalBeliefs(beliefsFile);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	            } 
+	            
 			}
 			
 		}
