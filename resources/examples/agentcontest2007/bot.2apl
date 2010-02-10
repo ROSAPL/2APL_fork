@@ -1,0 +1,8 @@
+Plans:
+{
+  B( server(Url,Port) );
+  B( credentials(User,Pass) );
+  B( entity(E) );
+  print( connect(Url,Port,User,Pass) );
+  skip
+}

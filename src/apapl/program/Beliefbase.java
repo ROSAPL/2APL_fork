@@ -256,9 +256,32 @@ public class Beliefbase extends Base
 		return cloned;		
 	}
 
-	public void addFromFile(File beliefsFile) throws IOException {
+	public void addFromFile(File beliefsFile, boolean shadow) throws IOException {
 
-		belief.addFromFile(beliefsFile.getAbsolutePath());
+		if( shadow == true ) {
+			
+			belief.addFromFile(beliefsFile.getAbsolutePath());
+		
+		}
+		else {
+			
+			BufferedReader in = new BufferedReader(new FileReader(beliefsFile));
+			String belief = "";
+			String s = in.readLine();
+			while (s != null) {
+				belief = belief + s+"\n";
+				s = in.readLine();
+			}
+			try {
+				assertBelief(Parser.stripComment(belief));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			in.close();
+
+		}
+		
+		
 	
 	}
 }

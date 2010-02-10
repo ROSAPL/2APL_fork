@@ -208,9 +208,36 @@ public class APAPLBuilder {
 				// attributes = environment name and file
 				String agentName = child.getAttributes().getNamedItem("name").getNodeValue();
 				String agentFile = child.getAttributes().getNamedItem("file").getNodeValue();
-				String agentBeliefs = null;
-				if(child.getAttributes().getNamedItem("beliefs") != null )
-					agentBeliefs = child.getAttributes().getNamedItem("beliefs").getNodeValue();
+				HashMap<String,Boolean> externalBeliefs = new HashMap<String,Boolean>(); // external beliefs
+				
+				// agent can have beliefs (external)
+				for( int b = 0 ; b < child.getChildNodes().getLength() ; b++ ) {
+					
+					Node childchild = child.getChildNodes().item(b);
+					
+					if( childchild.getNodeName().equals("beliefs") ) {
+
+						Node fileItem = childchild.getAttributes().getNamedItem("file");
+						String file = fileItem.getNodeValue();
+						
+						Node shadowItem = childchild.getAttributes().getNamedItem("shadow");
+						boolean shadow = false;
+						if( shadowItem != null ) {
+
+							if ( shadowItem.getNodeValue().equals("yes") || shadowItem.getNodeValue().equals("true") ) 
+								shadow = true;
+							else if ( shadowItem.getNodeValue().equals("no") || shadowItem.getNodeValue().equals("false") ) 
+								shadow = false;
+							else
+								assert false : shadowItem.getNodeValue();
+							
+						}
+
+						externalBeliefs.put(file,shadow);
+						
+					}
+					
+				}
 				
 	            // Build the module
 	            Tuple<APLModule, LinkedList<File>> t = buildModule(agentFile,agentName,ret);
@@ -219,19 +246,19 @@ public class APAPLBuilder {
 	            mods.add(t.l);
 	            
 	            // load additional beliefs
-	            if( agentBeliefs !=  null ) {
-	            
-	            	File beliefsFile = new File(masPath + agentBeliefs);
+	            for( Entry<String,Boolean> eb : externalBeliefs.entrySet() ) {
+	            	
+	            	File beliefsFile = new File(masPath + eb.getKey());
 	            	if( beliefsFile.exists() == false)
 	            		throw new ParseMASException(masfile,"could not load additional beliefs from " + beliefsFile.getAbsolutePath());
 	            	
 	            	try {
-						t.l.addAdditionalBeliefs(beliefsFile);
+						t.l.addAdditionalBeliefs(beliefsFile,eb.getValue());
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-	            } 
+	            	
+	            }
 	            
 			}
 			

@@ -6,7 +6,10 @@ import apapl.data.*;
 import apapl.program.Beliefbase;
 import apapl.program.Base;
 import com.ugos.JIProlog.engine.*;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
@@ -369,11 +372,8 @@ public class Prolog
 	}
 
 	public void addFromFile(String absolutePath) throws IOException {
-		System.out.println(absolutePath);
-		
-		// TODO show this in the view
-		
-		jip.consultFile(absolutePath);
-		
+
+			jip.consultFile(absolutePath);
+			
 	}
 }

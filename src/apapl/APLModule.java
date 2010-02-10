@@ -691,11 +691,12 @@ public class APLModule {
 	/**
 	 * Parses additional beliefs from a prolog-file and adds them to the belief-base.
 	 * @param beliefsFile
+	 * @param shadow
 	 * @throws IOException 
 	 */
-	void addAdditionalBeliefs(File beliefsFile) throws IOException {
+	void addAdditionalBeliefs(File beliefsFile, boolean shadow) throws IOException {
 		
-		this.beliefs.addFromFile(beliefsFile);
+		this.beliefs.addFromFile(beliefsFile,shadow);
 		
 	}
 }

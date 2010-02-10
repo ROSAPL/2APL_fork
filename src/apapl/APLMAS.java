@@ -311,7 +311,11 @@ public class APLMAS implements MessageListener {
      * @param n number of deliberation steps to be executed
      */
     public void step(int n) {
-        executor.step(n);
+    	
+    	// start the interfaces
+    	this.startEnvironmentInterfaces();
+
+    	executor.step(n);
     }
 
     /**
@@ -332,7 +336,12 @@ public class APLMAS implements MessageListener {
      * @param module the module to start
      */
     public void start(APLModule module) {
-        executor.start(module);
+  
+    	// start the interfaces
+    	this.startEnvironmentInterfaces();
+
+    	executor.start(module);
+
     }
 
     /**
@@ -342,7 +351,12 @@ public class APLMAS implements MessageListener {
      * @param n the number of deliberation steps to be executed
      */
     public void step(APLModule module, int n) {
-        executor.step(module, n);
+ 
+    	// start the interfaces
+    	this.startEnvironmentInterfaces();
+
+    	executor.step(module, n);
+    
     }
 
     /**
@@ -351,7 +365,12 @@ public class APLMAS implements MessageListener {
      * @param module the module to stop.
      */
     public void stop(APLModule module) {
-        executor.stop(module);
+  
+    	// TODO pause the interfaces when all modules are paused
+    	// this.startEnvironmentInterfaces();
+
+    	executor.stop(module);
+
     }
 
     /**
@@ -385,7 +404,18 @@ public class APLMAS implements MessageListener {
 
         // Take all environments down
         for (EnvironmentInterfaceStandard e : environmentInterfaces) {
-            e.release();
+            
+        	// send kill command
+        	EnvironmentCommand cmd = new EnvironmentCommand(EnvironmentCommand.KILL);
+        	try {
+				e.manageEnvironment(cmd);
+			} catch (ManagementException e1) {
+				System.out.println("Environment interface did not accept KILL-command");
+			} catch (NoEnvironmentException e1) {
+				System.out.println("Environment interface did not accept KILL-command");
+			}
+        	
+        	e.release();
         }
 
         activeModules = new LinkedList<APLModule>();

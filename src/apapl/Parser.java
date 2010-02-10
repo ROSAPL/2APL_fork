@@ -220,7 +220,7 @@ public class Parser
 	 * @param s the string to strip
 	 * @return the string without comment
 	 */
-	private String stripComment(String s)
+	public static String stripComment(String s)
 	{
 		String r = "";
 		String[] lines = Pattern.compile("$",Pattern.MULTILINE).split(s);
