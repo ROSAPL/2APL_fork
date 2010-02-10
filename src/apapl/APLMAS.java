@@ -6,6 +6,9 @@ import java.io.*;
 import eis.AgentListener;
 import eis.EnvironmentInterfaceStandard;
 import eis.exceptions.AgentException;
+import eis.exceptions.ManagementException;
+import eis.exceptions.NoEnvironmentException;
+import eis.iilang.EnvironmentCommand;
 import eis.iilang.Percept;
 
 import apapl.messaging.*;
@@ -294,6 +297,11 @@ public class APLMAS implements MessageListener {
      * {@link apapl.Executor}.
      */
     public void start() {
+    	
+    	// start the interfaces
+    	this.startEnvironmentInterfaces();
+    	
+    	// start the executor
         executor.start();
     }
 
@@ -310,6 +318,11 @@ public class APLMAS implements MessageListener {
      * Stops the execution of all modules in this MAS.
      */
     public void stop() {
+
+    	// pauses all environment-interfaces
+    	pauseEnvironmentInterfaces();
+    	
+    	// stop the executor
         executor.stop();
     }
 
@@ -629,6 +642,42 @@ public class APLMAS implements MessageListener {
         } catch (ModuleAccessException e) {
             return;
         }
+    }
+
+    private void startEnvironmentInterfaces() {
+
+    	// pauses the interfaces
+    	EnvironmentCommand cmd = new EnvironmentCommand(EnvironmentCommand.START);
+    	for( EnvironmentInterfaceStandard ei : environmentInterfaces ) {
+    		
+    		try {
+				ei.manageEnvironment(cmd);
+			} catch (ManagementException e) {
+				e.printStackTrace();
+			} catch (NoEnvironmentException e) {
+				e.printStackTrace();
+			}
+    		
+    	}
+
+    }
+    
+    private void pauseEnvironmentInterfaces() {
+
+    	// pauses the interfaces
+    	EnvironmentCommand cmd = new EnvironmentCommand(EnvironmentCommand.PAUSE);
+    	for( EnvironmentInterfaceStandard ei : environmentInterfaces ) {
+    		
+    		try {
+				ei.manageEnvironment(cmd);
+			} catch (ManagementException e) {
+				e.printStackTrace();
+			} catch (NoEnvironmentException e) {
+				e.printStackTrace();
+			}
+    		
+    	}
+
     }
 
 }

@@ -69,7 +69,7 @@
     							lib/jiprolog/JIProlog.jar
     							lib/jade/jadeTools.jar		
     							lib/jiprolog/jipxsystem.jar
-    							lib/apleis/eis-0.2rc1.jar
+    							lib/apleis/eis-0.2-lib.jar
     	          "
     		    />
 	   </manifest>

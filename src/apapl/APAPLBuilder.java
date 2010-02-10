@@ -159,39 +159,46 @@ public class APAPLBuilder {
 				assert env != null;
 				
 				// create environment command from parameters
-				EnvironmentCommand cmd = new EnvironmentCommand(
-						EnvironmentCommand.INIT
-						);
-				for( Entry<String, String> entry : envParams.entrySet() ) {
+				if( envParams.entrySet().size() != 0 ) {
+		
+					EnvironmentCommand cmd = new EnvironmentCommand(
+							EnvironmentCommand.INIT
+							);
 					
-					Parameter e = null;
-					
-					// Numeral or Identifier?
-					Integer i = new Integer(entry.getValue());
-					if( i != null ) {
-						e = new Numeral(i.longValue());
-					}
-					else {
-						Double d = new Double(entry.getValue());
-						if( d != null ) {
-							e = new Numeral(d.doubleValue());
+					for( Entry<String, String> entry : envParams.entrySet() ) {
+						
+						Parameter e = null;
+						
+						// Numeral or Identifier?
+						Integer i = new Integer(entry.getValue());
+						if( i != null ) {
+							e = new Numeral(i.longValue());
 						}
-						else 
-							e = new Identifier(entry.getValue());
+						else {
+							Double d = new Double(entry.getValue());
+							if( d != null ) {
+								e = new Numeral(d.doubleValue());
+							}
+							else 
+								e = new Identifier(entry.getValue());
+						}
+						assert e != null;
+						
+						Function f = new Function(entry.getKey(),e);
+						cmd.addParameter(f);
 					}
-					assert e != null;
 					
-					Function f = new Function(entry.getKey(),e);
-					cmd.addParameter(f);
-				}
-				
-				// manage
-				try {
-					env.manageEnvironment(cmd);
-				} catch (ManagementException e) {
-					e.printStackTrace();
-				} catch (NoEnvironmentException e) {
-					e.printStackTrace();
+					// manage
+					try {
+						env.manageEnvironment(cmd);
+					} catch (ManagementException e) {
+						System.out.println("Could not execute environment-command " + cmd.toProlog());
+						System.out.println("Reason: " + e.getMessage());
+					} catch (NoEnvironmentException e) {
+						System.out.println("Could not execute environment-command " + cmd.toProlog());
+						System.out.println("Reason: " + "no environment");
+					}
+
 				}
 				
 			}

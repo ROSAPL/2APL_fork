@@ -953,7 +953,7 @@ public class Environment implements EnvironmentInterfaceStandard {
 	@Override
 	public String requiredVersion() {
 		// TODO Auto-generated method stub
-		return "0.2rc1";
+		return "0.2";
 	}
 
 }
