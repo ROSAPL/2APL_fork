@@ -21,6 +21,16 @@ import java.util.List;
 import java.util.Vector;
 import java.util.LinkedList;
 import javax.swing.SwingUtilities;
+
+import eis.exceptions.EntityException;
+import eis.exceptions.ManagementException;
+import eis.exceptions.NoEnvironmentException;
+import eis.exceptions.RelationException;
+import eis.iilang.EnvironmentCommand;
+import eis.iilang.Function;
+import eis.iilang.Numeral;
+import eis.iilang.Parameter;
+
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1107,4 +1117,56 @@ public class Env extends Environment implements ObsVectListener
 	}
 	
 	/* END Overrides for ObsVector ---------------------------------*/
+	
+	/** EIS Environment Management  **/
+	
+	@Override
+    public void manageEnvironment(EnvironmentCommand cmd)
+       throws ManagementException, NoEnvironmentException {
+       if (cmd.getType() == EnvironmentCommand.INIT) {
+           // Initializing the Environment
+           int width = 10;
+           int height = 10;
+           int robots = 0;
+           
+           for(Parameter param : cmd.getParameters()) {
+               if (param instanceof Function) {
+                   if (((Function) param).getName().equals("gridWidth")) {
+                      width = ((Numeral)((Function) param).getParameters().getFirst()).getValue().intValue();
+                   }
+                   
+                   if (((Function) param).getName().equals("gridHeight")) {
+                       height = ((Numeral)((Function) param).getParameters().getFirst()).getValue().intValue();
+                    }  
+                   
+                   if (((Function) param).getName().equals("entities")) {
+                       robots = ((Numeral)((Function) param).getParameters().getFirst()).getValue().intValue();
+                    }                     
+                   
+               }
+           }
+           
+           setSize(width, height);
+           
+           if (robots > 0) {
+                for (int i = 0; i <= robots; i++) {
+                    addAgent("robot" + i);
+                    try {
+                        addEntity("robot" + i);
+                    } catch (EntityException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+       }
+    }
+	
+    public void addAgentEntity(String agent) {
+        // If the number of entities has been specified in the MAS file, 
+        // bypass 2APL specific automatic agent-entity attaching mechanism.
+        if (agentmap.containsKey("robot0")) return;
+        
+        super.addAgentEntity(agent);
+    }
+
 }

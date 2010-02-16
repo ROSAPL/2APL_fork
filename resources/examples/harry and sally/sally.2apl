@@ -4,6 +4,7 @@ Goals:
   search( blockWorld )
 
 Plans:
+	@blockworld( associateWith(robot1), _ );
   @blockworld( enter( 8, 8, red ), _ )
 
 PG-rules:

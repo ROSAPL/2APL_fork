@@ -12,6 +12,7 @@ Beliefs:
 
 Plans:
   B(start(X,Y)) ;
+  @blockworld( associateWith(robot0), _ );
   @blockworld( enter( X, Y, blue ), _ )
 
 Goals:

@@ -217,9 +217,11 @@ public class APLMAS implements MessageListener {
              * Creates an entity for each agent, which is then automatically
              * assigned to the agent. 
              */
+                        
             if (env instanceof Environment) {
                 ((Environment) env).addAgentEntity(module.getLocalName());
             }
+            
         } catch (AgentException e) {
             throw new RuntimeException("Failed to register agent " 
                     + module.getLocalName() + "to environment " + envName + ".");

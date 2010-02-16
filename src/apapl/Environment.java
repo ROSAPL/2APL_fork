@@ -149,13 +149,13 @@ public class Environment implements EnvironmentInterfaceStandard {
         try {
             freeEntity(agent);
         } catch (RelationException e) {            
-            e.printStackTrace();
+            return;
         }
         
         try {
             deleteEntity(agent);
         } catch (EntityException e) {            
-            e.printStackTrace();
+            return;
         }
     }
 
@@ -878,11 +878,8 @@ public class Environment implements EnvironmentInterfaceStandard {
                             + agent + "\".");
 
                 ret.addAll(getAllPerceptsFromEntity(entity));
-
             }
-
         }
-
         return ret;
     }
 
@@ -946,8 +943,6 @@ public class Environment implements EnvironmentInterfaceStandard {
 	@Override
 	public void manageEnvironment(EnvironmentCommand arg0)
 			throws ManagementException, NoEnvironmentException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
