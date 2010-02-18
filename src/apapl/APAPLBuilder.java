@@ -147,10 +147,15 @@ public class APAPLBuilder {
 					Node grandchild = child.getChildNodes().item(b);
 					if( grandchild.getNodeName().equals("parameter") == false )
 						continue;
-		
+					
+					// get the key
 					String paramKey = grandchild.getAttributes().getNamedItem("key").getNodeValue();
-					String paramValue = grandchild.getAttributes().getNamedItem("value").getNodeValue();
-					System.out.println(paramKey + " " + paramValue);
+					
+					// get the value. can be empty
+					String paramValue = "";
+					if( grandchild.getAttributes().getNamedItem("value") != null )
+						paramValue = grandchild.getAttributes().getNamedItem("value").getNodeValue();
+					//System.out.println(paramKey + " " + paramValue);
 					
 					envParams.put(paramKey, paramValue);
 					
@@ -167,24 +172,30 @@ public class APAPLBuilder {
 					
 					for( Entry<String, String> entry : envParams.entrySet() ) {
 						
-						Parameter e = null;
+						String key = entry.getKey();
+						Parameter value = null;
+						
+						if( entry.getValue().equals("") ) {
+							cmd.addParameter(new Identifier(key));
+							continue;
+						}
 						
 						// Numeral or Identifier?
 						Integer i = new Integer(entry.getValue());
 						if( i != null ) {
-							e = new Numeral(i.longValue());
+							value = new Numeral(i.longValue());
 						}
 						else {
 							Double d = new Double(entry.getValue());
 							if( d != null ) {
-								e = new Numeral(d.doubleValue());
+								value = new Numeral(d.doubleValue());
 							}
 							else 
-								e = new Identifier(entry.getValue());
+								value = new Identifier(entry.getValue());
 						}
-						assert e != null;
+						assert value != null;
 						
-						Function f = new Function(entry.getKey(),e);
+						Function f = new Function(key,value);
 						cmd.addParameter(f);
 					}
 					

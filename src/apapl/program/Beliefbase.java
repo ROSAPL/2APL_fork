@@ -256,6 +256,13 @@ public class Beliefbase extends Base
 		return cloned;		
 	}
 
+	/**
+	 * Adds beliefs from a prolog-file. Either as shadow-beliefs (not rendered by the GUI) or as visible ones.
+	 * 
+	 * @param beliefsFile
+	 * @param shadow
+	 * @throws IOException
+	 */
 	public void addFromFile(File beliefsFile, boolean shadow) throws IOException {
 
 		if( shadow == true ) {

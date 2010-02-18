@@ -3,6 +3,17 @@ Plans:
   B( server(Url,Port) );
   B( credentials(User,Pass) );
   B( entity(E) );
+  @massim( associateWith(E),_ );
   print( connect(Url,Port,User,Pass) );
+  @massim( connect(Url,Port,User,Pass),_ );
+  @massim( right(),_ );
+  @massim( up(),_ );
+  @massim( left(),_ );
+  @massim( down(),_ );
+  //@massim( skip(),_ );
+  @massim( pick(),_ );
+  @massim( drop(),_ );
+  @massim( mark('Hi'),_ );
+  @massim( unmark(),_ );
   skip
 }

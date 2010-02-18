@@ -685,9 +685,11 @@ public class APLMAS implements MessageListener {
     		try {
 				ei.manageEnvironment(cmd);
 			} catch (ManagementException e) {
-				e.printStackTrace();
+				System.out.println("Starting environment not supported");
+				System.out.println( e.getMessage() );
 			} catch (NoEnvironmentException e) {
-				e.printStackTrace();
+				System.out.println("Starting environment not supported");
+				System.out.println("No environment");
 			}
     		
     	}
