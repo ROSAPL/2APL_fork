@@ -1,5 +1,5 @@
 // This is a very simple agent for the agent-contest
-// 2007.
+// 2010.
 // First it connects to the server and then does some
 // random walking.
 
@@ -23,27 +23,30 @@ Plans:
     
 }
 
-// Further actions:
-//  @massim( pick(),_ );
-//  @massim( drop(),_ );
-//  @massim( mark('Hi'),_ );
-//  @massim( unmark(),_ );
+PC-rules: 
 
-PC-rules:
-
-  randomMove() <- prob(0.25) | { @massim( right(), _) }  
-  randomMove() <- prob(0.5) | { @massim( up(), _) }  
-  randomMove() <- prob(0.75) | { @massim( left(), _) }  
-  randomMove() <- true | { @massim( down(), _)  }
+  randomMove() <- prob(0.125) | { @massim( move(east), _) }  
+  randomMove() <- prob(0.25) | { @massim( move(northeast), _) }  
+  randomMove() <- prob(0.375) | { @massim( move(north), _) }  
+  randomMove() <- prob(0.5) | { @massim( move(northwest), _) }  
+  randomMove() <- prob(0.625) | { @massim( move(west), _) }  
+  randomMove() <- prob(0.75) | { @massim( move(southwest), _) }  
+  randomMove() <- prob(0.875) | { @massim( move(south), _) }  
+  randomMove() <- true | { @massim( move(soutneast), _)  }
   
+  // the connection has been lost
+  event(connectionLost,_) <- true | {
+    print(connectionLost)
+  }
+
   // the simulation has started
   event(simStart,_) <- true | {
     print(simStart)
   }
   
-  // the depot's position
-  event(depotPos(X,Y),_) <- true | {
-    print(depotPos(X,Y))
+  // the corral's position
+  event(corral(X1,Y1,X2,Y2),_) <- true | {
+    print(corral(X1,Y1,X2,Y2))
   }
 
   // the size of the grid
@@ -56,6 +59,11 @@ PC-rules:
     print(simId(Id))
   }
   
+  // the line of sight
+  event(lineOfSight(L),_) <- true | {
+    print(lineOfSight(L))
+  }
+
   // the name of the opponent
   event(opponent(O),_) <- true | {
     print(opponent(O))
@@ -72,8 +80,13 @@ PC-rules:
   }
 
   // the result of the simulation
-  event(simResult(R),_) <- true | {
-    print(simResult(R))
+  event(result(R),_) <- true | {
+    print(result(R))
+  }
+
+  // the final-score of the simulation
+  event(finalScore(F),_) <- true | {
+    print(finalScore(F))
   }
 
   // the tournament is over
@@ -82,8 +95,8 @@ PC-rules:
   }
 
   // the content of a perceived cell
-  event(cell(RelativePos,X,Y,Content,Step),_) <- true | {
-    print(cell(RelativePos,X,Y,Content,Step))
+  event(cell(X,Y,Content,Step),_) <- true | {
+    print(cell(X,Y,Content,Step))
   }
 
   // the current position
@@ -92,8 +105,8 @@ PC-rules:
   }
 
   // number of currently carried items
-  event(currentItems(Items,Step),_) <- true | {
-    print(currentItems(Items,Step))
+  event(cowsInCorral(Cows,Step),_) <- true | {
+    print(cowsInCorral(Cows,Step))
   }
 
   // the current step
