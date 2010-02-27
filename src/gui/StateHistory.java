@@ -30,9 +30,7 @@ public class StateHistory
 	
 	public StateHistory()
 	{
-		parts = new ArrayList<HashMap<String,String>>();
-		for (int i=0; i<4; i++) 
-			parts.add(new HashMap<String,String>());
+		clear();
 	}
 	
 	public void addPart(int part, int stateNo, String content)
@@ -87,6 +85,12 @@ public class StateHistory
 			}
 		}
 		firstState = newFirstState;
+	}
+	
+	public void clear() {
+		parts = new ArrayList<HashMap<String,String>>();
+		for (int i=0; i<4; i++) 
+			parts.add(new HashMap<String,String>());
 	}
 	
 }

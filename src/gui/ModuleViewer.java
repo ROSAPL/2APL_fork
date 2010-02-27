@@ -37,10 +37,15 @@ public class ModuleViewer extends Viewer
 	private StateHistory history;
 	private int statenr = 0;
 	
-	public ModuleViewer(APLModule module, GUI gui)
+	private boolean tracerEnabled = true;
+	private boolean logEnabled = true;
+	
+	
+	public ModuleViewer(APLModule module, GUI gui, boolean tracerEnabled, boolean logEnabled)
 	{
 		super();
 		this.module = module;
+		
 		belief = new RTFFrame("Beliefbase",rtf);
 		goal  = new RTFFrame("Goalbase",rtf);
 		plans = new RTFFrame("Planbase",rtf);
@@ -72,12 +77,14 @@ public class ModuleViewer extends Viewer
 			if (!module.getPRrulebase().isEmpty()) addTab("PR rules",makeRuleViewer(module.getPRrulebase()));
 		}
 		if (warnings.size()!=0) showWarnings();
-
 		
 		addTab("State Tracer", tracer);
 		tracer.update(false);	
 		
-    	addTab("Log", new JScrollPane(log));    	
+    	addTab("Log", new JScrollPane(log)); 
+    	
+		setTracerEnabled(tracerEnabled);
+		setLogEnabled(logEnabled);
 	}
 	
 	private void showWarnings()
@@ -114,23 +121,30 @@ public class ModuleViewer extends Viewer
 
 	public void logState(DeliberationResult result)
 	{
-		synchronized(module)
-		{	
-			history.addPart(StateHistory.BELIEFS, statenr, module.getBeliefbase().toString());
-			history.addPart(StateHistory.GOALS, statenr, module.getGoalbase().toString());
-			history.addPart(StateHistory.PLANS, statenr, module.getPlanbase().toString());
+		if (tracerEnabled) {
+			synchronized(module)
+			{	
+				history.addPart(StateHistory.BELIEFS, statenr, module.getBeliefbase().toString());
+				history.addPart(StateHistory.GOALS, statenr, module.getGoalbase().toString());
+				history.addPart(StateHistory.PLANS, statenr, module.getPlanbase().toString());
+			}
+			
+			if (result == null){
+				history.addPart(StateHistory.LOGS, statenr, "Initial State");
+			}		
+			else
+			{
+				history.addPart(StateHistory.LOGS, statenr, result.stepName());
+			}
+			statenr++;
 		}
 		
-		if (result == null){
-			history.addPart(StateHistory.LOGS, statenr, "Initial State");
-		}		
-		else
-		{
-			history.addPart(StateHistory.LOGS, statenr, result.stepName());
-			log.showDeliberationResult(result);
+		if (logEnabled) {
+			if (result != null)
+			{
+				log.showDeliberationResult(result);
+			} 
 		}
-		statenr++;
-
 	}
 	
 
@@ -292,4 +306,64 @@ public class ModuleViewer extends Viewer
 	public void setModule(APLModule module) {
 		this.module = module;
 	}
+	
+	/**
+	 * Sets background of the overview editors to gray to indicate that their
+	 * contents are not being updated.
+	 */
+	public void setNotUpToDate() {
+		Color disabled = new Color(240,240,240);
+		belief.setBackground(disabled);
+		goal.setBackground(disabled);
+		plans.setBackground(disabled);
+	}
+	
+	/**
+	 * Set background of the overview editors to white to indicate that their
+	 * contents is up-to-date.
+	 */
+	public void setUpToDate() {
+		belief.setBackground(Color.WHITE);
+		goal.setBackground(Color.WHITE);
+		plans.setBackground(Color.WHITE);
+	}
+	
+	/**
+	 * Informs viewer whether it should save state tracer information.
+	 * 
+	 * @param enabled
+	 *            true if tracing information should be saved, false otherwise
+	 */
+	public void setTracerEnabled(boolean enabled) {
+		tracerEnabled = enabled;
+		
+		if (enabled == false) {
+			history.clear();
+			tracer.update(true);
+		}
+		
+		int i = indexOfTab("State Tracer");
+		if (i != -1) {
+			tabPane.setEnabledAt(i, enabled);
+		}
+	}
+	
+	/**
+	 * Informs viewer whether it should save deliberation logs.
+	 * 
+	 * @param enabled
+	 *            true if deliberation logs should be saved, false otherwise
+	 */
+	public void setLogEnabled(boolean enabled) {
+		logEnabled = enabled;
+		
+		if (enabled == false) {
+			log.clear();
+		}
+		
+		int i = indexOfTab("Log");
+		if (i != -1) {
+			tabPane.setEnabledAt(i, enabled);
+		}
+	}	
 }

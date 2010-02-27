@@ -49,4 +49,9 @@ public class LogWindow extends JList
 		setListData(items.toArray());
 		this.ensureIndexIsVisible(items.size() - 1);
 	}
+	
+	public void clear() {
+		items = new LinkedList<String>();
+		setListData(items.toArray());
+	}
 }

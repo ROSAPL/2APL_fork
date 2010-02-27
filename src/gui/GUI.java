@@ -55,8 +55,6 @@ class MASFilenameFilter implements FilenameFilter {
 		
 		return false;
 	}
-	
-
 }
 
 /**
@@ -282,7 +280,7 @@ public class GUI extends JFrame implements WindowListener,
 	 */
 	public void addModule(APLModule module)
 	{
-		ModuleViewer viewer = new ModuleViewer(module, this);
+		ModuleViewer viewer = new ModuleViewer(module, this, toolbar.isTracerEnabled(), toolbar.isLogEnabled());
 
 		// Add File tab to ModuleViewer
 		//LinkedList<File> files = mas.getFiles(module);
@@ -516,7 +514,9 @@ public class GUI extends JFrame implements WindowListener,
 				if (viewer != null)
 				{
 					viewer.logState(result);
-					viewer.update();
+					
+					if (toolbar.isAutoUpdateOverviewEnabled())
+						viewer.update();
 				}
 			}
 		}, true);
@@ -593,6 +593,12 @@ public class GUI extends JFrame implements WindowListener,
 			{
 				toolbar.moduleWillStart(module);
 				treeModel.setStartedNode(module);
+				if (!toolbar.isAutoUpdateOverviewEnabled()) {
+					ModuleViewer viewer = viewers.get(module);
+					if (viewer != null) {
+						viewer.setNotUpToDate();
+					}
+				}
 			}
 		}, true);
 
@@ -610,6 +616,14 @@ public class GUI extends JFrame implements WindowListener,
 			{
 				toolbar.moduleStopped(module);
 				treeModel.setStoppedNode(module);
+				
+				if (!toolbar.isAutoUpdateOverviewEnabled()) {
+					ModuleViewer viewer = viewers.get(module);
+					if (viewer != null) {
+						viewer.update();
+						viewer.setUpToDate();
+					}
+				}
 			}
 		}, true);
 	}
@@ -675,6 +689,39 @@ public class GUI extends JFrame implements WindowListener,
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Informs module viewers that user has enabled/disabled the state tracer.
+	 * 
+	 * @param state true if state tracer is now enabled, false if it is now disabled.
+	 */
+	public void setTracerEnabled(boolean state) {
+		for (ModuleViewer viewer : viewers.values()) {
+			viewer.setTracerEnabled(state);
+		}
+	}
+	
+	/**
+	 * Informs module viewers that user has enabled/disabled the log.
+	 * 
+	 * @param state true if the log is now enabled, false if it is now disabled.
+	 */
+	public void setLogEnabled(boolean state) {
+		for (ModuleViewer viewer : viewers.values()) {
+			viewer.setLogEnabled(state);
+		}
+	}
+	
+	/**
+	 * Exit the 2APL Platform: Takes down the MAS and closes the GUI window.
+	 */
+	public void exit() {
+		if (mas != null)
+			closeMas();
+		setVisible(false);
+		dispose();
+		System.exit(0);
 	}
 
 }

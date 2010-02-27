@@ -48,6 +48,33 @@ public class Toolbar implements ActionListener, ItemListener
 	 * selected module.
 	 */
 	private boolean forAll = true;
+	
+	/**
+	 * Indicates whether overview should be updated after each deliberation step.
+	 */
+	private boolean autoUpdateOverviewEnabled = true;
+	
+	public boolean isAutoUpdateOverviewEnabled() {
+		return autoUpdateOverviewEnabled;
+	}
+
+	/**
+	 * Indicates whether tracing information will be saved after each step.
+	 */
+	private boolean tracerEnabled = true;
+	
+	public boolean isTracerEnabled() {
+		return tracerEnabled;
+	}
+
+	/**
+	 * Indicates whether log information will be saved after each step.
+	 */
+	private boolean logEnabled = true; 
+
+	public boolean isLogEnabled() {
+		return logEnabled;
+	}
 
 	/** Number of steps per one deliberation cycle. */
 	private final int STEPS_PER_CYCLE = 6;
@@ -71,7 +98,7 @@ public class Toolbar implements ActionListener, ItemListener
 	 * multi-agent system.
 	 */
 	final List<String> disableDuringExecutionCmds = Arrays.asList(
-			"recompile.png", "close.png", "forall.png", "load.png");
+			"recompile.png", "close.png", "forall.png", "load.png", "Auto-update Overview", "Allow State Tracer", "Allow Log");
 
 	/**
 	 * List of actions that can cause start of MAS execution and are therefore
@@ -107,12 +134,14 @@ public class Toolbar implements ActionListener, ItemListener
 
 		// Menu
 		JMenu file = new JMenu("File");
-		addMenuItem(file, "Open", "Open mas file.", "load.png", KeyEvent.VK_O);
+		addMenuItem(file, "Open...", "Open MAS file.", "load.png", KeyEvent.VK_O);
 		// addMenuItem(file,"New","New mas file.","new.png",KeyEvent.VK_N);
-		addMenuItem(file, "Close", "Close mas file.", "close.png",
+		addMenuItem(file, "Close", "Close MAS file.", "close.png",
 				KeyEvent.VK_C);
-		addMenuItem(file, "Reload", "Reload mas file.", "recompile.png",
+		addMenuItem(file, "Reload", "Reload MAS file.", "recompile.png",
 				KeyEvent.VK_F9);
+		addMenuItem(file, "Exit", "Exit the platform.", null,
+				KeyEvent.VK_Q);
 		menubar.add(file);
 
 		JMenu run = new JMenu("Run");
@@ -122,21 +151,31 @@ public class Toolbar implements ActionListener, ItemListener
 				"playcycle.png", KeyEvent.VK_F7);
 		addMenuItem(run, "Play One", "Perform one step in deliberation.",
 				"playstep.png", KeyEvent.VK_F6);
-		addMenuItem(run, "Pause", "Pause deliberation.", "pause.png",
+		addMenuItem(run, "Pause", "Pause Deliberation.", "pause.png",
 				KeyEvent.VK_F8);
-		addCheckBoxMenuItem(run, "Apply to all", "Apply to all agents.",
+		addCheckBoxMenuItem(run, "Apply to All", "Apply to all agents.",
 				"forall.png", forAll, KeyEvent.VK_A);
 		menubar.add(run);
 
-		JMenu jade = new JMenu("Debug");
-		addMenuItem(jade, "Message Agent", "Launch Message agent",
+		JMenu debug = new JMenu("Debug");
+		addCheckBoxMenuItem(debug, "Auto-update Overview", "If checked, the overview will be updated after each step.",
+				null, autoUpdateOverviewEnabled, KeyEvent.VK_U);
+		addCheckBoxMenuItem(debug, "Allow State Tracer", "Allows storing of the tracing information.",
+				null, tracerEnabled, KeyEvent.VK_T);
+		addCheckBoxMenuItem(debug, "Allow Log", "Allows storing of the logging information.",
+				null, logEnabled, KeyEvent.VK_L);
+		
+		debug.addSeparator();
+		
+		addMenuItem(debug, "Message Agent", "Launch Message agent",
 				"message.png", -1);
-		menubar.add(jade);
+		menubar.add(debug);
+		
 
-		JMenu options = new JMenu("Options");
-		addMenuItem(options, "About", "About 2APL", null, KeyEvent.VK_F1);
+		JMenu help = new JMenu("Help");
+		addMenuItem(help, "About", "About 2APL", null, KeyEvent.VK_F1);
 		// addMenuItem(options,"Settings","Change Settings",null,KeyEvent.VK_F2);
-		menubar.add(options);
+		menubar.add(help);
 		masLoaded(false);
 		setMessenger(null);
 	}
@@ -170,15 +209,19 @@ public class Toolbar implements ActionListener, ItemListener
 					ActionEvent.CTRL_MASK));
 		menuItem.getAccessibleContext().setAccessibleDescription(description);
 		m.add(menuItem);
-		menuItems.put(icon, menuItem);
+		menuItems.put(icon == null ? name : icon, menuItem);
 	}
 
 	private void addCheckBoxMenuItem(JMenu m, String name, String description,
 			String icon, boolean checked, int key)
 	{
-		JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(name,
-				makeIcon(icon), checked);
-		menuItem.setActionCommand(icon);
+		JCheckBoxMenuItem menuItem;
+		if (icon == null) 
+			menuItem = new JCheckBoxMenuItem(name, checked);
+		else
+			menuItem = new JCheckBoxMenuItem(name, makeIcon(icon), checked);
+		
+		menuItem.setActionCommand(icon == null ? name : icon);
 		menuItem.addActionListener(this);
 		
 		if (key >= KeyEvent.VK_F1 && key <= KeyEvent.VK_F9)
@@ -190,7 +233,7 @@ public class Toolbar implements ActionListener, ItemListener
 		menuItem.addItemListener(this);
 		menuChecks.add(menuItem);
 		m.add(menuItem);
-		menuItems.put(icon, menuItem);
+		menuItems.put(icon == null ? name : icon, menuItem);
 	}
 
 	public void addButton(String s, String tooltip)
@@ -256,6 +299,8 @@ public class Toolbar implements ActionListener, ItemListener
 			showAboutWindow();
 		if ("Settings".equals(action))
 			showSettingsWindow();
+		if ("Exit".equals(action))
+			gui.exit();
 	}
 
 	/**
@@ -340,6 +385,14 @@ public class Toolbar implements ActionListener, ItemListener
 								: makeIcon("forall2.png"));
 
 			updateRunButtonsEnabled();
+		} else if ("Auto-update Overview".equals(action)) {
+			autoUpdateOverviewEnabled = (e.getStateChange() == ItemEvent.SELECTED);
+		} else if ("Allow State Tracer".equals(action)) {
+			tracerEnabled = (e.getStateChange() == ItemEvent.SELECTED);
+			gui.setTracerEnabled(tracerEnabled);
+		} else if ("Allow Log".equals(action)) {
+			logEnabled = (e.getStateChange() == ItemEvent.SELECTED);
+			gui.setLogEnabled(logEnabled);
 		}
 
 		// Synchronization of Check buttons in the Menu and in the Toolbar.
@@ -348,14 +401,14 @@ public class Toolbar implements ActionListener, ItemListener
 		int i = 0;
 		for (JCheckBoxMenuItem c : menuChecks)
 		{
-			if (c == e.getItem())
+			if (c == e.getItem() && i < toolbarChecks.size())
 				toolbarChecks.get(i).setSelected(c.isSelected());
 			i++;
 		}
 		i = 0;
 		for (JToggleButton c : toolbarChecks)
 		{
-			if (c == e.getItem())
+			if (c == e.getItem() && i < menuChecks.size())
 				menuChecks.get(i).setSelected(c.isSelected());
 			i++;
 		}
@@ -487,8 +540,11 @@ public class Toolbar implements ActionListener, ItemListener
 		runningModules.add(module);
 		for (String command : disableDuringExecutionCmds)
 		{
-			buttons.get(command).setEnabled(false);
-			menuItems.get(command).setEnabled(false);
+			if (buttons.get(command) != null)
+				buttons.get(command).setEnabled(false);
+			
+			if (menuItems.get(command) != null)
+				menuItems.get(command).setEnabled(false);
 		}
 		updateRunButtonsEnabled();
 	}
@@ -506,8 +562,11 @@ public class Toolbar implements ActionListener, ItemListener
 		{
 			for (String command : disableDuringExecutionCmds)
 			{
-				buttons.get(command).setEnabled(true);
-				menuItems.get(command).setEnabled(true);
+				if (buttons.get(command) != null)
+					buttons.get(command).setEnabled(true);
+				
+				if (menuItems.get(command) != null)
+					menuItems.get(command).setEnabled(true);
 			}
 		}
 		updateRunButtonsEnabled();
