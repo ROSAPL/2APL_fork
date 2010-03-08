@@ -63,7 +63,7 @@ public class APAPL {
                         for (int i = 0; i < listOfFiles.length; i++) {
                             if (listOfFiles[i].isFile()
                                     && listOfFiles[i].getName()
-                                            .endsWith(".mas")) {
+                                            .endsWith(".xml")) {
                                 System.out.print("Found mas file "
                                         + listOfFiles[i].getName()
                                         + " in directory "
