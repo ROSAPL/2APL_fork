@@ -78,33 +78,18 @@
   	<mkdir dir="${releasedir}/environments"/>
   	
     <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
-      <include name="blockworld/**" />      
-    	<manifest>
-        <attribute name="Main-Class" value="blockworld.Env"/>
-	    </manifest>
-    </jar>
-  	
-    <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
-      <include name="blockworld/**" />      
+      <include name="blockworld/**" />
+    	<include name="apapl/data/**" />
+    	<include name="apapl/Environment.class" />
+    	<include name="apapl/ExternalActionFailedException.class" />
     	<manifest>
         <attribute name="Main-Class" value="blockworld.Env"/>
 	    </manifest>
     </jar>
   	
   	<!-- Distributes re-compiled blockworld environment to the examples -->
-    <jar basedir="${builddir}/" destfile="${releasedir}/examples/explorer and carrier/blockworld.jar">
-      <include name="blockworld/**" />      
-    	<manifest>
-        <attribute name="Main-Class" value="blockworld.Env"/>
-	    </manifest>
-    </jar>
-  	
-    <jar basedir="${builddir}/" destfile="${releasedir}/examples/harry and sally/blockworld.jar">
-      <include name="blockworld/**" />      
-    	<manifest>
-        <attribute name="Main-Class" value="blockworld.Env"/>
-	    </manifest>
-    </jar>  
+    <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/explorer and carrier/blockworld.jar" />
+    <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/harry and sally/blockworld.jar" />
   	  	
   </target>
   
@@ -120,7 +105,8 @@
 
   <target name="demo" depends="release">
     <java jar="${releasedir}/2apl.jar" fork="true" >
-    <arg value="-nojade" />	
+    <arg value="-nojade" />
+    <arg value="-nogui" />	
     <arg value="${releasedir}/examples/explorer and carrier/explorerandcarrier.mas" />
     	<assertions>
     	  <enable />
@@ -131,7 +117,7 @@
 	 <target name="harrysallyxml" depends="release">
 	    <java jar="${releasedir}/2apl.jar" fork="true" >
 	    <arg value="-nojade" />	
-		<arg value="-nogui" />	
+		  <!-- <arg value="-nogui" /> -->	
 	    <arg value="${releasedir}/examples/harry and sally/harrysallymas.xml" />
 	    	<assertions>
 	    	  <enable />
