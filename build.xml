@@ -82,6 +82,7 @@
     	<include name="apapl/data/**" />
     	<include name="apapl/Environment.class" />
     	<include name="apapl/ExternalActionFailedException.class" />
+    	<include name="apapl/Substitutable.class" />
     	<manifest>
         <attribute name="Main-Class" value="blockworld.Env"/>
 	    </manifest>
