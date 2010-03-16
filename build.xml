@@ -91,7 +91,8 @@
   	<!-- Distributes re-compiled blockworld environment to the examples -->
     <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/explorer and carrier/blockworld.jar" />
     <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/harry and sally/blockworld.jar" />
-  	  	
+  	<delete dir="${releasedir}/environments" />
+  	
   </target>
   
   <target name="run" depends="release">
