@@ -371,15 +371,6 @@ public class ExternalAction extends Plan {
             return;
         }
 
-        boolean methodExists = false;
-        for (Method m : environment.getClass().getMethods())
-            methodExists = methodExists || checkMethod(m);
-
-        // if (!methodExists)
-        // warnings.add("Action \""+this+"\" refers to a method that is not available.");
-        if (!methodExists)
-            warnings.add("Action \"" + toRTF(0)
-                    + "\" refers to a method that is not available.");
     }
 
     public Term getPlanDescriptor() {
