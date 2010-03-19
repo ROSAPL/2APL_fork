@@ -50,7 +50,7 @@ class MASFilenameFilter implements FilenameFilter {
 	@Override
 	public boolean accept(File dir, String name) {
 
-		if( name.endsWith(".mas") || name.endsWith(".xml") )
+		if( name.endsWith(".mas") )
 			return true;
 		
 		return false;

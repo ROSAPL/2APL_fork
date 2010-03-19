@@ -42,35 +42,6 @@ public class APAPLBuilder {
     }
 
     /**
-     * Builds a multi-agent system from a MAS specification file. 
-     * Distinguishes between <i>.mas</i>- and <i>.xml</i>-files.
-     * 
-     * @param masfile the file that specifies the MAS
-     * @param msgr the messenger used by the modules for communication
-     * @param exec the executor implementing the strategy for executing the
-     *        modules
-     * @return the MAS constructed from the specification file
-     * @throws ParseMASException
-     * @throws ParseModuleException
-     * @throws ParsePrologException
-     * @throws LoadEnvironmentException
-     */
-    public APLMAS buildMas(File masfile, Messenger msgr, Executor exec)
-            throws ParseMASException, ParseModuleException,
-            ParsePrologException, LoadEnvironmentException {
-
-    	if( masfile.getName().endsWith(".xml")) {
-    		return buildMasXML(masfile,msgr,exec);
-        }
-        else if( masfile.getName().endsWith(".mas")) {
-       		return buildMasTraditional(masfile,msgr,exec);
-        }
-    	
-    	return null;
- 
-    }
-    
-    /**
      * Loads a MAS from an XML-specification.
      * 
      * @param masfile the file that specifies the MAS
@@ -83,7 +54,7 @@ public class APAPLBuilder {
      * @throws ParsePrologException
      * @throws LoadEnvironmentException
      */
-    private APLMAS buildMasXML(File masfile, Messenger msgr, Executor exec)
+    public APLMAS buildMas(File masfile, Messenger msgr, Executor exec)
     throws ParseMASException, ParseModuleException,
     ParsePrologException, LoadEnvironmentException {
 
@@ -301,6 +272,7 @@ public class APAPLBuilder {
      * @throws ParseModuleException
      * @throws ParsePrologException
      * @throws LoadEnvironmentException
+     * @obsolete 
      */
     private APLMAS buildMasTraditional(File masfile, Messenger msgr, Executor exec)
             throws ParseMASException, ParseModuleException,
