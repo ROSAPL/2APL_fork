@@ -1,0 +1,21 @@
+\documentclass[a4paper]{report}
+\include{preamble}
+\include{mylistings}
+\usepackage{epsfig}
+
+
+\title{{\bf 2APL} \\
+A Practical Agent Programming Language\\
+\vspace*{.15in} User Guide}
+
+\data{Version 1.0}
+
+\begin{document}
+    \maketitle
+    \include{chapters/introduction}
+    \include{chapters/ide}
+    \include{chapters/language}
+    \include{chapters/environment}
+\bibliographystyle{abbrv}
+\bibliography{references}
+\end{document}
