@@ -134,12 +134,12 @@ public class APAPLBuilder {
 				
 				assert env != null;
 				
-				// create environment command from parameters
+				// create environment command (possibly using parameters from parameters)
+				EnvironmentCommand cmd = new EnvironmentCommand(
+						EnvironmentCommand.INIT
+						);
+
 				if( envParams.entrySet().size() != 0 ) {
-		
-					EnvironmentCommand cmd = new EnvironmentCommand(
-							EnvironmentCommand.INIT
-							);
 					
 					for( Entry<String, String> entry : envParams.entrySet() ) {
 						
@@ -152,35 +152,40 @@ public class APAPLBuilder {
 						}
 						
 						// Numeral or Identifier?
-						Integer i = new Integer(entry.getValue());
-						if( i != null ) {
+						// 1. is it an integer?
+						try {
+							Integer i = new Integer(entry.getValue());
 							value = new Numeral(i.longValue());
 						}
-						else {
-							Double d = new Double(entry.getValue());
-							if( d != null ) {
+						catch(NumberFormatException e1) {
+							// 2. is it an double?
+							try {
+								Double d = new Double(entry.getValue());
 								value = new Numeral(d.doubleValue());
 							}
-							else 
+							catch(NumberFormatException e2) {
+								// 3. it must be an identifier!
 								value = new Identifier(entry.getValue());
+							}
 						}
+					
 						assert value != null;
 						
 						Function f = new Function(key,value);
 						cmd.addParameter(f);
 					}
 					
-					// manage
-					try {
-						env.manageEnvironment(cmd);
-					} catch (ManagementException e) {
-						System.out.println("Could not execute environment-command " + cmd.toProlog());
-						System.out.println("Reason: " + e.getMessage());
-					} catch (NoEnvironmentException e) {
-						System.out.println("Could not execute environment-command " + cmd.toProlog());
-						System.out.println("Reason: " + "no environment");
-					}
+				}
 
+				// manage
+				try {
+					env.manageEnvironment(cmd);
+				} catch (ManagementException e) {
+					System.out.println("Could not execute environment-command " + cmd.toProlog());
+					System.out.println("Reason: " + e.getMessage());
+				} catch (NoEnvironmentException e) {
+					System.out.println("Could not execute environment-command " + cmd.toProlog());
+					System.out.println("Reason: " + "no environment");
 				}
 				
 			}
