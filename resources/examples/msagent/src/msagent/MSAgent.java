@@ -42,7 +42,7 @@ implements MSAgentListener
 		
 		try
 		{
-			String path = (MSAgent.class.getResource("").getPath().split("msagentenvironment.jar!")[0].split("file:/")[1] + "dll/MSAgentAvatar.dll").replaceAll("%20", " ");
+			String path = (MSAgent.class.getResource("").getPath().split("[\\w]+\\.jar\\!")[0].split("file:/")[1] + "dll/MSAgentAvatar.dll").replaceAll("%20", " ");
 			if (!new File(path).exists())
 				throw new MSAgentException("Could not load native library in '" + path + "'");
 		}
@@ -267,8 +267,8 @@ implements MSAgentListener
 class Env extends Thread
 {
 	private static Env instance;
-	private static HashMap<MSAgent, Integer> msAgentIDs;
-	private static HashMap<MSAgent, HashSet<MSAgentListener>> listeners;
+	private static volatile HashMap<MSAgent, Integer> msAgentIDs;
+	private static volatile HashMap<MSAgent, HashSet<MSAgentListener>> listeners;
 
 	private boolean running;
 	private LinkedList<State> states;
@@ -350,7 +350,7 @@ class Env extends Thread
 				case MSAgentActionEvent.INITIAL:
 					//System.out.println("STATE_INITIAL");
 
-					System.load((MSAgent.class.getResource("").getPath().split("msagentenvironment.jar!")[0].split("file:/")[1] + "dll/MSAgentAvatar.dll").replaceAll("%20", " "));
+					System.load((MSAgent.class.getResource("").getPath().split("[\\w]+\\.jar\\!")[0].split("file:/")[1] + "dll/MSAgentAvatar.dll").replaceAll("%20", " "));
 					result = true;
 					break;
 				case MSAgentActionEvent.CREATEAVATAR:

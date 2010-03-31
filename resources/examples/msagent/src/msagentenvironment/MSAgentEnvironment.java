@@ -158,19 +158,6 @@ implements EnvironmentInterfaceStandard, MSAgentListener
 	}
 	
 	/***
-	 * Returns a HashSet containing all AgentListeners.
-	 * @return a HashSet with AgentListeners
-	 */
-	protected HashSet<AgentListener> getAgentListeners()
-	{
-		HashSet<AgentListener> result = new HashSet<AgentListener>();
-		for (AgentContainer agentContainer : agentContainers.values())
-			result.addAll(agentContainer.getListeners());
-		
-		return result;		
-	}
-	
-	/***
 	 * Returns a HashSet of all attached EnvironmentListeners.
 	 * @return a HashSet containing EnvironmentListeners
 	 */
