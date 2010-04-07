@@ -2,20 +2,51 @@
 \begin{chapter}{2APL Environments}
 \label{chap:environment}
 
-    2APL agents can interact with external environments by performing actions in it.
-    The environments for 2APL agents are implemented in Java. You
-    can either use the {\tt blockworld} environment that is provided by the 2APL
-    platform (see section~\ref{sec:externalaction}), or implement your own environment.
-    For implementing your own environment, we refer to the following
-    document~\cite{ifi0910behrens}. In the following, we explain
-    how to use the blockworld environment. In general, there are two kinds of
-    actions that an agent can perform with respect to the
-    environments: the management actions and the domain actions.
+2APL agents can interact with environments in two ways: 
+1. performing external actions which might yield a return-value (e.g. sensing action),
+and 2. getting external events from the environment. 
+The agents can interact with all environments that conform to the
+\emph{Environment Interface Standard} (EIS)~\cite{ifi0910behrens}, which can be downloaded from 
+\texttt{http://sourceforge.net/projects/apleis}. 
+EIS is an initiative for the easy exchange of environments between different
+agent platforms.
+You can either use an environment that conforms to the standard or implement your own one and
+ensure its conformity. To that end please refer to the documents that accompany the EIS-package.
 
-    The management actions are generic to all kind of environments and are aimed
+%    2APL agents can interact with external environments by performing actions in it.
+%    The environments for 2APL agents are implemented in Java. You
+%    can either use the {\tt blockworld} environment that is provided by the 2APL
+%    platform (see section~\ref{sec:externalaction}), or implement your own environment.
+%    For implementing your own environment, we refer to the following
+%    document~\cite{ifi0910behrens}. In the following, we explain
+%    how to use the blockworld environment. In general, there are two kinds of
+%    actions that an agent can perform with respect to the
+%    environments: the management actions and the domain actions.
+
+The 2APL-package contains the \texttt{blockworld} environment 
+(see section~\ref{sec:externalaction}).
+In the following, we explain
+how to use the blockworld environment. In general, there are two kinds of
+actions that an agent can perform with respect to the
+environments: \emph{management actions} and \emph{domain actions}.
+
+
+    The management actions are EIS-specific and thus generic to all kind of environments and are aimed
     at managing the agents-entities-relations, i.e., relating one 2APL agent with
-    entities (for example their appearance) in the environments. The syntax of these
-    actions are similar to external actions. The following are the
+    entities (for example their appearance) in the environments. 
+    EIS makes a strict distinction between agents (think: brains) and entities (think: bodies). 
+    An entity can be for example a robot that is controlled by an agent. 
+    In general entities provide agents with sensory and effectoric capabilities, agents can 
+    sense and act \emph{through} entities.
+    EIS manages the
+    so called \emph{agents-entities-relation}, which denotes which agent controls which
+    entity. It is said that if an agent and an entity are \emph{associated} the agent controls the
+    entity and thus has access to its sensors and effectors.
+    In 2APL this agents-entities-relation is managed on the agents-level, that is the agents
+    are to decide which entities they control.
+    
+    The syntax of the management actions
+    actions is similar to external actions' one. The following are the
     management actions that an 2APL agent can perform with respect
     to an environment. For the blockworld environment, the term {\tt
     env} should be replaced by {\tt blockworld}.
@@ -97,8 +128,9 @@
   \begin{section}{Using the blockworld environment}
     \label{sec:blockworld}
 
-        The {\tt blockworld} is an external environment in which agents can perform
-        actions. The {\tt blockworld} consists of a $n \times n$ world where agents
+%        The {\tt blockworld} is an external environment in which agents can perform
+%        actions. 
+        The {\tt blockworld} consists of a $n \times n$ world where agents
         can move in four directions (north, south, east and west). The world can
         contain bombs, stones, and dustbins. Agents can pickup and drop bombs. When a
         bomb is dropped in a dustbin, the bomb is destroyed. Figure
