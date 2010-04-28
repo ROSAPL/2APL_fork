@@ -1,5 +1,3 @@
-\newcommand{\remarktmb}[1]{\textbf{RemarkTMB:}#1}
-
 \begin{chapter}{Introduction}
 \label{chap:introduction}
 
@@ -7,23 +5,34 @@ The 2APL Platform and its corresponding Eclipse plug-in editor were
 developed to support the implementation and execution of multi-agent
 systems programmed in the 2APL programming
 language~\cite{Dastani:08a,D-RULECHP09,CLIMA09}. 2APL (A Practical
-Agent Programming Language, pronounced \emph{double-a-p-l}) is a BDI-based
-agent-oriented programming language that supports an effective
-integration of \emph{declarative programming} constructs such as belief and
-goals and \emph{imperative style programming} constructs such as events and
-plans. The 2APL platform provides a graphical interface through
-which a user can load, run, and monitor the execution of 2APL
-multi-agent programs using several tools, such as state tracer, 
-a log window, and a message monitor, and allows for different execution modes. 
-The platform allows communication among agents and can run
-on several machines connected in a network. Agents hosted on
-different 2APL platforms can communicate with each other. In order
-to facilitate the implementation of 2APL multi-agent programs, a
-2APL editor plug-in for Eclipse has been developed. Using this editor it
-is possible to load, run, and monitor 2APL multi-agent programs
-directly from Eclipse.
+Agent Programming Language, pronounced \emph{double-a-p-l}) is a
+BDI-based agent-oriented programming language that supports an
+effective integration of \emph{declarative programming} constructs
+such as belief and goals and \emph{imperative style programming}
+constructs such as events and plans. The 2APL platform provides a
+graphical interface through which a user can load, run, and monitor
+the execution of 2APL multi-agent programs using several tools, such
+as state tracer, a log window, and a message monitor, and allows for
+different execution modes. The platform allows communication among
+agents and can run on several machines connected in a network.
+Agents hosted on different 2APL platforms can communicate with each
+other. In order to facilitate the implementation of 2APL multi-agent
+programs, a 2APL editor plug-in for Eclipse has been developed.
+Using this editor it is possible to load, run, and monitor 2APL
+multi-agent programs directly from Eclipse.
 
-\textbf{TMB: we need a short elaboration on the structure of the document. "In this chapter we..."}
+In this user guide, we first explain how the 2APL software can be
+downloaded, installed, executed, and used. Different tools for
+supporting the development of multi-agent programs, such as
+monitoring tools, are explained in details.
+Section~\ref{chap:eclipse} presents the details of an Eclipse
+plug-in editor that is developed for writing 2APL multi-agent
+programs. Section~\ref{chap:language} gives an overview of the
+syntax and intuitive meaning of 2APL programming constructs. Various
+examples are provided to illustrate the use of this programming
+language. Finally, section~\ref{chap:environment} explains how
+environments can be shared by different agents and how such
+environments can be developed and used in the 2APL framework.
 
 \begin{section}{Software requirements}
 The 2APL platform has been tested on Windows 2000 and Windows XP, as
@@ -68,34 +77,33 @@ follow the next steps:
           named {\tt 2APL}.
 \end{enumerate}
 
-The downloaded 2APL platform is an archive, called {\tt
-2APL.zip}, containing the file {\tt 2apl.jar} and two folders {\tt
-lib} and {\tt examples}. The file {\tt 2apl.jar} includes all the
-class files of the 2APL Platform, the {\tt lib} directory contains
-all necessary files to run the 2APL platform (e.g., the class files
-of JIProlog\footnote{JIProlog is a Java based Prolog reasoning
-engine that is used by the individual 2APL agents to represent and
-reason about their beliefs}), and the {\tt examples} folder contains
-some multi-agent systems programmed in 2APL. 
-\remarktmb{can we move the example somewhere else? maybe to a separate examples (sub)-section?}
-The example directory
-includes a multi-agent system program, called {\tt harry and sally}.
-This example is about two agents, {\tt harry} and {\tt sally}, who
-are located in the so-called {\tt blockworld} environment. The {\tt
-blockworld} environment is a $n \times n$ grid, which can contain
-other agents, bombs, and dustbins in which bombs can be thrown away.
-{\tt Sally} is responsible for searching bombs and notifying Harry
-in case a bomb has been found. {\tt Harry} is responsible for
-cleaning up the {\tt blockworld} by picking up the bomb and throwing
-it in a dustbin. Chapter \ref{chap:language} will elaborate on this
-example in more details. In the sequel, we will explain the 2APL
-programming language and its platform in terms of this example. The
-file {\tt blockworld.jar} is the implementation of the blockworld
-environment. The details of the {\tt blockworld} environment will be
-explained in chapter \ref{chap:environment}. In the example
-directory, there are more examples of 2APL multi-agent programs.
-Each example is explained in a readme document that is included in
-the directory of the example.
+The downloaded 2APL platform is an archive, called {\tt 2APL.zip},
+containing the file {\tt 2apl.jar} and two folders {\tt lib} and
+{\tt examples}. The file {\tt 2apl.jar} includes all the class files
+of the 2APL Platform, the {\tt lib} directory contains all necessary
+files to run the 2APL platform (e.g., the class files of
+JIProlog\footnote{JIProlog is a Java based Prolog reasoning engine
+that is used by the individual 2APL agents to represent and reason
+about their beliefs}), and the {\tt examples} folder contains some
+multi-agent systems programmed in 2APL.
+
+The example directory includes a multi-agent system program, called
+{\tt harry and sally}. This example is about two agents, {\tt harry}
+and {\tt sally}, who are located in the so-called {\tt blockworld}
+environment. The {\tt blockworld} environment is a $n \times n$
+grid, which can contain other agents, bombs, and dustbins in which
+bombs can be thrown away. {\tt Sally} is responsible for searching
+bombs and notifying Harry in case a bomb has been found. {\tt Harry}
+is responsible for cleaning up the {\tt blockworld} by picking up
+the bomb and throwing it in a dustbin. Chapter \ref{chap:language}
+will elaborate on this example in more details. In the sequel, we
+will explain the 2APL programming language and its platform in terms
+of this example. The file {\tt blockworld.jar} is the implementation
+of the blockworld environment. The details of the {\tt blockworld}
+environment will be explained in chapter \ref{chap:environment}. In
+the example directory, there are more examples of 2APL multi-agent
+programs. Each example is explained in a readme document that is
+included in the directory of the example.
 \end{section}
 
 \begin{section}{Getting started}
@@ -121,20 +129,20 @@ On every operating system, you can invoke the 2APL platform from the command pro
 For help you can run \texttt{java -jar 2apl.jar -help}. Here is the output:
 \begin{verbatim}
 $ java -jar 2apl.jar -help
- 
-2APL (A Practical Agent Programming Language) Interpreter 
- 
-Usage: java -jar 2apl.jar [-nogui] [-nojade] [-help] [<path to MAS file>] 
- 
-Options: 
-   -nogui   do not open graphical user interface; start the MAS immediately 
-   -nojade  skip JADE configuration and run in standalone mode 
-   -help    print this message 
+
+2APL (A Practical Agent Programming Language) Interpreter
+
+Usage: java -jar 2apl.jar [-nogui] [-nojade] [-help] [<path to MAS file>]
+
+Options:
+   -nogui   do not open graphical user interface; start the MAS immediately
+   -nojade  skip JADE configuration and run in standalone mode
+   -help    print this message
 \end{verbatim}
 
     \begin{figure}
         \begin{center}
-        	\epsfig{figure=images/configuration.eps,width=.3\textwidth}
+            \epsfig{figure=images/configuration.eps,width=.3\textwidth}
             %\epsfig{figure=images/configuration.eps,angle=0, width=.3\textwidth}
             \caption{The window with 2APL configuration options.}\label{fig:configuration}
         \end{center}
@@ -148,13 +156,13 @@ options are useful when a multi-agent program are to be run in a
 distributed manner on different machines. In this user guide, we
 focus on the stand-alone run mode of the 2APL platform.
 
-After a successful startup the main user interface (see Fig.~\ref{fig:mainscreen}) appears. 
+After a successful startup the main user interface (see Fig.~\ref{fig:mainscreen}) appears.
 This one allows to load, run, and monitor the
 execution of multi-agent systems programmed in 2APL.
 
     \begin{figure}
         \begin{center}
-        	\epsfig{figure=images/mainscreen.eps,width=0.8\textwidth}
+            \epsfig{figure=images/mainscreen.eps,width=0.8\textwidth}
             %\epsfig{figure=images/mainscreen.eps,angle=0, width=0.8\textwidth}
             \caption{The main 2APL user interface.}\label{fig:mainscreen}
         \end{center}
