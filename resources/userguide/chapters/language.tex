@@ -4,9 +4,9 @@
 
     \begin{section}{Multi-agent system specification}
         2APL is a multi-agent programming language that provides programming
-        constructs to specify both multi-agent systems as well as individual
+        constructs to specify both multi-agent systems and individual
         agents. The configuration of a multi-agent system is specified in XML
-        format using the tag {\tt apaplmas}. The specification is in
+        format using the tag {\tt apaplmas}. The specification is
         included in a file with the {\tt .mas} extension.
         Within this tag, agents and the environments in which the agents operate are
         specified. The environment tags are optional since multi-agent systems
@@ -207,32 +207,28 @@ The state of some of these ingredients will change during the
 agent's execution while the state of other ingredients remains the
 same during the execution of the agent. In the rest of this section,
 we will discuss each ingredient and give examples to illustrate
-them. Before explaining the syntax of a single agent, however, we
-first consider the multi-agent system that is specified in terms of
-multiple agents.
-
+them.
 
 \begin{section}{Beliefs and goals}
 
 A 2APL agent may have beliefs and goals which change during the
-agent's execution. The \emph{beliefs} of the agents are implemented
-by the belief base, which contains information the agent believes
-about its surrounding world including other agents. The
-implementation of the initial belief base starts with the keyword
-'{\tt Beliefs:}' followed by one or more belief expressions of the
-form \bla{belief}. Note that a \bla{belief} expression is treated as
-a Prolog fact or rule such that the belief base of a 2APL agent
-becomes a Prolog program You can use arbitrary Prolog programs to
-represent an agent's belief base, but this should be done with care
-as dynamics constructs of Prolog such as assert and retract may
-interact with belief update actions, resulting in undesirable
-behavior. All facts are assumed to be grounded. The code fragment
-below illustrates the implementation of the initial belief base of
-{\tt harry} which represents his information about its {\tt
-blockworld} environment. In particular, {\tt harry} believes that it
-starts working at location $(0,1)$, and that the {\tt blockworld}
-environment is clean if there are no bombs anymore and the agent is
-not carrying a bomb.
+agent's execution. The \emph{beliefs} of an agent is implemented in
+its belief base and contains information about its surrounding world
+including other agents. The implementation of the initial belief
+base starts with the keyword '{\tt Beliefs:}' followed by one or
+more belief expressions of the form \bla{belief}. Note that a
+\bla{belief} expression is treated as a Prolog fact or rule such
+that the belief base of a 2APL agent becomes a Prolog program. One
+can use arbitrary Prolog programs to represent an agent's belief
+base, but this should be done with care as dynamics constructs of
+Prolog such as assert and retract may interact with belief update
+actions, resulting in undesirable behavior. All facts are assumed to
+be grounded. The code fragment below illustrates the implementation
+of the initial belief base of {\tt harry} which represents his
+information about its {\tt blockworld} environment. In particular,
+{\tt harry} believes that it starts working at location $(0,1)$, and
+that the {\tt blockworld} environment is clean if there are no bombs
+anymore and the agent is not carrying a bomb.
 
 \begin{verbatim}
 Beliefs:
@@ -271,44 +267,44 @@ belief base, then its goal base may be modified as well.
 \begin{section}{Basic actions}
 
 In order to achieve its goals, a 2APL agent needs to act. Basic
-actions specify the capabilities that an agent can perform to
-achieve its desirable situation. The basic actions will constitute
-an agent's plan, as we will see in the next subsection. In 2APL, six
-types of basic actions are distinguished: actions to update the
-belief base, communication actions, external actions to be performed
-in an agent's environment, abstract actions, actions to test the
-belief and goal bases, and actions to manage the dynamics of goals.
+actions specify the capabilities that an agent has to achieve its
+desirable situation. The basic actions will constitute an agent's
+plan, as we will see in the next subsection. In 2APL, six types of
+basic actions are distinguished: actions to update the belief base,
+communication actions, external actions to be performed in an
+agent's environment, abstract actions, actions to test the belief
+and goal bases, and actions to manage the dynamics of goals.
 
 \begin{subsection}*{Belief Update Action}
 
 A {\em belief update action} updates the belief base of an agent
 when executed. A belief update action \bla{beliefupdate} is an
-expression of the predicate argument form where the predicate starts
-with a capital letter. Such an action is specified in terms of pre-
-and post-conditions. An agent can execute a belief update action if
-the pre-condition of the action is derivable from its belief base.
-The pre-condition is a formula consisting of literals composed by
-disjunction and conjunction operators. The execution of a belief
-update action modifies the belief base in such a way that after the
-execution the post-condition of the action is derivable from the
-belief base. The post-condition of a belief update action is a list
-of literals. The update of the belief base by such an action removes
-the atom of the negative literals from the belief base and adds the
-positive literals to the belief base. The specification of the
-belief update actions starts with the keyword '{\tt BeliefUpdates:}'
-followed by the specifications of a set of belief update actions
-\bla{beliefupdatespecification}.
+expression of the predicate argument form, where the predicate
+starts with a capital letter. Such an action is specified in terms
+of pre- and post-conditions. An agent can execute a belief update
+action if the pre-condition of the action is derivable from its
+belief base. The pre-condition is a formula consisting of literals
+composed by disjunction and conjunction operators. The execution of
+a belief update action modifies the belief base in such a way that
+after the execution the post-condition of the action is derivable
+from the belief base. The post-condition of a belief update action
+is a list of literals. The update of the belief base by such an
+action removes the atom of the negative literals from the belief
+base and adds the positive literals to the belief base. The
+specification of the belief update actions starts with the keyword
+'{\tt BeliefUpdates:}' followed by the specifications of a set of
+belief update actions \bla{beliefupdatespecification}.
 
 The code fragment below shows an example of the specification of the
 belief update actions of {\tt harry}. In this example, the
-specification of the {\tt PickUp()} indicates that this belief
-update action can be performed if the agent does not already carry a
-bomb (i.e., the agent can carry only one bomb) and that after
-performing this action the agent will carry a bomb.  Note that the
-agent cannot perform two {\tt PickUp()} action consecutively. Note
-the use of variables in the specification of {\tt RemoveBomb(X,Y)};
-it requires that an agent can remove a bomb if it is the same
-location as the bomb. Note also that variables in the
+specification of the {\tt PickUp()} action indicates that this
+belief update action can be performed if the agent does not already
+carry a bomb (i.e., the agent can carry only one bomb) and that
+after performing this action the agent will carry a bomb.  Note that
+the agent cannot perform two {\tt PickUp()} action consecutively.
+Note the use of variables in the specification of {\tt
+RemoveBomb(X,Y)}; it requires that an agent can remove a bomb if it
+is the same location as the bomb. Note also that variables in the
 post-conditions are bounded since otherwise the facts in the belief
 base will not be grounded.
 
@@ -326,7 +322,7 @@ BeliefUpdates:
 
 A \emph{communication action} passes a message to another agent. A
 communication action \bla{sendaction} can have either three or five
-parameters. In the first case, the communication action is the
+parameters. In the last case, the communication action is the
 expression {\tt send(Receiver, Performative, Language, Ontology,
 Content)} where {\tt Receiver} is a name referring to the receiving
 agent, {\tt Performative} is a speech act name (e.g. inform,
@@ -338,13 +334,13 @@ often the case that agents assume a certain language and ontology
 such that it is not necessary to pass them as parameters of their
 communication actions. The second version of the communication
 action is therefore the expression {\tt send(Receiver, Performative,
-Content)}. It should be noted that 2APL interpreter is built on the
-JADE platform. For this reason, the name of the receiving agent can
-be a local name or a full JADE name. A full jade name has the form
-{\tt localname@host:port/JADE} where {\tt localname} is the name as
-used by 2APL, {\tt host} is the name of the host running the agent's
-container and {\tt port} is the port number where the agent's
-container, should listen to (see \cite{jade2005} for more
+Content)}. It should be noted that the 2APL interpreter is built on
+the JADE platform. For this reason, the name of the receiving agent
+can be a local name or a full JADE name. A full jade name has the
+form {\tt localname@host:port/JADE} where {\tt localname} is the
+name as used by 2APL, {\tt host} is the name of the host running the
+agent's container and {\tt port} is the port number where the
+agent's container, should listen to (see \cite{jade2005} for more
 information on JADE standards). The following is an example of a
 communication action by which {\tt sally} informs {\tt harry} about
 a bomb location.
@@ -368,21 +364,16 @@ an external action by performing a sense action, defined as an
 external action, or by means of events generated by the environment.
 An external action \bla{externalaction} is an expression of the form
 {\tt @Env(Action,ReturnVal)}. The parameter {\tt Env} is the name of
-the agent's environment as specified in the MAS-file and {\tt Action} 
-is the action the agent
-wants to perform in the environment. 
-%The environment is assumed to
-%have a state represented by the instance variables of the class. The
-%execution of an action in an environment is then a read/write
-%operation on the state of the environment. 
-The parameter {\tt ReturnVal} is a list of values, possibly an empty list, returned by the
-corresponding method. An example of the implementation of an
-external action is {\tt @blockworld( enter( X, Y, blue ), \_ )}.
-This action causes an agent to enter the blockworld environment at
-position {\tt (X,Y)}. The appearance color of the agent will be
-blue. The execution of this action causes the agent to appear in
-blue at position {\tt (X,Y)} in the blockworld environment. An empty
-list is returned.
+the agent's environment as specified in the MAS-file and {\tt
+Action} is the action the agent wants to perform in the environment.
+The parameter {\tt ReturnVal} is a list of values, possibly an empty
+list, returned by the corresponding method. An example of the
+implementation of an external action is {\tt @blockworld( enter( X,
+Y, blue ), \_ )}. This action causes an agent to enter the
+blockworld environment at position {\tt (X,Y)}. The appearance color
+of the agent will be blue. The execution of this action causes the
+agent to appear in blue at position {\tt (X,Y)} in the blockworld
+environment. An empty list is returned.
 \end{subsection}
 
 \begin{subsection}*{Abstract Action}
@@ -411,11 +402,12 @@ are used as arguments in the belief expression. A belief test action
 is basically a (Prolog) query to the belief base which can be used
 in a plan to 1) instantiate a variable in rest of the plan, or 2)
 block the execution of the plan (if the test fails). For example,
-let the belief based of {\tt harry} contains the fact {\tt
-start(0,1)}. the belief test action {\tt B(start(X,Y))} succeeds
+let the belief base of {\tt harry} contains the fact {\tt
+start(0,1)}. The belief test action {\tt B(start(X,Y))} succeeds
 resulting in the substitution {\tt [X/0 , Y/1]}. If there are more
-than one substitutions possible, then the first substitution will be
-taken. \textbf{TMB: Which one is the first?}
+than one substitutions possible, then the substitution that is
+resulted from unifying the query term with the first term in the
+belief base is taken.
 
 A \emph{goal test action} is to test whether a formula is derivable
 from the goal base, i.e., whether the agent has a certain goal from
@@ -792,7 +784,7 @@ In a multi agent system it can happen that there are more instances
 of one agent type. Although these agents are almost the same, they
 might have slightly different beliefs, goals, plans or rules. 2APL
 introduces an encapsulation mechanism to include agent files into
-other agent files. You can include another file with the {\tt
+other agent files. One can include another file with the {\tt
 Include: filename} command. The resulting agent will be a union of
 the two (or more) files. In our example, for instance, both {\tt
 harry} and {\tt sally} are capable of moving to a certain location

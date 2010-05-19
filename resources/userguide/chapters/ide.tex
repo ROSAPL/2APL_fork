@@ -5,13 +5,13 @@ editing of 2APL multi-agent programs. In this section we will
 describe how to install, configure and use this editor.
 
 \begin{section}{Requirements}
-You should have a basic understanding of the 2APL platform itself as
-described in previous section. In order to run the 2APL editor you
-need the latest version of Eclipse Xtext.
+A basic understanding of the 2APL platform, as described in previous
+section, is required. In order to run the 2APL editor the latest
+version of Eclipse Xtext is required.
 \end{section}
 
 \begin{section}{Getting Software and Installation}
-You can download the {\tt 2APL Full Package} that contains the 2APL
+One can download the {\tt 2APL Full Package} that contains the 2APL
 platform, the Eclipse plug\-in editor, and the Eclipse Xtext version
 all configured and installed (286 MB), or alternatively download all
 the packages separately and configure them by hand.
@@ -39,8 +39,8 @@ In order to use the total package:
         \end{figure}
 \end{enumerate}
 
-To manually install the 2APL editor you need to follow the next
-procedure:
+To manually install the 2APL editor the next procedure should be
+followed:
 
 \begin{enumerate}
     \item Download the Eclipse Xtext Galileo 0.7.2 version from its homepage using the following URL:
@@ -58,7 +58,7 @@ procedure:
 
     \item Extract the files to the Eclipse plug\-in directory named {\tt eclipse$\backslash$plugins}.
 
-    \item Download a XML plug\-in for Eclipse using the following URL:
+    \item Download an XML plug\-in for Eclipse using the following URL:
     \begin{center}
     {\tt http://sourceforge.net/projects/editorxml/files/Rinzo}
     \end{center}
@@ -81,29 +81,26 @@ Existing projects, e.g., the multi-agent program {\tt harry and
 sally} in the {\tt 2APL$\backslash$examples$\backslash$harry and
 sally}\footnote{For unix systems, path representations should be
 modified accordingly.}, can be loaded and edited using the import
-wizard. For importing an existing project, you should have the
-existing projects in the
-\texttt{D:$\backslash$2APL$\backslash$workspace} directory. Once you
-have your projects in this directory, choose {\tt File -> import}. A
-selection window will appear. Select item {\tt General -> Existing
+wizard. For importing an existing project, the existing projects
+should be located in the directory
+\texttt{D:$\backslash$2APL$\backslash$workspace}. Once the projects
+are located in this directory, one can choose {\tt File -> import}.
+A selection window will appear. Select item {\tt General -> Existing
 Projects into Workspace}, press {\tt Next}, browse from directory
 containing the project files, and press {\tt Finish}. The project
 will appear in the right panel. These steps are illustrated in
 Figure~\ref{fig:existingproject}.
     \begin{figure}[h]
-        \begin{minipage}{0.3\linewidth}
             \begin{center}
                 \epsfig{figure=images/existingprojects.eps,width=\textwidth}
             \end{center}
-        \end{minipage}
-        \hspace{.5cm}
-        \begin{minipage}{0.3\linewidth}
+        \begin{minipage}{0.5\linewidth}
             \begin{center}
                 \epsfig{figure=images/existingproject1.eps,width=\textwidth}
             \end{center}
         \end{minipage}
         \hspace{.5cm}
-        \begin{minipage}{0.3\linewidth}
+        \begin{minipage}{0.5\linewidth}
             \begin{center}
                 \epsfig{figure=images/existingproject2.eps,width=\textwidth}
             \end{center}
@@ -113,9 +110,9 @@ Figure~\ref{fig:existingproject}.
 \end{subsection}
 
 \begin{subsection}{Creating and Editing a New Project based on existing Multi-Agent Program Files}
-This option can be used if you have already written a multi-agent
-program with another editor and want now to develop it further with
-the 2APL Eclipse editor.
+This option can be used if a multi-agent program is already written
+with another editor. One can develop the multi-agent program further
+with the 2APL Eclipse editor.
 
 \begin{enumerate}
         \item To create a new empty project without any files, select the menu \texttt{File -> new}.
@@ -127,11 +124,11 @@ the 2APL Eclipse editor.
         Select in the {\tt Select Wizard} the option {\tt General -> File System} and click {\tt
         Next}.
 
-        \item Use {\tt Browse} and select the directory in which your already written multi-agent system
+        \item Use {\tt Browse} and select the directory in which the already written multi-agent system
         files are located.
 
-        \item You can now select the files to import and click {\tt
-        Finish}. Your files are now available in the project in the
+        \item One can now select the files to import and click {\tt
+        Finish}. The files are now available in the project in the
         left panel of the editor.
 \end{enumerate}
 
@@ -198,8 +195,7 @@ taken.
                         \epsfig{figure=images/newfile1.eps,width=.6\textwidth}
                     \end{center}
                 \end{minipage}
-                \hspace{.5cm}
-                \begin{minipage}{0.3\linewidth}
+                \begin{minipage}{0.4\linewidth}
                     \begin{center}
                         \epsfig{figure=images/newfile2.eps,width=\textwidth}
                     \end{center}
@@ -218,7 +214,7 @@ taken.
 To change to colors in the 2APL editor go to the
 \texttt{Preferences} page, under the menu \texttt{Window}, and then
 select \texttt{Xtext Languages}, \texttt{APAPL}, \texttt{Syntax
-Coloring}. Here you can change to colors for some rules. You can
+Coloring}. Here one can change the colors for some rules. One can
 also restore the color settings, back to black as default, by
 clicking the \texttt{Restore Defaults} button. This is illustrated
 in Figure~\ref{fig:coloring}.
@@ -237,31 +233,32 @@ in Figure~\ref{fig:coloring}.
     To run the 2APL platform from Eclipse follow the next steps.
     \begin{enumerate}
     \item Open the \texttt{External Tools Configurations} as
-    illustrated in the next Figure.
+    illustrated in Figure~\ref{fig:runconfiguration}.
         \begin{figure}[ht]
             \begin{center}
                 \epsfig{figure=images/runconfiguration.eps,width=.5\textwidth}
             \end{center}
-            \label{fig:runconfiguration}
+            \caption{The first step to run 2APL from Eclipse.}\label{fig:runconfiguration}
         \end{figure}
 
     \item In the External Tools Configurations window, right click \texttt{program} and select
-    \texttt{new}. This is illustrated in the next Figure.
+    \texttt{new}. This is illustrated in the Figure~\ref{fig:runconfiguration1}.
         \begin{figure}[ht]
             \begin{center}
                 \epsfig{figure=images/runconfiguration1.eps,width=.3\textwidth}
-            \end{center}\label{fig:runconfiguration1}
+            \end{center}
+            \caption{The second step to run 2APL from Eclipse.}\label{fig:runconfiguration1}
         \end{figure}
 
     \item In the configurations window, set the following values.
         \begin{enumerate}
         \item Name: a name for the run configuration (e.g. \texttt{2APL with GUI})
 
-        \item Location: the full path to your java.exe\\
+        \item Location: the full path to the java.exe\\
         (e.g. \texttt{C:$\backslash$Program
         Files$\backslash$Java$\backslash$jdk1.6.0\_04$\backslash$bin$\backslash$java.exe}).
 
-        \item Working Directory: the path to your 2APL directory where {\tt 2apl.jar} is
+        \item Working Directory: the path to the 2APL directory where {\tt 2apl.jar} is
         located\\
         (e.g. \texttt{D:$\backslash$apapl}).
 
@@ -282,7 +279,7 @@ in Figure~\ref{fig:coloring}.
             \end{figure}
 
     \item Select the multi-agent system file with the \texttt{.mas} extension to run.
-    Choose the run configuration you just created as illustrated in
+    Choose the run configuration that is just created as illustrated in
     Figure~\ref{fig:run}. The 2APL platform will start running the selected multi-agent program.
         \begin{figure}[ht]
             \begin{center}
