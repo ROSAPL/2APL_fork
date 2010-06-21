@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import apapl.SubstList;
 import java.util.Hashtable;
@@ -291,4 +292,11 @@ public class Beliefbase extends Base
 		
 	
 	}
+	
+	public Collection<String> getBeliefs() {
+	
+		return belief.getBeliefsAsStrings();
+		
+	}
+	
 }

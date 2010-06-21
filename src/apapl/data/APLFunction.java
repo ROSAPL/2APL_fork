@@ -1,6 +1,8 @@
 package apapl.data;
 
 import apapl.program.Base;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import apapl.SubstList;
 
@@ -117,17 +119,18 @@ public class APLFunction extends Fact
 	private static Term eval(Term left, String name, Term right)
 	{
 		if (left instanceof APLNum && right instanceof APLNum) {
-			double l = ((APLNum)left).getVal();
-			double r = ((APLNum)right).getVal();
+			BigDecimal l = ((APLNum)left).getVal();
+			BigDecimal r = ((APLNum)right).getVal();
 			
-			if (name.equals("+")) return new APLNum(l+r);
-			if (name.equals("-")) return new APLNum(l-r);
-			if (name.equals("*")) return new APLNum(l*r);
-			if (name.equals("/")) return new APLNum(l/r);
-			if (name.equals("%")) return new APLNum(l%r);
+			if (name.equals("+")) return new APLNum(l.add(r));
+			if (name.equals("-")) return new APLNum(l.subtract(r));
+			if (name.equals("*")) return new APLNum(l.multiply(r));
+			if (name.equals("/")) return new APLNum(l.divide(r));
+			if (name.equals("%")) return new APLNum(l.divideAndRemainder(r)[1]);
 		}
 		
 		return null;
+
 	}
 	
 	/**

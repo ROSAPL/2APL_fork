@@ -1,6 +1,8 @@
 package apapl.data;
 
 import apapl.SubstList;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -8,8 +10,18 @@ import java.util.ArrayList;
  */
 public class APLNum extends Term
 {
-	private double val;
+	private BigDecimal val;
 	
+	/**
+	 * Constructs a number.
+	 * 
+	 * @param val the value
+	 */
+	public APLNum(Number val)
+	{
+		this.val = new BigDecimal(val.toString());
+	}
+
 	/**
 	 * Constructs a number.
 	 * 
@@ -17,7 +29,7 @@ public class APLNum extends Term
 	 */
 	public APLNum(double val)
 	{
-		this.val = val;
+		this.val = new BigDecimal(val);
 	}
 	
 	/**
@@ -27,7 +39,7 @@ public class APLNum extends Term
 	 */
 	public APLNum(int val)
 	{
-		this.val = (double)val;
+		this.val = new BigDecimal(val);
 	}
 	
 	/**
@@ -35,15 +47,14 @@ public class APLNum extends Term
 	 * 
 	 * @return the value
 	 */
-	public double getVal()
+	public BigDecimal getVal()
 	{
 		return val;
 	}
 	
 	public String toString(boolean inplan)
 	{
-		if (val%1==0) return ((int)val)+"";
-		else return val+"";
+		return val.toString();
 	}
 	
 	public String toRTF(boolean inplan)
@@ -129,7 +140,7 @@ public class APLNum extends Term
 	 */
 	public double toDouble()
 	{
-		return val;
+		return val.doubleValue();
 	}
 	
 	/**
@@ -139,13 +150,12 @@ public class APLNum extends Term
 	 */
 	public int toInt()
 	{
-		return (int)val;
+		return val.intValue();
 	}
 	
 	public String toString()
 	{
-		if (val%1==0) return ((int)val)+"";
-		else return ""+val;
+		return val.toString();
 	}
 	
 	/**
