@@ -1,5 +1,6 @@
 package apapl.program;
 
+import apapl.Logger;
 import apapl.SolutionIterator;
 import apapl.Unifier;
 import apapl.Prolog;
@@ -33,6 +34,8 @@ public class Beliefbase extends Base
 {
 	private Prolog belief;
 	
+	private Logger logger = null;
+	
 	/** @deprecated */
 	private boolean showrules = true;
 	
@@ -53,6 +56,9 @@ public class Beliefbase extends Base
 	 */
 	public SolutionIterator doTest(Query query)
 	{
+		if( logger != null)
+			logger.beliefQuery(query.toString(),"doTest");
+		
 		return belief.doTest(query);
 	}
 	
@@ -68,6 +74,9 @@ public class Beliefbase extends Base
 	 */
 	public boolean doQuery(Query query, SubstList<Term> theta)
 	{
+		if( logger != null)
+			logger.beliefQuery(query.toString(),"doQuery1");
+
 		SubstList<Term> solution = doQueryOne(query);
 		if (solution!=null) {
 			theta.putAll(solution);
@@ -86,6 +95,9 @@ public class Beliefbase extends Base
 	 */
 	public SubstList<Term> doQueryOne(Query query)
 	{
+		if( logger != null)
+			logger.beliefQuery(query.toString(),"doQueryOne");
+
 		query.evaluate();
 		if (query instanceof True) {
 			return new SubstList<Term>();
@@ -106,6 +118,9 @@ public class Beliefbase extends Base
 	 */
 	public ArrayList<SubstList<Term>> doQuery(Query query)
 	{
+		if( logger != null)
+			logger.beliefQuery(query.toString(),"doQuery2");
+
 		ArrayList<SubstList<Term>> solutions;
 		query.evaluate();
 		if (query instanceof True) {
@@ -126,6 +141,9 @@ public class Beliefbase extends Base
 	 */
 	public boolean doGoalQuery(Goal g, SubstList<Term> theta)
 	{
+		if( logger != null)
+			logger.beliefQuery(g.toString(),"doGoalQuery");
+
 		for (Literal l : g) {
 			boolean b = doQuery(l,theta);
 			if (!b) return false;
@@ -165,6 +183,9 @@ public class Beliefbase extends Base
 	 */	
 	public void assertBelief(Literal literal) 
 	{
+		if( logger != null)
+			logger.beliefUpdate(literal.toString(),"assertBelief1");
+
 		try {
 			Term b = literal.getBody();
 			if (b instanceof APLFunction) ((APLFunction)b).evaluateArguments();
@@ -182,6 +203,9 @@ public class Beliefbase extends Base
 	 */
 	public void  assertBelief(String b) throws ParseException, IOException
 	{
+		if( logger != null)
+			logger.beliefUpdate(b,"assertBelief2");
+
 		for (String s : separateBelief(b)) belief.addPredicate(s);
 	}
 	
@@ -251,6 +275,9 @@ public class Beliefbase extends Base
 	public Beliefbase clone()
 	{
 		Beliefbase cloned = new Beliefbase();
+		
+		cloned.setLogger(logger);
+		
 		for (String b :  belief.getBeliefsAsStrings())
 			cloned.getBelief().addPredicate(b);
 		
@@ -293,9 +320,19 @@ public class Beliefbase extends Base
 	
 	}
 	
+	/**
+	 * Returns a list of all beliefs. Does not include shadow-beliefs.
+	 * @return
+	 */
 	public Collection<String> getBeliefs() {
 	
 		return belief.getBeliefsAsStrings();
+		
+	}
+	
+	public void setLogger(Logger logger) {
+		
+		this.logger = logger;
 		
 	}
 	

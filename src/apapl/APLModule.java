@@ -103,6 +103,8 @@ public class APLModule {
     // Denoting whether currently performing an external action
     private boolean inEnvironment = false;
 
+    private Logger logger = null;
+    
     /**
      * Constructs an empty module. Typically, the bases are filled while parsing
      * the 2APL module specification code.
@@ -699,4 +701,19 @@ public class APLModule {
 		this.beliefs.addFromFile(beliefsFile,shadow);
 		
 	}
+	
+	public void setLogger(Logger logger) {
+		
+		this.logger = logger;
+		this.beliefs.setLogger(logger);
+		this.goals.setLogger(logger);	
+		
+	}
+	
+	public Logger getLogger() {
+		
+		return logger;
+		
+	}
+	
 }

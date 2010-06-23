@@ -4,6 +4,7 @@ import apapl.SolutionIterator;
 import apapl.data.GoalCompare;
 import apapl.data.Query;
 import apapl.data.True;
+import apapl.Logger;
 import apapl.Unifier;
 import apapl.APLModule;
 import apapl.Parser;
@@ -29,6 +30,8 @@ public class Goalbase extends Base implements Iterable<Goal>
 {	
 	private ArrayList<Goal> gb = new ArrayList<Goal>();
 	
+	private Logger logger = null;
+	
 	/**
 	 * Constructs a new goal base.
 	 */
@@ -52,6 +55,9 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public SolutionIterator doTest(Query query)
 	{
+		if( logger != null)
+			logger.goalQuery(query.toString(),"doTest");
+
 		for (Goal goal : this) {
 			SolutionIterator solutions = goal.doTest(query);
 			if (solutions.hasNext()) return solutions;
@@ -69,6 +75,9 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public SubstList<Term> testGoal(Query query)
 	{					
+		if( logger != null)
+			logger.goalQuery(query.toString(),"testGoal");
+
 		SubstList<Term> theta = null;
 		if (query instanceof True) return new SubstList<Term>();
 		else for (Goal goal : this) {
@@ -97,7 +106,9 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public void assertGoal(Goal goal)
 	{
-		
+		if( logger != null)
+			logger.goalAddition(goal.toString(),"assertGoal");
+
 		for (Goal g : gb) if (g.equals(goal)) return;
 		goal.evaluate();
 		gb.add(goal);
@@ -111,6 +122,9 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public void assertGoalHead(Goal goal)
 	{
+		if( logger != null)
+			logger.goalAddition(goal.toString(),"asserGoalHead");
+
 		for (Goal g : gb) if (g.equals(goal)) return;
 		goal.evaluate();
 		gb.add(0,goal);
@@ -124,6 +138,10 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public void dropGoal(Goal goal)
 	{
+
+		if( logger != null)
+			logger.goalRemoval(goal.toString(),"dropGoal");
+
 		ArrayList<Goal> toRemove = new ArrayList<Goal>();
 		ArrayList<Literal> toDropList = new ArrayList<Literal>();
 		for (Literal l : goal) toDropList.add(l.clone());
@@ -147,6 +165,10 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public void dropSubGoals(Goal goal)
 	{
+
+		if( logger != null)
+			logger.goalRemoval(goal.toString(),"dropSubGoalGoals");
+
 		ArrayList<Goal> toRemove = new ArrayList<Goal>();
 		for (Goal g : gb) if (isSubGoalFor(g,goal)) toRemove.add(g);
 		for (Goal g : toRemove) gb.remove(g);
@@ -159,6 +181,9 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public void dropSuperGoals(Goal goal)
 	{
+		if( logger != null)
+			logger.goalRemoval(goal.toString(),"dropSuperGoals");
+
 		ArrayList<Goal> toRemove = new ArrayList<Goal>();
 		for (Goal g : gb) if (isSubGoalFor(goal,g)) toRemove.add(g);
 		for (Goal g : toRemove) gb.remove(g);
@@ -173,6 +198,8 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	private boolean isSubGoalFor(Goal a, Goal b)
 	{
+		// TODO log this too
+		
 		ArrayList<Goal> toRemove = new ArrayList<Goal>();
 		ArrayList<Literal> dropGoal = new ArrayList<Literal>();
 		for (Literal l : a) dropGoal.add(l.clone());
@@ -237,6 +264,10 @@ public class Goalbase extends Base implements Iterable<Goal>
 			toRemove.add(g);
 			
 		for (Goal g : toRemove)	{
+
+			if( logger != null)
+				logger.goalRemoval(g.toString(),"removeReachedGoals");
+
 			gb.remove(g);
 		}
 	}
@@ -253,6 +284,13 @@ public class Goalbase extends Base implements Iterable<Goal>
 	 */
 	public Goalbase clone()
 	{
-		return new Goalbase(this.getGoalbase());
+		Goalbase gb = new Goalbase(this.getGoalbase());
+		gb.setLogger(logger);
+		return gb;
 	}
+	
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+	
 }
