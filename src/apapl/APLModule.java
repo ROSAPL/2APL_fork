@@ -120,6 +120,7 @@ public class APLModule {
         this.envs = new HashMap<String, EnvironmentInterfaceStandard>();
         this.delib = new Deliberation();
         this.stoppingCond = null;
+        this.setLogger(new Logger());
     }
 
     /**
@@ -171,6 +172,7 @@ public class APLModule {
         this.pcrules = pcrules.clone();
         this.plans = plans.clone();
         this.inEnvironment = inEnvironment;
+        this.setLogger(new Logger());
     }
 
     /**
