@@ -1,6 +1,5 @@
 package apapl.plans;
 
-import apapl.Environment;
 import apapl.ExternalActionFailedException;
 import apapl.IILConverter;
 import apapl.UnboundedVarException;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Vector;
 import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 import eis.EnvironmentInterfaceStandard;
 import eis.exceptions.ActException;
@@ -37,6 +35,8 @@ public class ExternalAction extends Plan {
     private int timeout = 0;
     private long firstExecuteTime = -1;
 
+    private boolean eisDebug = false;
+    
     public ExternalAction(String env, APLFunction action, APLVar result) {
         this(env, action, result, new APLNum(0));
     }
@@ -164,7 +164,7 @@ public class ExternalAction extends Plan {
 
             for (String entity : entities) {
                 try {
-                    e.associateEntity(module.getLocalName(), entity);
+                    e.associateEntity(module.getAgentName(), entity);
                 } catch (RelationException e1) {
                     throw new ExternalActionFailedException(
                             "Agent could not be associated" + "\n"
@@ -175,7 +175,7 @@ public class ExternalAction extends Plan {
         } else if (action.getName().equals("disassociateFrom")) {
             String entity = ((APLIdent) action.getParams().get(0)).getName();
             try {
-                e.freePair(module.getLocalName(), entity);
+                e.freePair(module.getAgentName(), entity);
             } catch (RelationException e1) {
                 throw new ExternalActionFailedException(
                         "Agent could not be dis associated" + "\n"
@@ -196,7 +196,7 @@ public class ExternalAction extends Plan {
 
             try {
                 LinkedList<Percept> percepts = e.getAllPercepts(module
-                        .getLocalName());
+                        .getAgentName());
 
                 LinkedList<Term> terms = new LinkedList<Term>();
                 for (Percept p : percepts) {
@@ -218,37 +218,39 @@ public class ExternalAction extends Plan {
 
             Action iilaction = IILConverter.convertToAction(action);
 
-            // System.out.println("Converted: " + iilaction.toProlog());
-
-            // System.out.println(iilaction.toProlog());
+            if(eisDebug) System.out.println("Converted: " + iilaction.toProlog());
 
             try {
 
-                LinkedList<Percept> results = e.performAction(module
-                        .getLocalName(), iilaction);
+            	String agentName = module.getAgentName();
+            	if(eisDebug) System.out.println(agentName + " performs " + iilaction.toProlog());
+                LinkedList<Percept> results = e.performAction(agentName, iilaction);
 
-                // System.out.println("Action performed");
+                if(eisDebug) System.out.println("Action performed");
 
                 LinkedList<Term> terms = new LinkedList<Term>();
 
                 for (Percept result : results) {
 
-                    terms.add(IILConverter.convert(result));
+                	if(eisDebug) System.out.println("  Result: " + result.toProlog());
+                	APLFunction convRes = IILConverter.convert(result);
+                	if(eisDebug) System.out.println("  Converted result: " + convRes.toString());
+                    terms.add(convRes);
+                
                 }
 
-                // System.out.println("Done");
 
                 return APLList.constructList(terms, null);
 
             } catch (ActException e1) {
-                // System.out.println("Fail 1");
-                //e1.printStackTrace();
+            	if(eisDebug) System.out.println("Fail 1");
+            	if(eisDebug) e1.printStackTrace();
                 throw new ExternalActionFailedException("Acting failed." + "\n"
                         + e1.getMessage());
 
             } catch (NoEnvironmentException e1) {
-                // System.out.println("Fail 2");
-                e1.printStackTrace();
+            	if(eisDebug) System.out.println("Fail 2");
+            	if(eisDebug) e1.printStackTrace();
                 throw new ExternalActionFailedException("Acting failed." + "\n"
                         + "No environment connected");
 
