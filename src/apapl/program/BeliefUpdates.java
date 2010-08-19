@@ -55,11 +55,14 @@ public class BeliefUpdates extends Rulebase<BeliefUpdate>
 			rulecopy.freshVars(unfresh,own,changes);
 			APLFunction act = rulecopy.getAct();
 			
-			if (Unifier.unify(plan,act,theta)) {
+			SubstList<Term> theta2 = theta.clone();
+			if (Unifier.unify(plan,act,theta2)) {
 				norulefound = false;
 				Query pre = rulecopy.getPre();
-				pre.applySubstitution(theta);
-				if (beliefbase.doQuery(pre,theta)) {
+				pre.applySubstitution(theta2);
+				if (beliefbase.doQuery(pre,theta2)) {
+					theta.getMap().clear();
+					theta.putAll(theta2);
 					return rulecopy;
 				}
 			}
