@@ -1,11 +1,11 @@
 \begin{thebibliography}{1}
 
-\bibitem{ifi0910behrens}
-T.~M. Behrens, J.~Dix, and K.~V. Hindriks.
-\newblock The environment interface standard for agent-oriented programming
-  platform integration guide and interface implementation guide.
-\newblock Technical Report IfI-09-10, Clausthal University of Technology, Dec.
-  2009.
+\bibitem{EnvIntProMAS}
+T.~Behrens, J.~Dix, K.~Hindriks, M.~Dastani, R.~Bordini, J.~Hübner, P.~A., and
+  L.~Braubach.
+\newblock An interface for agent-environment interaction.
+\newblock In {\em The Eighth International Workshop on Programming Multi-agent
+  Systems (ProMAS 2010)}, 2010.
 
 \bibitem{jade2005}
 F.~Bellifemine, F.~Bergenti, G.~Caire, and A.~Poggi.
