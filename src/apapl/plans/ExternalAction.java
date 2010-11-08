@@ -29,7 +29,7 @@ import eis.iilang.Percept;
  */
 public class ExternalAction extends Plan {
     private String env;
-    private APLFunction action;
+    private Term action;
     private APLVar result;
     private Term timeoutTerm = new APLNum(0);
     private int timeout = 0;
@@ -37,11 +37,11 @@ public class ExternalAction extends Plan {
 
     private boolean eisDebug = false;
     
-    public ExternalAction(String env, APLFunction action, APLVar result) {
+    public ExternalAction(String env, Term action, APLVar result) {
         this(env, action, result, new APLNum(0));
     }
 
-    public ExternalAction(String env, APLFunction action, APLVar result,
+    public ExternalAction(String env, Term action, APLVar result,
             Term timeoutTerm) {
         this.env = env;
         this.action = action;
@@ -50,7 +50,23 @@ public class ExternalAction extends Plan {
     }
 
     public PlanResult execute(APLModule module) {
+    	APLFunction action=null;
+    	if(this.action instanceof APLFunction)
+    		action=(APLFunction)this.action;
+    	else
+    	{
+    			Term t;
+				try {
+					t = Term.unvar(this.action);
+				} catch (UnboundedVarException e1) {
+					return new PlanResult(this, PlanResult.FAILED);
+				}
+    			if(!(t instanceof APLFunction))
+    				return new PlanResult(this, PlanResult.FAILED);
+    			action=(APLFunction)t;
+    	}
 
+    	
         try {
             timeoutTerm = Term.unvar(timeoutTerm);
             timeout = ((APLNum) timeoutTerm).toInt();
@@ -67,6 +83,7 @@ public class ExternalAction extends Plan {
         }
         try {
             if (timeoutCheck()) {
+    
                 Term t = execute(action, e, module);
                 if (t != null) {
                     SubstList<Term> theta = new SubstList<Term>();
@@ -294,7 +311,7 @@ public class ExternalAction extends Plan {
         return env;
     }
 
-    public APLFunction getAction() {
+    public Term getAction() {
         return action;
     }
 
@@ -344,8 +361,9 @@ public class ExternalAction extends Plan {
         return action.getVariables();
     }
 
+    //never called, maybe deprecated
     private boolean checkMethod(Method m) {
-        if (!m.getName().equals(action.getName()))
+    /*    if (!m.getName().equals(action.getName()))
             return false;
 
         Class[] paramTypes = m.getParameterTypes();
@@ -360,7 +378,9 @@ public class ExternalAction extends Plan {
         } catch (ClassNotFoundException ex) {
         }
 
-        return true;
+        return true;*/
+    	System.out.println("checkMethod(Method m) called");
+    	return true;
     }
 
     public void checkPlan(LinkedList<String> warnings, APLModule module) {
@@ -381,3 +401,4 @@ public class ExternalAction extends Plan {
 
 
 }
+

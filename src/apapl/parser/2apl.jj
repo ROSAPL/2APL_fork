@@ -506,12 +506,16 @@ UpdateBeliefbaseAction UpdateBeliefbaseAction() :
 }
 
 ExternalAction ExternalAction() :
-{Token env; Term timeout = new APLNum(0); APLFunction action; APLVar result = new APLVar();}
+{APLVar variable=null;
+Token var=null;Token env; Term timeout = new APLNum(0); 
+Term action; APLVar result = new APLVar();}
 {
 	<AT>
 	env = <IDENT>
 	<LBRACE>
-	action = PlanAtom()
+	(action = PlanAtom()
+	| var=<VARNAME> {action=new APLVar(var.toString());}
+	)
 	(LOOKAHEAD(<COMMA> APLVar()) <COMMA> result = APLVar())?
 	(LOOKAHEAD(<COMMA> NumVar()) <COMMA> timeout = NumVar())?
 	<RBRACE>
@@ -1014,3 +1018,4 @@ APLIdent ModuleIdent() :
 {
 	ident = APLIdent() {return ident;}
 }
+
