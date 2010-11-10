@@ -189,8 +189,8 @@ public class Unifier
 			String s2 = a2.getEnv();
 			if (!s1.equals(s2)) return false;
 			
-			Term f1 = a1.getAction();
-			Term f2 = a2.getAction();
+			APLFunction f1 = a1.getAction();
+			APLFunction f2 = a2.getAction();
 			
 			if (!unify(f1,f2,theta)) return false;
 			
@@ -524,4 +524,3 @@ public class Unifier
 		else return false;
 	}
 }
-
