@@ -72,7 +72,7 @@ public class APLNum extends Term
 	public boolean groundedUnify(Term t, SubstList<Term> theta)
 	{
 		if (t instanceof APLVar) return groundedUnify((APLVar)t,theta);
-		else if (t instanceof APLNum) return ((APLNum)t).getVal()==val;
+		else if (t instanceof APLNum) return ((APLNum)t).getVal().equals(val);
 		else return false;
 	}
 	
@@ -169,7 +169,7 @@ public class APLNum extends Term
 		if (other instanceof APLNum)
 		{
 			APLNum term = (APLNum)other;
-			return val==term.getVal();
+			return val.equals(term.getVal());
 		}
 		else if (other instanceof APLVar)
 		{

@@ -473,7 +473,7 @@ public class Unifier
 		else if (t1 instanceof APLNum && t2 instanceof APLNum) {
 			APLNum d1 = (APLNum)t1;
 			APLNum d2 = (APLNum)t2;
-			return d1.getVal()==d2.getVal();
+			return d1.equals(d2);
 		}
 		else if (t1 instanceof APLFunction && t2 instanceof APLFunction) {
 			APLFunction a1 = (APLFunction)t1;
