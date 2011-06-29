@@ -109,7 +109,16 @@ public class IILConverter {
 			}
 			
 			return new APLList(terms);
-		}			
+		}
+		else if(parameter instanceof Function)
+		{
+			Function f=(Function)parameter;
+			ArrayList<Term>terms=new ArrayList<Term>();
+			for(Parameter p:f.getParameters())
+				terms.add(convert(p));
+			APLFunction aplf=new APLFunction(f.getName(),terms);
+			return aplf;
+		}
 		else {
 			assert false: "Unknown type " + parameter.getClass();
 		}
