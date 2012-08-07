@@ -1,0 +1,4 @@
+TODO:
+
+- EBNF van 2apl user guide conjunction in beliefupdate postcondion kan "and" en "," hebben
+- user guide 2apl, sectie 5 toevoegen: benchmarking

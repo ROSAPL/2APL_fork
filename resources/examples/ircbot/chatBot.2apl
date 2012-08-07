@@ -1,0 +1,132 @@
+/*  _________________________________
+ * |   Simple IRC chatbot for 2APL   |
+ * |_________by_Marc_van_Zee_________|
+ *
+ * The bot connects to a given server/port and joins a single channel.
+ * It responds to different commands with three levels of authentication: normal users, authenticated users and owners.
+ * Users are recognized only by their nickname so it is not a waterproof system.
+ *
+ * ==== RECEIVING MESSAGES
+ * The bot responds to messages from users, which are cut in words and stored in a list.
+ * For example, the message: "!nick newNick" by "user" on "#chan" will be received as the following event: 
+ *      
+ *      event(message(user, '#chan', ['!nick', 'newNick']))
+ *
+ * This means that the bot cannot respond to server messages, but only to messages from users
+ * A private message will have the user that sent the message as the source, so the private message "hi" from "user":
+ *
+ *      event(message(user, user, ['hi']))
+ *
+ * ==== SENDING MESSAGES
+ * The bot can send two different messages:
+ * - Server messages. for example the message "NICK newNick": command(['NICK',newNick])
+ * - Say something. for example, saying "howdy" in #chan:     say('#chan', howdy)
+ *
+ * Notice that some strings have ' and ' around them and some dont. Don't worry too much about this, but in general any
+ * string that contains characters other than [a-z][A-Z][0-9] should have them. The environment will remove them when
+ * parsing them so this should be no problem.
+ *
+ * This should be fixed in the next release of 2APL, where all strings should have ' and ' around to avoid confusion.
+ */
+
+
+// Connection information
+beliefs:
+	username('apaplbot').
+	nickname('apaplbot').
+	server('chat.freenode.net').
+	port(6667).	
+	channel('#2APL').
+
+	// roles
+	authUsers(['marczoid']).
+	owners(['marczoid']).
+	
+	// prolog list search
+	in(X, [X|_]).  
+	in(X,[_|T]):- in(X,T).
+
+
+beliefupdates:
+	{ nickname(Oldnick) }	SetNick(Newnick)	{ not nickname(Oldnick), nickname(Newnick) }
+
+goals:
+	connect.
+
+pgrules:
+	// connect to the specified server using the external action connect (defined in the environment)
+	connect <- not connected and not connecting | {
+		B(server(S) and port(P) and username(U) and nickname(N) and channel(C));
+		+connecting;
+		@env(connect(S,P,U,N,C),NewNick);
+		SetNick(NewNick);
+	}
+
+pcrules:
+	event(connected(), env) <- not connected and connecting | {
+		+connected;
+		-connecting;
+		dropgoal(connect);
+		B(channel(Chan));
+		say(Chan, ['hello everybody! I am an IRC bot programmed using the agent programming language 2APL, developed at the Utrecht University (www.apapl.sourceforge.net)']);
+	}
+
+	event(message(User,Src,Msg), env) <- connected and authUsers(Auths) and owners(Owners) | {
+		// commands available to everyone
+		if (Msg = [hello, X] and nickname(X)) {
+			say(Src, ['hellooooo']);
+		}
+
+		else if (Msg = ['!say'|T]) {
+			say(Src,T);
+		}
+
+		// commands available only to authenticated users
+		else if (in(User, Auths) or in(User,Owners)) {
+			if (Msg = ['!nick', X]) {
+				command(['NICK',X]);
+				SetNick(X);
+			}
+
+			else if (Msg = ['!join', X]) {
+				command(['JOIN', X]);
+			}
+
+			else if (Msg = ['!part', X]) {
+				command(['PART', X]);
+			}
+			else if (Msg = ['!topic'|X]) {
+				command(['TOPIC'|X]);
+			}
+
+			/// commands available only to owners
+			if (in(User, Owners)) {
+				if (Msg = ['!disconnect'] or Msg = ['!quit']) {
+					command(['QUIT']);
+				}
+				else if (Msg = ['!op',Nick]) {
+					command(['MODE',Src,'+o',Nick]);
+				}
+				else if (Msg = ['!deop',Nick]) {
+					command(['MODE',Src,'-o',Nick]);
+				}
+				else if (Msg = ['!kick',Nick]) {
+					command(['KICK',Src,Nick]);
+				}
+			}
+		}
+	}
+
+	// wrapper methods to make the 2APL of above a bit more readable
+	say(Src, Msg) <- connected | {
+		@env(say(Src,Msg));
+	}
+
+	command(Msg) <- connected | {
+		@env(command(Msg));
+	}
+
+prrules:
+	command(X); Rest; <- true | {
+		skip;
+	}

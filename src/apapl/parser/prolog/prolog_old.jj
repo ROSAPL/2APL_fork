@@ -1,0 +1,245 @@
+/////////////////////////////////////////////////
+//
+// PROLOG PARSING
+//
+// Basic Prolog parsing for belief inertia. 
+// Collect the predicates and heads of all inference rules and store them in a hashmap indexed by the head
+// Omit built-in predicates, and add "rand" if it is used in the rule.
+// See apapl.BeliefInertia.BeliefInertia
+//
+// @author Marc van Zee (marcvanzee.nl) - Utrecht University
+//
+////////////////////////////////////////////////////
+
+
+options
+{
+	DEBUG_LOOKAHEAD = false; 
+	STATIC = false;
+} 
+
+PARSER_BEGIN(PrologParser)
+package apapl.parser.prolog;
+
+import apapl.UnboundedVarException;
+import apapl.data.*;
+import apapl.program.*;
+import apapl.plans.*;
+import apapl.*;
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.HashMap;
+import java.io.File;
+
+
+public class PrologParser
+{
+}
+
+PARSER_END(PrologParser) 
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+} 
+
+TOKEN :
+{
+	<RANDOM: "rand" >
+|	
+	<RESERVED_PREDS: ("is")>
+|
+	<NOT: "not" >
+|
+	<ROUND: "round" >
+
+}
+
+TOKEN :
+{
+	<COMMA:			",">
+|	<SEMICOLON:		";">
+}
+
+TOKEN : 
+{
+	<CUT:			("!")>
+|	<UNDERSCORE:	("_")>
+|	<LBRACE:		"(">
+|	<RBRACE:		")">
+
+|	<LISTL:			"[">
+|	<LISTR:			"]">
+|	<MID:			"|">
+|	<DOT:			".">
+|	<IMPL:			":-">
+|	<RELATIONAL:	("<" | ">" | "=" | "<=" | ">=") >
+|	<MATH:			("+" | "-" | "*" | "/")>
+}
+
+// Identifiers etc.
+TOKEN:
+{
+	<IDENT:			(["a"-"z"]) ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
+|	<VARNAME:		(["A"-"Z"]) ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
+|	<NUM:			(["0"-"9"] )+ >
+|	<NUMNAME:		(["0"-"9"]) ( ["a"-"z","A"-"Z","_","0"-"9"] )+ >
+|   <NAMEDOT:		(["a"-"z","A"-"Z","_","0"-"9"] )+ > 
+//|	<NAMEDOT:		(["a"-"z","A"-"Z","_","0"-"9","."] )+ >
+|	<VERT:			"|">
+|	<QUOTE:			(("\'") ("\\\'" | ~["\'"])* ("\'"))
+					| (("\"") ("\\\"" | ~["\""])* ("\""))>
+|	<QUOTE1:		("\'") ("\\\'" | ~["\'"])* ("\'")>
+
+}
+
+void Base(HashMap<String,HashSet<String>> map) :
+{}
+{
+	(
+	LOOKAHEAD(Head() <IMPL>)
+	Rule(map)
+|
+	Head() <DOT> 
+	
+	)*
+	
+	<EOF>
+}
+
+void Rule(HashMap<String,HashSet<String>> map) :
+{
+	String head; 
+	HashSet<String> body = new HashSet<String>();
+}
+{
+	head = Head() 	<IMPL> 		(	AndBody(body)	) 		<DOT>
+	
+	{ map.put(head, body); }
+}
+
+String Head() :
+{
+	String head;
+	Token t;
+}
+{
+	LOOKAHEAD(<IDENT> <LBRACE>)
+	head = Function(null) { return head; } /* the head cannot contain "rand" */
+|
+	t = <IDENT> { return t.image; }
+}
+
+void AndBody(HashSet<String> map) :
+{}
+{
+	OrBody(map) 	(	<COMMA>	OrBody(map) 	)*
+
+}
+
+void OrBody(HashSet<String> map) :
+{}
+{
+	Literal(map) 	(	<SEMICOLON>		Literal(map) 	)*
+}
+
+void Literal(HashSet<String> map) :
+{}
+{
+	<CUT>										/* special symbol */
+|
+	(<NOT>)? Atom(map)
+}
+
+void Atom(HashSet<String> map) :
+{
+	String pred;
+	Token  predToken;
+}
+{
+	LOOKAHEAD((<IDENT>|<RESERVED_PREDS>) <LBRACE>)
+	( pred = Function(map) { if (!pred.equals("")) map.add(pred); } )	/* this is actually a predicate, but syntactically predicates and functions are identical */
+|
+	( predToken = <IDENT> { map.add(predToken.image); } )
+|
+	Expr(map)								/* expression: variable or number or expression using variables or/and numbers */
+}
+
+String Function(HashSet<String> map) :
+{
+	Token head = null;
+}
+{
+	(
+	<RESERVED_PREDS> /* don't store reserved predicates */
+|
+	(head = <IDENT>) 
+	)
+	<LBRACE> (	Terms(map)	)?	<RBRACE>
+	
+	{ return (head != null) ? head.image : ""; }
+}
+
+void Expr(HashSet<String> map) :
+{}
+{
+	Arith(map)		(		( <RELATIONAL> | <RESERVED_PREDS>) 	Arith(map)		)?
+}
+
+void Arith(HashSet<String> map) :
+{}
+{
+	VarNum(map) 		(		( <MATH> )		VarNum(map)		)*	
+}
+
+void VarNum(HashSet<String> map) :
+{
+	Token t;
+}
+{
+	Var()
+| 
+	LOOKAHEAD(<NUM> <DOT> <NUM>)
+	<NUM> <DOT> <NUM>
+|
+	<NUM>
+|
+	( t = <RANDOM> { map.add(t.image); }		)						/* reserved constants that will be replaced by numbers */
+|
+	<ROUND> <LBRACE> (	Terms(map)	)?	<RBRACE>
+|
+	<LBRACE>	AndBody(map)		<RBRACE>	/* TODO: this is WAY too liberal! */
+}
+
+void Terms(HashSet<String> map) :
+{}
+{
+	Term(map) 	(	<COMMA>	Term(map)	)*
+}
+
+void Term(HashSet<String> map) :
+{}
+{
+	LOOKAHEAD(<IDENT> <LBRACE>)
+	Function(map)
+|
+	<IDENT>
+|
+	Expr(map)
+|	
+	<QUOTE>
+|
+	<LISTL> Terms(map) <LISTR>
+|
+	<UNDERSCORE>
+}
+
+void Var() :
+{}
+{
+	<VARNAME>
+}

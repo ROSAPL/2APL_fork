@@ -1,0 +1,46 @@
+beliefs:
+  worker(w1).
+  worker(w2).
+  worker(w3).
+
+goals:
+  haveBomb.
+
+pgrules:
+  haveBomb <- bomb(POS) and not assigned(carrier(POS), _) and worker(W) and not assigned(_, W) |
+  {
+    send(W, request, play(carrier, POS));
+    +assigned(carrier(POS), W);
+  }
+  
+  haveBomb <- not bomb(_) and worker(W) and not assigned( _, W) |
+  {    
+    send(W, request, play(explorer));
+    +assigned(explorer, W);
+  }
+
+pcrules: 
+  message(A, inform, _, _, bomb(POS)) <- true  | 
+  {
+    [
+      +bomb(POS);
+      -assigned(explorer, A);
+    ]
+  } 
+
+  message(A, inform, _, _, done(POS)) <- true |
+  {
+    [
+      -assigned(carrier(POS), A);
+      -bomb(POS);
+    ]
+  } 
+  
+  message(A, inform, _, _, failed(POS)) <- true |
+  {
+    [
+      -assigned(carrier(POS), A);
+    ]
+  } 
+
+    

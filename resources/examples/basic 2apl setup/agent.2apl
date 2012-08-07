@@ -1,0 +1,25 @@
+/*  ____________________________________________________________________________
+ * |                        Basic 2APL Setup - 2APL Agent                       |
+ * |                                                                            |
+ * |_________by Marc van Zee - marcvanzee@gmail.com, Utrecht University_________|
+ *
+ * This agent is meant to demonstrate the basic functionality of the interaction 
+ * between the Java environment and the 2APL agent. For more information, please
+ * see the environment file Env.java that is contained in the subdirectory "src/".
+ *
+ */
+
+goals:
+  getSquare(100).
+
+pgrules:
+  getSquare(X) <- true | {
+    @env(square(X),Y);
+    print(Y);
+    dropgoal(getSquare(X));
+  }
+	
+pcrules:
+	event(name(Name), env) <- true | {
+		+name(Name);
+	}

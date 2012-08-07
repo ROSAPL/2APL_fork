@@ -1,0 +1,34 @@
+beliefs:
+storage([]).
+
+in_storage(Item, [Item]).
+in_storage(Item, [_,T]) :- in_storage(Item, [T]).
+
+size([],0).
+size([H|T],Y) :- size(T,X), is(Y, X + 1).
+
+remove([],_,[]).
+remove([H|T],H,L) :- remove(T,H,L).
+remove([H|T],X,[H|L]) :- remove(T,X,L).
+
+beliefupdates:
+{ storage(L) } Add(Item) { not storage(L), storage([Item|L]) }
+{ storage(L) } UpdateStorage(L2) { not storage(L) and storage(L2) }
+
+pgrules:
+<- storage(L) and size(L,X) and X < 5 | @env(addItem(),_);
+<- storage(L) and size(L,X) and X > 0 | @env(removeItem(),_);
+
+pcrules:
+event(add(Item), env) <- storage(L) and not in_storage(Item, L) | {
+	Add(Item);
+}
+
+event(remove(Item), env) <- storage(L) and in_storage(Item, L) | {
+	remove(Item);
+}
+
+remove(Item) <- storage(L) | {
+	B(remove(L,Item,L2));
+	UpdateStorage(L2);
+}

@@ -1,0 +1,391 @@
+options{
+  STATIC = false;
+}
+
+PARSER_BEGIN(PrologParser)
+package apapl.parser.prolog;
+
+import apapl.beliefinertia.dependencyset.InferenceRules;
+
+/**
+ * Basic Prolog parsing for belief inertia. 
+ * Collect the predicates and heads of all inference rules and store them in a hashmap indexed by the head
+ * Omit built-in predicates, and add "rand" if it is used in the rule.
+ * See apapl.BeliefInertia.BeliefInertia.
+ * 
+ * Original JavaCC parser by Bas Testerink, Java code changed by Marc van Zee for belief inertia
+ * 
+ * @author Bas Testerink Utrecht University, The Netherlands
+ * 
+ */
+public class PrologParser
+{
+}
+
+PARSER_END(PrologParser) 
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  "%" : IN_SINGLE_LINE_COMMENT_STD_PROLOG
+|
+  <"/**" ~["/"]> : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT_STD_PROLOG>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT_STD_PROLOG: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_SINGLE_LINE_COMMENT_STD_PROLOG,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* LITERALS */
+
+TOKEN :
+{
+  < INTEGER_LITERAL:
+        ["1"-"9"] (["0"-"9"])*
+  >
+| 
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ ("." (["0"-"9"])+)?
+  >
+| 
+  < CHARACTER_LITERAL:
+      "'"
+      (   (~["'","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )+
+      "'"
+  >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < STD_IDENTIFIER: (["a"-"z","@"] (["a"-"z","A"-"Z","0"-"9","_"])*)>
+| < VAR_IDENTIFIER: ["A"-"Z","_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+| < BANG: "!" >
+| < NOTSPACE: "not " >
+}
+
+/* OPERATORS */
+
+TOKEN :
+{
+  < ADD: "+" >
+| < SUBTRACT: "-" >
+| < IMPLY: "->" >
+| < MULTIPLY: "*" >
+| < POWER: "**" >
+| < DIVIDE: "/" > 
+| < BITAND: "/\\" >
+| < UNIFICATION: "=" >
+| < ARITHUNIF: "=:=" >
+| < ARITHNOTUNIF: "=\\=" >
+| < EQLT: "=<" >
+| < TERMDECOMPOSITION: "=.." >
+| < EQUALS: "==" >
+| < BACKSLASH: "\\" >
+| < NOT: "\\+" >
+| < BITOR: "\\/" >
+| < NOTUNIFIABLE: "\\=" >
+| < NOTEQUALS: "\\==" > 
+| < TERMGTEQ: "@>=" >
+| < TERMEQLT: "@=<" >
+| < TERMLT: "@<" >
+| < TERMGT: "@>" >
+| < TERMEQ: "@==" >
+| < TERMNEQ: "@\\=" >
+| < LT: "<" >
+| < SHIFTLEFT: "<<" >
+| < GT: ">" >
+| < SHIFTRIGHT: ">>" >
+| < GTEQ: ">=" >
+| < ASSIGN: " is " >
+| < POWER2: "^" >
+| < XOR: " xor " >
+| < REMAINDER: " rem " >
+| < INTDIVIDE: " div " >
+| < MODULO: " mod " >
+| < COLON: ":" >
+| < BAR: "|" >
+| < NORMIMPLY: "=>" >
+| < NORMAND: "and " >
+| < DOLLAR: "$" >
+| < QUESTION: "?" >
+}  
+// PROLOG: 
+void Argument(InferenceRules rules, boolean isHead, boolean isPredicate) :
+{}
+{
+	(
+	LOOKAHEAD(Infix(rules, isHead, isPredicate)) Infix(rules, isHead, isPredicate)
+|
+	LOOKAHEAD(Number()) Number()
+|
+	Predicate(rules, isHead, isPredicate)
+|
+	Parenthesized(rules, isHead, isPredicate)
+|
+	Var()
+|	
+	List(rules, isHead, isPredicate)
+	)
+}
+	
+void Number() :
+{}
+{
+	[ <SUBTRACT> ]
+	(
+		<INTEGER_LITERAL>
+	|
+		<FLOATING_POINT_LITERAL>
+	)
+}
+ 
+void Predicate(InferenceRules rules, boolean isHead, boolean isPredicate) :
+{
+	Token pred;
+	String predImg;
+}
+{
+	(	LOOKAHEAD(2) 
+		[ <NOTSPACE> ] pred = <STD_IDENTIFIER> 
+		{ 
+			predImg = pred.image; 
+			if (!isPredicate)		rules.addFunction(predImg);
+			else if (isHead)		rules.setCurrentHead(predImg);
+				 else				rules.addPredicate(predImg);
+		}
+	|
+		<CHARACTER_LITERAL>
+	|
+		Operator()
+	)
+	[<LPAREN> Argument(rules, isHead, false) (<COMMA> Argument(rules, isHead, false))* <RPAREN>]
+}
+
+void Operator() :
+{}
+{
+	(<ADD>|<SUBTRACT>|<IMPLY>|<MULTIPLY>|<POWER>|<DIVIDE>|<BITAND>|<UNIFICATION>|<ARITHUNIF>|<ARITHNOTUNIF>|<EQLT>|
+	<TERMDECOMPOSITION>|<EQUALS>|<BACKSLASH>|<BITOR>|<NOTUNIFIABLE>|<NOTEQUALS>|<TERMGTEQ>|<TERMEQLT>|<TERMLT>|<TERMGT>|
+	<TERMEQ>|<TERMNEQ>|<LT>|<SHIFTLEFT>|<GT>|<SHIFTRIGHT>|<GTEQ>|<ASSIGN>|<POWER2>|<XOR>|<REMAINDER>|<INTDIVIDE>|<MODULO>|
+	<COLON>|<NORMAND>|<NOTSPACE>|<SEMICOLON>|<NOT>)
+} 
+ 
+void Bodypart(InferenceRules rules) :
+{}
+{
+	(
+		LOOKAHEAD(Infix(rules, false, true))	Infix(rules, false, true)
+	|
+		Predicate(rules, false, true)
+	|
+		Parenthesized(rules, false, true)
+	|
+		Var()
+	)
+}
+
+void Infix(InferenceRules rules, boolean inHead, boolean isPredicate) :
+{}
+{
+	(
+		LOOKAHEAD(Number()) Number()
+	|
+		Predicate(rules, inHead, isPredicate)
+	|
+		Parenthesized(rules, inHead, isPredicate)
+	|	
+		Var()
+	|
+		List(rules, inHead, isPredicate)
+	)
+	
+	Operator() 	Argument(rules, inHead, isPredicate)
+}
+ 
+void List(InferenceRules rules, boolean inHead, boolean isPredicate) :
+{}
+{
+	<LBRACKET>	[ ListPart(rules, inHead, false) ]	<RBRACKET>
+}
+
+void ListPart(InferenceRules rules, boolean inHead, boolean isPredicate) :
+{}
+{
+	Argument(rules, inHead, isPredicate)
+	[
+	(
+		( <COMMA> ListPart(rules, inHead, isPredicate) )
+	|
+		( <BAR> (	List(rules, inHead, isPredicate)	|	Var()	)	)
+	)
+	]
+	
+} 
+	 
+void Parenthesized(InferenceRules rules, boolean inHead, boolean isPredicate) :
+{}
+{
+	<LPAREN> Argument(rules, inHead, isPredicate) ( <COMMA> Argument(rules, inHead, isPredicate) )* <RPAREN> 
+}
+ 
+void Var() :
+{}
+{
+	<VAR_IDENTIFIER> 
+}
+
+void Rule(InferenceRules rules) :
+{}
+{
+	(
+		(
+			<QUESTION> 
+			(	
+				( Bodypart(null)	)		
+			|
+				( <BANG> 	)			
+			) 
+			[ 
+				( <COMMA> 
+					(
+						( Bodypart(null) )
+					|	
+						( <BANG>  )
+					)
+				)+
+			]
+		)
+	|
+		(
+			Predicate(rules, true, true)
+			[ 
+				<COLON> <SUBTRACT> 
+				
+				(
+					Bodypart(rules)
+				|
+					<BANG>
+				)
+				[
+					(
+						<COMMA> 
+						(
+							Bodypart(rules)
+						|	<BANG>
+						)
+					)+
+				]
+			]
+		)
+	)
+	<DOT> 
+}
+
+void Directive() : 
+{}
+{
+	<COLON> <SUBTRACT> 
+	(
+		(	<STD_IDENTIFIER>
+			[ <DIVIDE> <INTEGER_LITERAL> ]
+		)
+	|
+		(	<INTEGER_LITERAL> )
+	)*
+	
+	<DOT> 
+}
+
+InferenceRules Prolog() :
+{
+	InferenceRules rules = new InferenceRules();
+}
+{
+	(	LOOKAHEAD(2)	Directive()	)*
+	(	
+		Rule(rules)
+	)* 
+	
+	<EOF>
+	
+	{ return rules; }
+}

@@ -1,0 +1,31 @@
+beliefs:
+
+distance(500).
+fuel(1).
+
+enough_fuel(X) :- Y is X * 10, fuel(Y).
+fuel(X) :- Y is X - 1, Y > 0, fuel(Y).
+
+beliefupdates:
+{ distance(X) }	Forward(Y) { not distance(X), distance(X - Y) }
+{ distance(X) }	Backward(Y) { not distance(X), distance(X + Y) }
+
+goals:
+driveForward(100).
+
+pgrules:
+driveForward(X) <- enough_fuel(X) | {
+	Forward(X);
+	if (B(distance(D) and D <= 0)) {
+		dropgoal(driveForward(X));
+		adopta(driveBackward(100));
+	}
+}
+
+driveBackward(X) <- speed(X) | {
+	Backward(X);
+	if (B(distance(D) and D >= 1000)) {
+		dropgoal(driveBackward(X));
+		adopta(driveForward(100));
+	}
+}

@@ -1,0 +1,4 @@
+<apaplmas>
+	<environment name="env" file="env.jar"/>
+	<agent name="chatBot" file="chatBot.2apl"/>
+</apaplmas>
