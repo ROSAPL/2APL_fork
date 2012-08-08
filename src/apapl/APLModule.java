@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import apapl.beliefinertia.BeliefInertiaModule;
-import apapl.benchmarking.APLBenchmarkParam;
-import apapl.benchmarking.APLBenchmarker;
 import apapl.data.APLFunction;
 import apapl.data.APLIdent;
 import apapl.data.Term;

@@ -2,9 +2,6 @@ package apapl;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,13 +17,6 @@ import org.xml.sax.SAXException;
 
 import apapl.data.Tuple;
 import apapl.env.EnvLoader;
-import apapl.env.exceptions.ManagementException;
-import apapl.env.exceptions.NoEnvironmentException;
-import apapl.env.iilang.EnvironmentCommand;
-import apapl.env.iilang.Function;
-import apapl.env.iilang.Identifier;
-import apapl.env.iilang.Numeral;
-import apapl.env.iilang.Parameter;
 import apapl.messaging.Messenger;
 import apapl.parser.ParseException;
 import apapl.parser.ParseMASException;
@@ -140,61 +130,11 @@ public class APAPLBuilder {
 				}
 				
 				assert env != null;
-				
-				// create environment command (possibly using parameters from parameters)
-				EnvironmentCommand cmd = new EnvironmentCommand(
-						EnvironmentCommand.INIT
-						);
 
 				if( envParams.entrySet().size() != 0 ) {
-					
-					for( Entry<String, String> entry : envParams.entrySet() ) {
-						
-						String key = entry.getKey();
-						Parameter value = null;
-						
-						if( entry.getValue().equals("") ) {
-							cmd.addParameter(new Identifier(key));
-							continue;
-						}
-						
-						// Numeral or Identifier?
-						// 1. is it an integer?
-						try {
-							Integer i = new Integer(entry.getValue());
-							value = new Numeral(i.longValue());
-						}
-						catch(NumberFormatException e1) {
-							// 2. is it an double?
-							try {
-								Double d = new Double(entry.getValue());
-								value = new Numeral(d.doubleValue());
-							}
-							catch(NumberFormatException e2) {
-								// 3. it must be an identifier!
-								value = new Identifier(entry.getValue());
-							}
-						}
-					
-						assert value != null;
-						
-						Function f = new Function(key,value);
-						cmd.addParameter(f);
-					}
-					
-				}
-				
-				// manage
-				try {
-					env.manageEnvironment(cmd);
-				} catch (ManagementException e) {
-					System.out.println("Could not execute environment-command " + cmd.toProlog());
-					System.out.println("Reason: " + e.getMessage());
-				} catch (NoEnvironmentException e) {
-					System.out.println("Could not execute environment-command " + cmd.toProlog());
-					System.out.println("Reason: " + "no environment");
-				}
-				
+					for( Entry<String, String> entry : envParams.entrySet() )
+						env.addEnvParameter(entry.getKey(), entry.getValue());						
+				}				
 			}
 			
 			// node is an agent-specification
@@ -261,7 +201,7 @@ public class APAPLBuilder {
     	
 		// associate
 		for( APLModule mod : mods ) {
-			
+	
 			for( Entry<String, Environment> env : envs.entrySet() ) {
 				
 				ret.attachModuleToEnvironment(mod, env.getKey(), env.getValue());
@@ -355,7 +295,7 @@ public class APAPLBuilder {
      * @throws ParsePrologException if the module's belief base could not be
      *         instantiated
      */
-    public Tuple<APLModule, LinkedList<File>> buildModule(String moduleSpec,
+    Tuple<APLModule, LinkedList<File>> buildModule(String moduleSpec,
             String name, APLMAS mas) throws ParseModuleException,
             ParsePrologException {
         File file = getModuleSpecificationFile(mas, moduleSpec);
@@ -370,53 +310,6 @@ public class APAPLBuilder {
         t.l.setMas(mas);
 
         return (t);
-    }
-
-    /**
-     * Builds an environment. The environment is specified by a class file
-     * Env.class that is expected to be in a jar file that is located in the
-     * directory 'environments' and that has the name of the environment. This
-     * method then loads and instantiates this class.
-     * 
-     * @param environment the name that identifies the environment
-     * @return the environment
-     * @throws LoadEnvironmentException if an error occurred during loading
-     * 
-     * @deprecated 2APL has migrated to Environment Interface Standard.
-     */
-    public Environment buildEnvironment(String environment)
-            throws LoadEnvironmentException {
-        Environment env = null;
-
-        // Construct the location of the jar file the environment is in
-        environment = environment.trim();
-        String jarfile = System.getProperty("user.dir") + File.separator
-                + "environments" + File.separator + environment + ".jar";
-
-        try {
-            URL[] urls = new URL[1];
-            urls[0] = new URL("file:" + File.separator + File.separator
-                    + jarfile);
-
-            // Add the jar file to the classpath
-            ClassPathHacker.addFile(jarfile);
-
-            // Obtain environment class
-            URLClassLoader cloader = new URLClassLoader(urls);
-            Class<?> envClass = cloader.loadClass(environment + ".Env");
-
-            // Instantiate the environment class
-            Constructor<?> co = envClass.getConstructor();
-            env = (Environment) (co.newInstance());
-        }
-
-        // Lots of things might go wrong when loading an environment
-        // just throw the exception to the calling method
-        catch (Exception e) {
-            throw (new LoadEnvironmentException(environment, e.getMessage()));
-        }
-
-        return (env);
     }
 
     /**

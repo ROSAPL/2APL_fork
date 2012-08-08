@@ -63,7 +63,7 @@ public class APLMAS implements MessageListener {
      * @param exec the executor implementing the strategy for executing the
      *        modules
      */
-    public APLMAS(File moduleSpecDir, Messenger msgr, Executor exec) {
+    APLMAS(File moduleSpecDir, Messenger msgr, Executor exec) {
         activeModules = new LinkedList<APLModule>();
         inactiveModules = new LinkedList<APLModule>();
         modulefiles = new HashMap<APLModule, LinkedList<File>>();
@@ -85,7 +85,7 @@ public class APLMAS implements MessageListener {
      * @param files the files by which is this module specified
      * @param active determines whether the module should be initially active
      */
-    public void addModule(APLModule module, LinkedList<File> files,
+    void addModule(APLModule module, LinkedList<File> files,
             boolean active) {
         if (active) {
             activeModules.add(module);
@@ -136,7 +136,7 @@ public class APLMAS implements MessageListener {
      * 
      * @param module the module to be activated
      */
-    public void activateModule(APLModule module) {
+    private void activateModule(APLModule module) {
         // Removes module from inactive list. No effect if not there.
         inactiveModules.remove(module);
         activeModules.add(module);
@@ -154,7 +154,7 @@ public class APLMAS implements MessageListener {
      * 
      * @param module the module to be deactivated
      */
-    public void deactivateModule(APLModule module) {
+    private void deactivateModule(APLModule module) {
         // Removes module from active list. No effect if not there.
         activeModules.remove(module);
         inactiveModules.add(module);
@@ -170,7 +170,7 @@ public class APLMAS implements MessageListener {
      * 
      * @param ei the environment interface to be added
      */
-    public void addEnvironment(Environment ei) {
+    void addEnvironment(Environment ei) {
         environments.add(ei);
     }
     
@@ -186,7 +186,7 @@ public class APLMAS implements MessageListener {
      * @param envName the name of the environment to attach
      * @param env the environment to attach
      */
-    public void attachModuleToEnvironment(APLModule module, String envName,
+    void attachModuleToEnvironment(APLModule module, String envName,
             Environment env) 
     {
  
@@ -221,7 +221,7 @@ public class APLMAS implements MessageListener {
      * @param envName the identifier of the environment
      * @param env the environment
      */
-    public void detachModuleFromEnvironment(APLModule module, String envName) {
+    private void detachModuleFromEnvironment(APLModule module, String envName) {
         try {
             Environment env = module.getEnvironment(envName); 
             
@@ -233,16 +233,6 @@ public class APLMAS implements MessageListener {
         }
 
         module.removeEnvironment(envName);
-    }
-
-    /**
-     * Obtains all the files by which is the module specified.
-     * 
-     * @param module the module to obtain the files for
-     * @return the files that specify this module
-     */
-    public LinkedList<File> getFiles(APLModule module) {
-        return (modulefiles.get(module));
     }
 
     /**
@@ -323,7 +313,7 @@ public class APLMAS implements MessageListener {
      * 
      * @param module module to be put to sleep
      */
-    public void sleep(APLModule module) {
+    void sleep(APLModule module) {
         executor.sleep(module);
     }
 
@@ -332,7 +322,7 @@ public class APLMAS implements MessageListener {
      * 
      * @param module module to be waken up
      */
-    public void wakeUp(APLModule module) {
+    void wakeUp(APLModule module) {
         if (isActive(module))
             executor.wakeUp(module);
     }
@@ -537,7 +527,7 @@ public class APLMAS implements MessageListener {
      * @return <code>true</code> is the module is active, <code>false</code>
      *         otherwise
      */
-    public boolean isActive(APLModule module) {
+    boolean isActive(APLModule module) {
         return activeModules.contains(module);
     }
 
@@ -548,7 +538,7 @@ public class APLMAS implements MessageListener {
      * @return <code>true</code> if the system contains the module,
      *         <code>false</code> otherwise
      */
-    public boolean containsModule(String moduleId) {
+    private boolean containsModule(String moduleId) {
         for (APLModule m : getModules()) {
             if (m.getName().equals(moduleId)) {
                 return true;
@@ -593,7 +583,7 @@ public class APLMAS implements MessageListener {
      * @param env the environment that generated the event
      * @param a the received event
      */
-    public void notifyEEevent(String moduleName, String env, APLFunction a) {
+    private void notifyEEevent(String moduleName, String env, APLFunction a) {
         
     	try {
             APLModule module = this.getModule(null, moduleName);            

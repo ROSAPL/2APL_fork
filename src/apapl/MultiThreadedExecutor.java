@@ -1,7 +1,6 @@
 package apapl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,22 +29,6 @@ public class MultiThreadedExecutor implements Executor
 	{
 		execs = new HashMap<APLModule, ModuleExecutor>();
 		listeners = new ArrayList<MASExecutionListener>();
-	}
-
-	/**
-	 * Constructs an executor using initial set of executed modules.
-	 * 
-	 * @param modules the modules to execute
-	 */
-	public MultiThreadedExecutor(Collection<APLModule> modules)
-	{
-		execs = new HashMap<APLModule, ModuleExecutor>();
-		listeners = new ArrayList<MASExecutionListener>();
-
-		for (APLModule module : modules)
-		{
-			addModule(module);
-		}
 	}
 
 	public synchronized void addModule(APLModule module)
