@@ -1,4 +1,4 @@
-<project name="2apl_src_opt" default="run">
+<project name="2apl build" default="run">
   
   <property name="builddir" location="build"/>
   <property name="srcdir" location="src"/>
