@@ -20,6 +20,8 @@ import org.xml.sax.SAXException;
 
 import apapl.data.Tuple;
 import apapl.env.EnvLoader;
+import apapl.env.exceptions.ManagementException;
+import apapl.env.exceptions.NoEnvironmentException;
 import apapl.env.iilang.EnvironmentCommand;
 import apapl.env.iilang.Function;
 import apapl.env.iilang.Identifier;
@@ -180,6 +182,17 @@ public class APAPLBuilder {
 						cmd.addParameter(f);
 					}
 					
+				}
+				
+				// manage
+				try {
+					env.manageEnvironment(cmd);
+				} catch (ManagementException e) {
+					System.out.println("Could not execute environment-command " + cmd.toProlog());
+					System.out.println("Reason: " + e.getMessage());
+				} catch (NoEnvironmentException e) {
+					System.out.println("Could not execute environment-command " + cmd.toProlog());
+					System.out.println("Reason: " + "no environment");
 				}
 				
 			}

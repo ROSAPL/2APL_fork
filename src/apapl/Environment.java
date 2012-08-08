@@ -11,7 +11,9 @@ import apapl.env.AgentListener;
 import apapl.env.exceptions.ActException;
 import apapl.env.exceptions.AgentException;
 import apapl.env.exceptions.EnvironmentInterfaceException;
+import apapl.env.exceptions.ManagementException;
 import apapl.env.exceptions.NoEnvironmentException;
+import apapl.env.iilang.EnvironmentCommand;
 
 /**
  * This class is the superclass for 2APL environments. It implements
@@ -200,5 +202,23 @@ public class Environment {
         }
     }
     
+    /*
+     * Management functionality.
+     */
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see eis.NewInterface#manageEnvironment(eis.iilang.EnvironmentCommand,
+     * java.lang.String)
+     */
+    public void manageEnvironment(EnvironmentCommand command, String... args)
+            throws ManagementException, NoEnvironmentException {
+        // TODO Implement this
+    }
+    
+	public void manageEnvironment(EnvironmentCommand arg0)
+			throws ManagementException, NoEnvironmentException {
+	}    
     
 }

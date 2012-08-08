@@ -27,9 +27,7 @@ public class APAPL {
     final static String BENCHMARK = "-benchmark";
     final static String BENCHMARK_TIME = "-time";
     final static String BENCHMARK_NOAGENTS = "-noagents";
-    
-    final static String INERTIA = "-inertia";
-    
+        
     public static void main(String[] args)
     {    	
     	// has been the -benchmark argument set?
@@ -55,10 +53,7 @@ public class APAPL {
         			arg = HELP_ARGUMENT;
         	} else if (arg.equals(BENCHMARK_NOAGENTS)) {
         		APLBenchmarkParam.MULTIPLE_AGENT_BENCHMARK = false;
-        	} else if (arg.equals(INERTIA)) {
-        		BeliefInertiaParam.ENABLED = true;
-        	}
-        	else if (arg.equals(NOGUI_ARGUMENT)) {
+        	} else if (arg.equals(NOGUI_ARGUMENT)) {
                 nogui = true;
             } else if (arg.equals(NOJADE_ARGUMENT)) {
                 nojade = true;
@@ -71,6 +66,9 @@ public class APAPL {
                   "Usage: java -jar 2apl.jar [-benchmark [-time <time in sec> ] [-noagents] ] [-nogui] [-nojade] [-help] [<path to MAS file>] \n" +
                   " \n" +
                   "Options: \n" + 
+                  "   -benchmark do a benchmark (no graphical interface) \n" +
+                  "       -time      <t> the number of seconds to perform a benchmark \n" +
+                  "       -noagents  print benchmarking results for all agents combined \n" +
                   "   -nogui   do not open graphical user interface; start the MAS immediately \n" + 
                   "   -nojade  skip JADE configuration and run in standalone mode \n" +
                   "   -help    print this message \n";
