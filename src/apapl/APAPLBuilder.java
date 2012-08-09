@@ -123,18 +123,20 @@ public class APAPLBuilder {
 					String paramValue = "";
 					if( grandchild.getAttributes().getNamedItem("value") != null )
 						paramValue = grandchild.getAttributes().getNamedItem("value").getNodeValue();
-					//System.out.println(paramKey + " " + paramValue);
-					
+										
 					envParams.put(paramKey, paramValue);
 					
 				}
 				
 				assert env != null;
 
-				if( envParams.entrySet().size() != 0 ) {
+				if( envParams.entrySet().size() != 0 ) 
+				{
 					for( Entry<String, String> entry : envParams.entrySet() )
-						env.addEnvParameter(entry.getKey(), entry.getValue());						
-				}				
+						env.addEnvParameter(entry.getKey(), entry.getValue());	
+				}
+				
+				env.initialized();
 			}
 			
 			// node is an agent-specification
@@ -200,13 +202,10 @@ public class APAPLBuilder {
 		}
     	
 		// associate
-		for( APLModule mod : mods ) {
-	
-			for( Entry<String, Environment> env : envs.entrySet() ) {
-				
+		for( APLModule mod : mods ) 
+		{
+			for( Entry<String, Environment> env : envs.entrySet() )	
 				ret.attachModuleToEnvironment(mod, env.getKey(), env.getValue());
-				
-			}
 			
 		}
 		

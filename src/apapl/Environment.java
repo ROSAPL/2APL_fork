@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import apapl.data.APLFunction;
 import apapl.data.Term;
@@ -202,6 +203,17 @@ public class Environment {
         }
     }
     
+    /**
+     * This method is called when all the environment parameters have been added
+     * to the environment and it has been added to the module as well. It can be
+     * overridden by an Environment developer to determine the point when the
+     * environment has received all necessary information for the APAPLBuilder.
+     * 
+     */
+    public void initialized() {
+    }
+    
+    
     /*
      * Environment parameters functionality
      * 
@@ -214,4 +226,5 @@ public class Environment {
 	public HashMap<String, String> getEnvParameters() {
 		return envParams;
 	}
+	
 }

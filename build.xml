@@ -28,9 +28,6 @@
     <copy todir="${builddir}/">
       <fileset dir="${resourcesdir}/license"/>
     </copy>
-    <copy todir="${builddir}/blockworld/images">
-      <fileset dir="${srcdir}/blockworld/images" />
-    </copy>
   </target>
 	
   <target name="release" depends="compile">
@@ -56,7 +53,7 @@
  
   	<!-- Create the jar-file -->
     <jar basedir="${builddir}" destfile="${releasedir}/2apl.jar">
-      	<fileset dir="${builddir}" excludes="blockworld/**"/>
+      	<fileset dir="${builddir}"/>
       	<!--fileset dir="${libdir}"/-->
     	<manifest>
           <attribute name="Main-Class" value="APAPL"/>
@@ -72,26 +69,7 @@
     	          "
     		    />
 	   </manifest>
-    </jar>  	
-  	
-  	<mkdir dir="${releasedir}/environments"/>
-  	
-    <jar basedir="${builddir}/" destfile="${releasedir}/environments/blockworld.jar">
-      <include name="blockworld/**" />
-    	<include name="apapl/data/**" />
-    	<include name="apapl/Environment.class" />
-    	<include name="apapl/ExternalActionFailedException.class" />
-    	<include name="apapl/Substitutable.class" />
-    	<manifest>
-        <attribute name="Main-Class" value="blockworld.Env"/>
-	    </manifest>
-    </jar>
-  	
-  	<!-- Distributes re-compiled blockworld environment to the examples -->
-    <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/explorer and carrier/blockworld.jar" />
-    <copy file="${releasedir}/environments/blockworld.jar" tofile="${releasedir}/examples/harry and sally/blockworld.jar" />
-  	<delete dir="${releasedir}/environments" />
-  	
+    </jar>   	
   </target>
   
   <target name="run" depends="release">
