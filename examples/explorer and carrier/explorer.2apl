@@ -1,0 +1,30 @@
+include: 
+  moving.2apl;
+
+beliefupdates:
+  { at(OLDPOS) }         UpdatePosition(POS)  { not at(OLDPOS), at(POS) }
+  { true }               UpdatePosition(POS)  { at(POS) }
+  
+beliefs:
+  foundBomb :- bomb(_).
+  
+  /* Succeeds with probability P */ 
+  prob(P) :- is(X, rand), X < P.
+
+goals:
+  foundBomb.
+
+pgrules:
+  /* Wander around */
+  foundBomb <- prob(0.06) | 
+  {
+		gotoRandomPos(15,15);
+  }
+  
+  foundBomb <- true |
+  {
+    @blockworld( senseBombs(), BOMBS );
+    if ( BOMBS = [ [default,X1,Y1] | REST ])
+       +bomb([X1,Y1]);
+  }
+  
