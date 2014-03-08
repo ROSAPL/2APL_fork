@@ -204,7 +204,7 @@ public class APLBenchmarker
 	/**
 	 * This class represents a benchmark for all operations.
 	 * 
-	 * @author Marc van Zee (marcvanzee@gmail.com) - Linköping University
+	 * @author Marc van Zee (marcvanzee@gmail.com) - Linkoping University
 	 *
 	 */
 	private class Benchmark

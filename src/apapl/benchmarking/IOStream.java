@@ -8,7 +8,7 @@ import java.io.PrintStream;
  * Replace the normal out stream with one that does not print anything.
  * Used when the user desires not to have any output during benchmarking.
  * 
- * @author Marc van Zee (marcvanzee@gmail.com) - Linköping University
+ * @author Marc van Zee (marcvanzee@gmail.com) - Linkoping University
  *
  */
 public class IOStream {
