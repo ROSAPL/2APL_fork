@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib
+END
+ObsVect.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/ObsVect.java
+END
+AttrGroup.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/AttrGroup.java
+END
+IntegerAttr.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/IntegerAttr.java
+END
+Error.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/Error.java
+END
+IntegerAttrAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/IntegerAttrAdapter.java
+END
+ROIntegerAttr.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/ROIntegerAttr.java
+END
+ROIntegerView.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/ROIntegerView.java
+END
+ObsVectListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/ObsVectListener.java
+END
+Signal.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/Signal.java
+END
+IntegerAttrListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/115/trunk/code/2apl_platform/environments/blockworld/lib/IntegerAttrListener.java
+END
