@@ -210,11 +210,11 @@ public abstract class Environment {
 	 * environment has received all necessary information for the APAPLBuilder.
 	 * 
 	 */
-	abstract public void initialized();
+	public void initialized(){return;}
 
 
 	/*
-	 * Environment parameters functionality
+	 * Environment parameters functionality:w
 	 * 
 	 */
 	void addEnvParameter(String key, String value) {
