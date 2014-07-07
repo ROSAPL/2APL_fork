@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 
 import apapl.messaging.JadeMessenger;
 import apapl.messaging.LocalMessenger;
+import apapl.messaging.Messenger;
 
 
 public class Config extends JFrame implements ActionListener, WindowListener
@@ -114,9 +115,9 @@ public class Config extends JFrame implements ActionListener, WindowListener
 		{	int port = 1099;
 			try {port = Integer.parseInt(portField.getText());} catch (Exception ex) {}
 			String host = hostField.getText();
-			if (modeButton[1].isSelected()) new GUI(new JadeMessenger(null,port), masfile);
-			else if (modeButton[2].isSelected()) new GUI(new JadeMessenger(host,port), masfile);
-			else if (modeButton[0].isSelected()) new GUI(new LocalMessenger(), masfile);
+			if (modeButton[1].isSelected()) launchGui(new JadeMessenger(null,port), masfile);
+			else if (modeButton[2].isSelected()) launchGui(new JadeMessenger(host,port), masfile);
+			else if (modeButton[0].isSelected()) launchGui(new LocalMessenger(), masfile);
 			setVisible(false);
 		}
 		else if ("server".equals(e.getActionCommand()))
@@ -131,6 +132,10 @@ public class Config extends JFrame implements ActionListener, WindowListener
 		{	hostField.setEditable(false);
 			portField.setEditable(false);
 		}
+	}
+	
+	protected void launchGui(Messenger messenger, File masfile){
+		new GUI(messenger,masfile);
 	}
 	
 	public void windowClosing(WindowEvent e) {System.exit(0);}
