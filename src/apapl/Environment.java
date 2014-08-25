@@ -160,23 +160,23 @@ public class Environment {
 		       Class<?>[] classParams = new Class[params.size() + 1];
 		       classParams[0] = String.class; // entity name
 
-		       for (int a = 0; a < params.size(); a++)
-			       classParams[a + 1] = params.get(a).getClass();
+		       for (int a = 0; a < params.size(); a++){
+		    	   classParams[a + 1] = params.get(a).getClass();
+		       }
+			       
 
 		       try {
 			       // lookup the method
 			       Method m = this.getClass().getMethod(action.getName(), classParams);
-
 			       if (Class.forName("apapl.data.Term").isAssignableFrom(
 						       m.getReturnType()) == false)
 				       throw new ActException("Wrong return-type");
-
 			       // invoke
 			       Object[] objParams = new Object[params.size() + 1];
-			       objParams[0] = agent; // agent name
-			       for (int a = 0; a < params.size(); a++)
+			       objParams[0] = agent; // agent nameo
+			       for (int a = 0; a < params.size(); a++){
 				       objParams[a + 1] = params.get(a);
-
+			       }
 			       return (Term) m.invoke(this, objParams);
 
 		       } catch (ClassNotFoundException e) {
