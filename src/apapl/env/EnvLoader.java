@@ -65,7 +65,8 @@ public class EnvLoader {
 		try {
 			envInterfaceClass = loader.loadClass(mainClass);
 		} catch (ClassNotFoundException e) {
-			throw new IOException("Class \"" + mainClass + "\" could not be loaded from \"" + file + "\" (class not found exception)");
+			throw new IOException("Class \"" + mainClass + "\" could not be loaded from \"" + file + "\" (class not found exception): "+ e);
+			
 		}
 		
 		// 5.  get an instance of the class

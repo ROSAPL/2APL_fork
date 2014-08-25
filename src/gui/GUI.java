@@ -693,7 +693,7 @@ public class GUI extends JFrame implements WindowListener,
 					e.printStackTrace();
 				} catch (InvocationTargetException e)
 				{
-					e.printStackTrace();
+					e.getCause().printStackTrace();
 				}
 			}
 		}
