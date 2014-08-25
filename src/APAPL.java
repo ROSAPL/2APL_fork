@@ -10,6 +10,7 @@ import apapl.LoadEnvironmentException;
 import apapl.MultiThreadedExecutor;
 import apapl.benchmarking.APLBenchmarkParam;
 import apapl.benchmarking.APLBenchmarker;
+import apapl.messaging.JadeMessenger;
 import apapl.messaging.LocalMessenger;
 import apapl.messaging.Messenger;
 import apapl.parser.ParseMASException;
@@ -21,7 +22,9 @@ public class APAPL {
     final static String NOGUI_ARGUMENT = "-nogui";
     final static String NOJADE_ARGUMENT = "-nojade";
     final static String HELP_ARGUMENT = "-help";
-    
+    final static String JADE_HOST_ARGUMENT = "-host";
+    final static String JADE_PORT_ARGUMENT = "-port";    
+    final static String JADE_MASTER = "master";
     final static String BENCHMARK = "-benchmark";
     final static String BENCHMARK_TIME = "-time";
     final static String BENCHMARK_NOAGENTS = "-noagents";
@@ -36,6 +39,10 @@ public class APAPL {
         boolean nojade = false;
         // has been the path to MAS file provided?
         File masfile = null; 
+        // default host for jade: localhost
+        String jade_host = null;
+        // default port for jade: 1099
+        int jade_port = 1099;
 
         // Parse arguments, the last argument should be the mas filename.       
         for (int i=0; i<args.length; i++) {
@@ -56,12 +63,28 @@ public class APAPL {
             } else if (arg.equals(NOJADE_ARGUMENT)) {
                 nojade = true;
             } 
-        	if (arg.equals(HELP_ARGUMENT)) {                
+         else if (arg.equals(JADE_HOST_ARGUMENT)){
+            if (!args[i+1].startsWith("-")) {
+               if (args[i+1].equals(JADE_MASTER)){
+                  ++i; //skip the nex argument left host to null to start the master container
+               }
+               else{
+                  jade_host = args[++i]; //set the master uri
+               }
+           }
+         }
+         else if (arg.equals(JADE_PORT_ARGUMENT)){
+            if (!args[i+1].startsWith("-")) {
+                jade_port = Integer.parseInt(args[++i]);
+            }
+         }
+         
+         if (arg.equals(HELP_ARGUMENT)) {                
                 String helpmessage = 
                   " \n" +  
                   "2APL (A Practical Agent Programming Language) Interpreter \n" +
                   " \n" +
-                  "Usage: java -jar 2apl.jar [-benchmark [-time <time in sec> ] [-noagents] ] [-nogui] [-nojade] [-help] [<path to MAS file>] \n" +
+                  "Usage: java -jar 2apl.jar [-benchmark [-time <time in sec> ] [-noagents] ] [-nogui] [-nojade] [-host <jade master url>] [-port <jade port>] [-help] [<path to MAS file>] \n" +
                   " \n" +
                   "Options: \n" + 
                   "   -benchmark do a benchmark (no graphical interface) \n" +
@@ -69,7 +92,11 @@ public class APAPL {
                   "       -noagents  print benchmarking results for all agents combined \n" +
                   "   -nogui   do not open graphical user interface; start the MAS immediately \n" + 
                   "   -nojade  skip JADE configuration and run in standalone mode \n" +
-                  "   -help    print this message \n";
+                  "   -host    JADE master container URL. If not set or follows by master acts as master container  \n" +
+                  "   -port    JADE master connexion port. If empty de default is 1099\n" +
+                  "   -help    print this message \n\n"+
+                  " \n" +
+                  "Note that if -nojade is set -host and -port are ignored if defined. If none of -nojade, -host or -port are set a jade master node listening at port 1099 is created.\n";
                  
                 System.out.print(helpmessage);
                 System.exit(0);
@@ -129,8 +156,13 @@ public class APAPL {
                 System.out.println("No MAS file provided!");
                 System.exit(0);
             }        
-            
-            Messenger msgr = new LocalMessenger();
+            Messenger msgr = null;
+            if (nojade) {
+               msgr = new LocalMessenger();
+            }
+            else if (!nojade) {
+               msgr = new JadeMessenger(jade_host,jade_port);
+            }
             APAPLBuilder builder = new APAPLBuilder();
 
             // load the MAS

@@ -72,22 +72,23 @@ public class GUI extends JFrame implements WindowListener,
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6726930322741411236L;
-	private int x = 200;
-	private int y = 100;
-	private int width = 800;
-	private int height = 600;
+	protected static final long serialVersionUID = 6726930322741411236L;
+	protected int x = 200;
+	protected int y = 100;
+	protected int width = 800;
+	protected int height = 600;
 
-	private boolean useSH = false;
+	protected boolean useSH = false;
 
-	private JPanel viewerPanel;
-	private HashMap<APLModule, ModuleViewer> viewers = new HashMap<APLModule, ModuleViewer>();
+	protected JPanel viewerPanel;
+	protected HashMap<APLModule, ModuleViewer> viewers = new HashMap<APLModule, ModuleViewer>();
 
 	/**
 	 * Tree displaying the hierarchy of modules stored in the {@link treeModel}
-	 * data structure.
+	 * data stru
+	 * cture.
 	 */
-	private JTree tree;
+	protected JTree tree;
 
 	/**
 	 * Module tree model mirrors the current hierarchy of modules in the
@@ -99,14 +100,14 @@ public class GUI extends JFrame implements WindowListener,
 	 * is loaded and updated after each callback from MASChangeListener or
 	 * MASExecutionListener.
 	 */
-	private ModuleTreeModel treeModel;
+	protected ModuleTreeModel treeModel;
 
 	MasTab mastab;
 
-	private APLMAS mas;
-	private Toolbar toolbar;
-	private File masfile;
-	private Messenger msgr;
+	protected APLMAS mas;
+	protected Toolbar toolbar;
+	protected File masfile;
+	protected Messenger msgr;
 
 	public static LookAndFeel laf = UIManager.getLookAndFeel();
 	public static Object oldUIClassLoader = UIManager.get("ClassLoader");
@@ -231,18 +232,22 @@ public class GUI extends JFrame implements WindowListener,
 		{
 			showError(errormsg + "Error parsing mas file " + e.getFile()
 					+ ":\n\n" + e.getMessage());
+			System.out.println(e.getStackTrace());
 		} catch (ParseModuleException e)
 		{
 			showError(errormsg + "Error parsing module specification file "
 					+ e.getFile() + ":\n\n" + e.getMessage());
+			System.out.println(e.getStackTrace());
 		} catch (ParsePrologException e)
 		{
 			showError(errormsg + "Error parsing prolog file " + e.getFile()
 					+ ":\n\n" + e.getMessage());
+			System.out.println(e.getStackTrace());
 		} catch (LoadEnvironmentException e)
 		{
 			showError(errormsg + "Error loading environment " + e.getName()
 					+ ":\n\n" + e.getMessage());
+			System.out.println(e.getStackTrace());
 		}
 	}
 
@@ -337,7 +342,7 @@ public class GUI extends JFrame implements WindowListener,
 	 * 
 	 * @param c the container to display
 	 */
-	private void updateViewer(final Container c)
+	protected void updateViewer(final Container c)
 	{
 		// this causes the addTab method to be called from within the swing
 		// event dispatch thread.
@@ -415,7 +420,7 @@ public class GUI extends JFrame implements WindowListener,
 		return useSH;
 	}
 
-	private void showError(String errorMessage)
+	protected void showError(String errorMessage)
 	{
 		RTFFrame r = new RTFFrame(false);
 		r.update(errorMessage);
@@ -668,7 +673,7 @@ public class GUI extends JFrame implements WindowListener,
 	 * @param wait if set to {@code true}, the thread will wait until the event is
 	 *        processed
 	 */
-	private void dispatchSwingUpdate(final Runnable update, boolean wait)
+	protected void dispatchSwingUpdate(final Runnable update, boolean wait)
 	{
 		if (SwingUtilities.isEventDispatchThread())
 		{
@@ -688,7 +693,7 @@ public class GUI extends JFrame implements WindowListener,
 					e.printStackTrace();
 				} catch (InvocationTargetException e)
 				{
-					e.printStackTrace();
+					e.getCause().printStackTrace();
 				}
 			}
 		}

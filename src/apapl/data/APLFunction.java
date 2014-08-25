@@ -13,6 +13,7 @@ import apapl.program.Base;
  */
 public class APLFunction extends Fact
 {
+	public static final APLFunction NULL = new APLFunction("null", new APLNum(0));
 	private boolean infix = false;
 	private String name;
 	ArrayList<Term> params;

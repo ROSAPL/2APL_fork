@@ -1,0 +1,7 @@
+#Ignore temp files
+*~
+*.swap
+
+#Ignore build folders
+release/
+build/

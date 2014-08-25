@@ -29,30 +29,41 @@ import apapl.parser.ParsePrologException;
  */
 public class APLMAS implements MessageListener {
     /** The list of active modules that reside in this MAS. */
-    private List<APLModule> activeModules;
+    protected List<APLModule> activeModules;
     /** The list of inactive modules that reside in this MAS. */
-    private List<APLModule> inactiveModules;
+    protected List<APLModule> inactiveModules;
 
     /** The files that are used per module. */
-    private HashMap<APLModule, LinkedList<File>> modulefiles;
+    protected HashMap<APLModule, LinkedList<File>> modulefiles;
     /** The environments used in this MAS. (needed for cleanup at destruction) */
-    private LinkedList<Environment> environments;
+    protected LinkedList<Environment> environments;
     
     /** The executor used to execute the modules. */
-    private Executor executor;
+    protected Executor executor;
     /** The messenger used to send messages. */
-    private Messenger msgr;
+    protected Messenger msgr;
     /**
      * Directory in which module specifications are located. Typically the
      * directory with MAS specification file.
      */
-    private File moduleSpecDir;
+    protected File moduleSpecDir;
     /**
      * Listeners to be informed when a module is created, released, activated or
      * deactivated.
      */
-    private ArrayList<MASChangeListener> listeners;
-
+     protected ArrayList<MASChangeListener> listeners;
+     
+    /**
+    * Basic constructor suitable to safely start a MAS and be
+    * reused by subclasses.
+    **/
+    protected APLMAS(){
+        activeModules = new LinkedList<APLModule>();
+        inactiveModules = new LinkedList<APLModule>();
+        modulefiles = new HashMap<APLModule, LinkedList<File>>();
+        environments = new LinkedList<Environment>();
+        listeners = new ArrayList<MASChangeListener>();
+    }
     /**
      * Constructs an empty MAS. Initially, a MAS is populated by modules created
      * by a parser.
@@ -64,12 +75,7 @@ public class APLMAS implements MessageListener {
      *        modules
      */
     APLMAS(File moduleSpecDir, Messenger msgr, Executor exec) {
-        activeModules = new LinkedList<APLModule>();
-        inactiveModules = new LinkedList<APLModule>();
-        modulefiles = new HashMap<APLModule, LinkedList<File>>();
-        environments = new LinkedList<Environment>();
-        listeners = new ArrayList<MASChangeListener>();
-        
+        this();     
 
         this.moduleSpecDir = moduleSpecDir;
         this.msgr = msgr;

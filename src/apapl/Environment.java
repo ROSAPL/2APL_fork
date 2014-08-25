@@ -137,88 +137,86 @@ public class Environment {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+	}
 
 
-    /**
-     * Performs action in the original 2APL environment.
-     */ 
-    public final Term performAction(String agent,
-            APLFunction action) throws ActException,
-            NoEnvironmentException {
+	/**
+	 * Performs action in the original 2APL environment.
+	 */ 
+	public final Term performAction(String agent,
+			APLFunction action) throws ActException,
+	       NoEnvironmentException {
 
-        // unregistered agents cannot act
-        if (!agents.containsKey(agent))
-            throw new ActException("Agent \"" + agent + "\" is not registered.");
+		       // unregistered agents cannot act
+		       if (!agents.containsKey(agent))
+			       throw new ActException("Agent \"" + agent + "\" is not registered.");
 
-        // Parameters expressed using 2APL data types
-        ArrayList<Term> params = action.getParams();
-        
-        // determine class parameters for finding the method
-        // and store the parameters as objects
+		       // Parameters expressed using 2APL data types
+		       ArrayList<Term> params = action.getParams();
 
-        Class<?>[] classParams = new Class[params.size() + 1];
-        classParams[0] = String.class; // entity name
-        
-        for (int a = 0; a < params.size(); a++)
-            classParams[a + 1] = params.get(a).getClass();
+		       // determine class parameters for finding the method
+		       // and store the parameters as objects
 
-        try {
-            // lookup the method
-            Method m = this.getClass().getMethod(action.getName(), classParams);
+		       Class<?>[] classParams = new Class[params.size() + 1];
+		       classParams[0] = String.class; // entity name
 
-            if (Class.forName("apapl.data.Term").isAssignableFrom(
-                    m.getReturnType()) == false)
-                throw new ActException("Wrong return-type");
+		       for (int a = 0; a < params.size(); a++){
+		    	   classParams[a + 1] = params.get(a).getClass();
+		       }
+			       
 
-            // invoke
-            Object[] objParams = new Object[params.size() + 1];
-            objParams[0] = agent; // agent name
-            for (int a = 0; a < params.size(); a++)
-            	objParams[a + 1] = params.get(a);
+		       try {
+			       // lookup the method
+			       Method m = this.getClass().getMethod(action.getName(), classParams);
+			       if (Class.forName("apapl.data.Term").isAssignableFrom(
+						       m.getReturnType()) == false)
+				       throw new ActException("Wrong return-type");
+			       // invoke
+			       Object[] objParams = new Object[params.size() + 1];
+			       objParams[0] = agent; // agent nameo
+			       for (int a = 0; a < params.size(); a++){
+				       objParams[a + 1] = params.get(a);
+			       }
+			       return (Term) m.invoke(this, objParams);
 
-            return (Term) m.invoke(this, objParams);
+		       } catch (ClassNotFoundException e) {
+			       throw new ActException("Class not found", e);
+		       } catch (SecurityException e) {
+			       throw new ActException("Security exception", e);
+		       } catch (NoSuchMethodException e) {
+			       throw new ActException("No such method", e);
+		       } catch (IllegalArgumentException e) {
+			       throw new ActException("Illegal argument", e);
+		       } catch (IllegalAccessException e) {
+			       throw new ActException("Illegal access", e);
+		       } catch (InvocationTargetException e) {
 
-        } catch (ClassNotFoundException e) {
-            throw new ActException("Class not found", e);
-        } catch (SecurityException e) {
-            throw new ActException("Security exception", e);
-        } catch (NoSuchMethodException e) {
-            throw new ActException("No such method", e);
-        } catch (IllegalArgumentException e) {
-            throw new ActException("Illegal argument", e);
-        } catch (IllegalAccessException e) {
-            throw new ActException("Illegal access", e);
-        } catch (InvocationTargetException e) {
-            
-            // action has failed -> let fail
-            if (e.getCause() instanceof ExternalActionFailedException)
-                throw new ActException("Execution failed.", (Exception) e
-                        .getCause()); // rethrow
-            
-            else if (e.getCause() instanceof NoEnvironmentException)
-                throw (NoEnvironmentException) e.getCause(); // rethrow
+			       // action has failed -> let fail
+			       if (e.getCause() instanceof ExternalActionFailedException)
+				       throw new ActException("Execution failed.", (Exception) e
+						       .getCause()); // rethrow
 
-            throw new ActException("Invocation target exception", e);
-        }
-    }
-    
-    /**
-     * This method is called when all the environment parameters have been added
-     * to the environment and it has been added to the module as well. It can be
-     * overridden by an Environment developer to determine the point when the
-     * environment has received all necessary information for the APAPLBuilder.
-     * 
-     */
-    public void initialized() {
-    }
-    
-    
-    /*
-     * Environment parameters functionality
-     * 
-     */
-    
+			       else if (e.getCause() instanceof NoEnvironmentException)
+				       throw (NoEnvironmentException) e.getCause(); // rethrow
+
+			       throw new ActException("Invocation target exception", e);
+		       }
+	       }
+
+	/**
+	 * This method is called when all the environment parameters have been added
+	 * to the environment and it has been added to the module as well. It can be
+	 * overridden by an Environment developer to determine the point when the
+	 * environment has received all necessary information for the APAPLBuilder.
+	 * 
+	 */
+	public void initialized(){return;}
+
+
+	/*
+	 * Environment parameters functionality:w
+	 * 
+	 */
 	void addEnvParameter(String key, String value) {
 		envParams.put(key, value);
 	}

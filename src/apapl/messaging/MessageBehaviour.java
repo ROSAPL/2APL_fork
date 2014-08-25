@@ -5,6 +5,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import apapl.Parser;
 import apapl.data.APLFunction;
+import apapl.data.APLIdent;
 import apapl.parser.ParseException;
 
 public class MessageBehaviour extends CyclicBehaviour
@@ -43,12 +44,15 @@ public class MessageBehaviour extends CyclicBehaviour
 	private APLFunction parseContent(String content)
 	{
 		Parser p = new Parser();
-		APLFunction f = null;
+		APLFunction f = APLFunction.NULL;
 
     try
 		{ f = p.parseAPLFunction(content);
 		}
-		catch( ParseException e ) {}
+		catch( ParseException e ) {
+			f = new APLFunction("error",new APLIdent("unparseable"));
+		}
+    	catch( Exception e) {};
 
     return(f); 
 	}
