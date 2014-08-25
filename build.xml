@@ -41,7 +41,7 @@
       <fileset dir="lib"/>
     </copy>	
 
-
+   
   	<!-- Copy JIProlog extension libraries to the release folder -->
   	<!--mkdir dir="${releasedir}/lib/jiprolog"/>
     <copy todir="${releasedir}/lib/jiprolog">
@@ -70,6 +70,13 @@
     		    />
 	   </manifest>
     </jar>   	
+  </target>
+  
+  <target name="grandle" depends="release">
+      <exec executable="/bin/bash">
+         <arg value="${resourcesdir}/declare_gradle_path.bash"/>
+         <arg value="${releasedir}" />
+      </exec>
   </target>
   
   <target name="run" depends="release">
