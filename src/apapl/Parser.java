@@ -59,8 +59,11 @@ public class Parser
 	public APLFunction parseAPLFunction(String s) throws ParseException
 	{
 		APLFunction a = null;
-		parser.ReInit(new StringReader(s));
-		a = parser.APLFunction();
+		if (s!=null)
+		{
+			parser.ReInit(new StringReader(s));
+			a = parser.APLFunction();
+		}
 		
 		return a;
 	}

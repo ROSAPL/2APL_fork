@@ -29,7 +29,7 @@ public class APLNum extends Term
 	 */
 	public APLNum(double val)
 	{
-		this.val = new BigDecimal(val);
+		this.val = new BigDecimal(Double.toString(val));
 	}
 	
 	/**
@@ -155,7 +155,7 @@ public class APLNum extends Term
 	
 	public String toString()
 	{
-		return val.toString();
+		return toString(false);
 	}
 	
 	/**
