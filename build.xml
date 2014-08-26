@@ -41,6 +41,9 @@
       <fileset dir="lib"/>
     </copy>	
 
+   <copy todir="$releasedir">
+      <fileset dir="${resourcesdir}/declare_gradle_path.bash"/>
+   </copy>
    
   	<!-- Copy JIProlog extension libraries to the release folder -->
   	<!--mkdir dir="${releasedir}/lib/jiprolog"/>
